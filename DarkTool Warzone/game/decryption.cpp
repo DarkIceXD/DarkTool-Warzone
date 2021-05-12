@@ -7,719 +7,660 @@ typedef unsigned __int64 QWORD;
 
 uint64_t decryption::client_info(const uint64_t encrypted_address, const uint64_t peb)
 {
-	uint64_t rax, rbx, rcx, rdx, r8, rdi, rsi, r9, r10, r11, r12, r13, r14 = 0;
+	uint64_t RAX = 0, RBX = 0, RCX = 0, RDX = 0, R8 = 0, RDI = 0, R9 = 0, R10 = 0, R11 = 0, R12 = 0, R13 = 0, R14 = 0, RSI = 0, RSP = 0, RBP = 0;
+	RBX = encrypted_address;
+	if (!RBX)
+		return 0;
 
-	rbx = encrypted_address;
-
-	rdx = ~peb;
-
-	r8 = peb;
-	rax = (globals::base + 0x777B);
-	r8 *= rax;
-	rax = 0x1F8F946E8C369BB;
-	rbx *= rax;
-	r8 ^= rbx;
-	rax = r8;
-	rax >>= 0x28;
-	r8 ^= rax;
-	rax = r8;
-	rax >>= 0xE;
-	r8 ^= rax;
-	rax = r8;
-	rax >>= 0x1C;
-	r8 ^= rax;
-	rax = r8;
-	rax >>= 0x38;
-	r8 ^= rax;
-	rax = (globals::base + 0xFC0);
-	//    rcx -= rax;
-	rax = r8;
-	//    rcx &= 0xffffffffc0000000;
-	rax >>= 0x25;
-	//    rcx <<= 0x10;
-	rcx = 0;
-	rax ^= r8;
-	rcx ^= driver::read<QWORD>(globals::pid, globals::base + 0x66FA0FC);
-	rcx = (~rcx);
-	rbx = driver::read<QWORD>(globals::pid, rcx + 0x9);
-	rbx *= rax;
-	return rbx;
+	R8 = globals::base;
+	RCX = peb;
+	RCX = (~RCX);
+	// test rbx,rbx
+	// je short 000000000205FC31h
+	RAX = globals::base;
+	RDX = globals::base + 0xE9D;
+	RAX -= RDX;
+	RCX += RBX;
+	RAX = 0; // Special case
+	RCX += R8;
+	RAX = _rotl64(RAX, 0x10);
+	RDX = 0xD0FDC0E5AC56A3F1;
+	RAX ^= driver::read<uintptr_t>(globals::pid, globals::base + 0x68FE0DC);
+	RCX *= RDX;
+	RAX = _byteswap_uint64(RAX);
+	RDX = 0x7C09AF42D8BF321D;
+	RCX += RDX;
+	RAX = driver::read<uintptr_t>(globals::pid, RAX + 0x17);
+	RAX *= RCX;
+	RBX = RAX;
+	RBX >>= 0x27;
+	RBX ^= RAX;
+	RBX += R8;
+	return RBX;
 }
 
 
 uint64_t decryption::client_base(const uint64_t encrypted_address, const uint64_t peb)
 {
-	// Default decl
-	uint64_t rax = 0, rbx = 0, rcx = 0, rdx = 0, r8 = 0, rdi = 0, rsi = 0, r9 = 0, r10 = 0, r11 = 0, r12 = 0, r13 = 0, r14 = 0, r15 = 0;
-
-	rax = encrypted_address;
-
-	auto decrypt_case = _rotl64(~peb, 0x25) & 0xF;
-
-	rbx = ~peb;
-	rdx = globals::base;
-
-	switch (decrypt_case) {
-	case 0: {
-		rax = (globals::base + 0x777B);
-		r8 *= rax;
-		rax = 0x1F8F946E8C369BB;
-		rbx *= rax;
-		r8 ^= rbx;
-		rax = r8;
-		rax >>= 0x28;
-		r8 ^= rax;
-		rax = r8;
-		rax >>= 0xE;
-		r8 ^= rax;
-		rax = r8;
-		rax >>= 0x1C;
-		r8 ^= rax;
-		rax = r8;
-		rax >>= 0x38;
-		r8 ^= rax;
-		rax = (globals::base + 0xFC0);
-		rcx -= rax;
-		rax = r8;
-		rcx &= 0xffffffffc0000000;
-		rax >>= 0x25;
-		rcx <<= 0x10;
-		rax ^= r8;
-		rcx ^= driver::read<QWORD>(globals::pid, globals::base + 0x66FA0FC);
-		rcx = (~rcx);
-		rbx = driver::read<QWORD>(globals::pid, rcx + 0x9);
-		rbx *= rax;
-		rdi = (globals::base + 0x1D4);
-		r14 = (globals::base + 0x3FF6);
-		r8 = 0x2926E5D05E846783;
-		r9 = driver::read<QWORD>(globals::pid, globals::base + 0x66FA12A);
-		rcx = 0x7CD23AFF41271AD5;
-		r8 ^= rcx;
-		rcx = r14;
-		rcx -= rbx;
-		rax += rcx;
-		rcx = 0xECDC0D68AF8122B5;
-		r8 ^= rcx;
-		rcx = rax;
-		rcx >>= 0x1A;
-		rax ^= rcx;
-		rcx = rax;
-		rcx >>= 0x34;
-		rax ^= rcx;
-		rcx = rax;
-		rcx >>= 0x6;
-		rax ^= rcx;
-		rcx = 0x9088151123BFBEA4;
-		r8 ^= rcx;
-		rcx = rax;
-		rcx >>= 0xC;
-		rax ^= rcx;
-		rcx = rax;
-		rcx >>= 0x18;
-		rax ^= rcx;
-		rcx = rax;
-		rcx >>= 0x30;
-		rax ^= rcx;
-		rcx = 0x92EE7B189DBAAB80;
-		r8 ^= rcx;
-		rcx = 0x890F42B7FCD615;
-		rax *= rcx;
-		rcx = 0x747F5AD7733203AB;
-		r8 ^= rcx;
-		rcx = rax;
-		rcx >>= 0x20;
-		rax ^= rcx;
-		//            rcx = driver::read<QWORD>(globals::pid, rbp + 0x108);
-		//            rcx -= rdi;
-		//            rcx &= 0xffffffffc0000000;
-		rcx = 0;
-		rcx <<= 0x10;
-		rcx ^= r9;
-		rcx = (~rcx);
-		rcx = driver::read<QWORD>(globals::pid, rcx + 0x17);
-		rax *= rcx;
-		rcx = 0x71294A8B070B9839;
-		rax -= rcx;
-		rcx = 0xDDBC4EFBAA9F5E5B;
-		r8 ^= rcx;
-		rcx = 0xBF1E74D2D72983AB;
-		rax *= rcx;
-		return rax;
-		break;
+	uint64_t RAX = globals::base, RBX = globals::base, RCX = globals::base, RDX = globals::base, R8 = globals::base, RDI = globals::base, R9 = globals::base, R10 = globals::base, R11 = globals::base, R12 = globals::base, R13 = globals::base, R14 = globals::base, R15 = globals::base, RSI = globals::base, RSP = globals::base, RBP = globals::base;
+	RAX = encrypted_address;
+	if (!RAX)
+		return 0;
+	RDI = peb;
+	// test rax,rax
+	// je near ptr 00000000020648E4h
+	RCX = RDI;
+	RCX >>= 0x17;
+	// and ecx,0Fh
+	RCX &= 0xF;
+	switch (RCX)
+	{
+	case 0:
+	{
+		R9 = driver::read<uintptr_t>(globals::pid, globals::base + 0x68FE117);
+		RSI = globals::base + 0x6AC;
+		// mov rcx,[rbp+0E8h]
+		RCX -= RSI;
+		RCX = 0; // Special case
+		RCX = _rotl64(RCX, 0x10);
+		RCX ^= R9;
+		RCX = _byteswap_uint64(RCX);
+		RAX *= driver::read<uintptr_t>(globals::pid, RCX + 0x11);
+		RCX = globals::base;
+		RAX += RCX;
+		RCX = 0x5CD525BAF45D4153;
+		RAX *= RCX;
+		RCX = RAX;
+		RCX >>= 0x4;
+		RAX ^= RCX;
+		RCX = RAX;
+		RCX >>= 0x8;
+		RAX ^= RCX;
+		RCX = RAX;
+		RCX >>= 0x10;
+		RAX ^= RCX;
+		RCX = RAX;
+		RCX >>= 0x20;
+		RAX ^= RCX;
+		RCX = 0x3E9F9DBB6E66EB1A;
+		RAX ^= RCX;
+		RCX = globals::base;
+		RAX -= RCX;
+		RAX += 0xFFFFFFFF856D9D0D;
+		RAX += RDI;
+		RCX = RAX;
+		RCX >>= 0x6;
+		RAX ^= RCX;
+		RCX = RAX;
+		RCX >>= 0xC;
+		RAX ^= RCX;
+		RCX = RAX;
+		RCX >>= 0x18;
+		RAX ^= RCX;
+		RCX = RAX;
+		RCX >>= 0x30;
+		RAX ^= RCX;
+		RCX = RAX;
+		RCX >>= 0xE;
+		RAX ^= RCX;
+		RCX = RAX;
+		RCX >>= 0x1C;
+		RAX ^= RCX;
+		RCX = RAX;
+		RCX >>= 0x38;
+		RAX ^= RCX;
+		return RAX;
 	}
-
-	case 1: {
-		r11 = driver::read<QWORD>(globals::pid, globals::base + 0x66FA12A);
-		rdi = (globals::base + 0x1D4);
-		rdx = (globals::base + 0x28554F16);
-		rcx = rbx;
-		rcx ^= rdx;
-		rax -= rcx;
-		rcx = rax;
-		rcx >>= 0xE;
-		rax ^= rcx;
-		rcx = rax;
-		rcx >>= 0x1C;
-		rax ^= rcx;
-		rcx = rax;
-		rcx >>= 0x38;
-		rax ^= rcx;
-		rcx = rax;
-		rcx >>= 0xA;
-		rax ^= rcx;
-		rcx = rax;
-		rcx >>= 0x14;
-		rax ^= rcx;
-		rcx = rax;
-		rcx >>= 0x28;
-		rax ^= rcx;
-		rcx = 0xE1FD3C86DB19EBF9;
-		rax *= rcx;
-		//            r8 = driver::read<QWORD>(globals::pid, rbp + 0x108);
-		rdx = (globals::base + 0x5D7E5CC0);
-		//            r8 -= rdi;
-		//            r8 &= 0xffffffffc0000000;
-		r8 = 0;
-		r8 <<= 0x10;
-		r8 ^= r11;
-		rcx = rbx;
-		r8 = (~r8);
-		rcx = (~rcx);
-		rdx = (~rdx);
-		rcx += rax;
-		rdx += rcx;
-		rcx = 0x18DB6BC94B2CBA7C;
-		rax = driver::read<QWORD>(globals::pid, r8 + 0x17);
-		rax *= rdx;
-		rax ^= rcx;
-		rcx = 0x68C819A3C9078EC0;
-		rax ^= rcx;
-		return rax;
-		break;
+	case 1:
+	{
+		R10 = driver::read<uintptr_t>(globals::pid, globals::base + 0x68FE117);
+		RSI = globals::base + 0x6AC;
+		R15 = globals::base + 0x64C85167;
+		RDX = RDI;
+		RDX = (~RDX);
+		RCX = globals::base + 0x4224;
+		RCX = (~RCX);
+		RDX *= RCX;
+		RCX = 0xACCE08093FB3EFFD;
+		RAX ^= RDX;
+		RAX *= RCX;
+		RCX = 0x5FB21A878C77BA33;
+		RAX += RCX;
+		RCX = R15;
+		RCX = (~RCX);
+		RCX += RDI;
+		RAX ^= RCX;
+		RCX = 0x22C2431C8FB82D9B;
+		RAX += RCX;
+		RCX = RAX;
+		RCX >>= 0x1C;
+		RAX ^= RCX;
+		RCX = RAX;
+		RCX >>= 0x38;
+		RAX ^= RCX;
+		RCX = RAX;
+		RCX >>= 0x14;
+		RAX ^= RCX;
+		RCX = RAX;
+		// mov rdx,[rbp+0E8h]
+		RDX -= RSI;
+		RCX >>= 0x28;
+		RDX = 0; // Special case
+		RCX ^= RAX;
+		RDX = _rotl64(RDX, 0x10);
+		RDX ^= R10;
+		RDX = _byteswap_uint64(RDX);
+		RAX = driver::read<uintptr_t>(globals::pid, RDX + 0x11);
+		RAX *= RCX;
+		return RAX;
 	}
-
-	case 2: {
-		r10 = driver::read<QWORD>(globals::pid, globals::base + 0x66FA12A);
-		rdi = (globals::base + 0x1D4);
-		r15 = (globals::base + 0xD51F);
-		r11 = globals::base;
-		rcx = rax;
-		rcx >>= 0x11;
-		rax ^= rcx;
-		rcx = rax;
-		rcx >>= 0x22;
-		rax ^= rcx;
-		//            rdx = driver::read<QWORD>(globals::pid, rbp + 0x108);
-		//            rdx -= rdi;
-		//            rdx &= 0xffffffffc0000000;
-		rdx = 0;
-		rcx = rax + r11 * 1;
-		rdx <<= 0x10;
-		rdx ^= r10;
-		rdx = (~rdx);
-		rax = driver::read<QWORD>(globals::pid, rdx + 0x17);
-		rax *= rcx;
-		rcx = 0x4DE64FAFA04AFCC3;
-		rax *= rcx;
-		rcx = r15;
-		rcx = (~rcx);
-		rcx += rbx;
-		rax ^= rcx;
-		rax -= rbx;
-		rcx = 0x9EF4528D17D101CD;
-		rax ^= rcx;
-		return rax;
-		break;
+	case 2:
+	{
+		RBX = driver::read<uintptr_t>(globals::pid, globals::base + 0x68FE117);
+		RSI = globals::base + 0x6AC;
+		RCX = 0xD6D9DEEDA5248D76;
+		RAX ^= RCX;
+		RCX = RAX;
+		RCX >>= 0x11;
+		RAX ^= RCX;
+		RCX = RAX;
+		RCX >>= 0x22;
+		RAX ^= RCX;
+		R8 = RDI;
+		R8 = (~R8);
+		// mov r9,[rbp+0E8h]
+		R9 -= RSI;
+		R9 = 0; // Special case
+		R9 = _rotl64(R9, 0x10);
+		RCX = globals::base + 0x2EC9;
+		R9 ^= RBX;
+		RDX = 0xDDE2E61B691384A0;
+		RDX += RAX;
+		RCX = (~RCX);
+		RDX ^= R8;
+		RAX = globals::base + 0x20F5092D;
+		RAX ^= RDX;
+		RAX += R8;
+		RCX += RAX;
+		R9 = _byteswap_uint64(R9);
+		RAX = driver::read<uintptr_t>(globals::pid, R9 + 0x11);
+		RAX *= RCX;
+		RAX ^= RDI;
+		RCX = 0x565E27B475312525;
+		RAX *= RCX;
+		return RAX;
 	}
-
-	case 3: {
-		rdi = (globals::base + 0x1D4);
-		r11 = globals::base;
-		r9 = driver::read<QWORD>(globals::pid, globals::base + 0x66FA12A);
-		rcx = 0x51DF0317C63BA0B0;
-		rax -= rcx;
-		rcx = rax;
-		rcx >>= 0x4;
-		rax ^= rcx;
-		rcx = rax;
-		rcx >>= 0x8;
-		rax ^= rcx;
-		rcx = rax;
-		rcx >>= 0x10;
-		rax ^= rcx;
-		rcx = rax;
-		rcx >>= 0x20;
-		rax ^= rcx;
-		rcx = rax;
-		rcx >>= 0xC;
-		rax ^= rcx;
-		rcx = rax;
-		rcx >>= 0x18;
-		rax ^= rcx;
-		rcx = rax;
-		rcx >>= 0x30;
-		rax ^= rcx;
-		rcx = 0x7B440B4A6B0A8EF5;
-		rax *= rcx;
-		//            rcx = driver::read<QWORD>(globals::pid, rbp + 0x108);
-		//            rcx -= rdi;
-		//            rcx &= 0xffffffffc0000000;
-		rcx = 0;
-		rcx <<= 0x10;
-		rcx ^= r9;
-		rcx = (~rcx);
-		rcx = driver::read<QWORD>(globals::pid, rcx + 0x17);
-		rax *= rcx;
-		rax -= rbx;
-		rax ^= r11;
-		rcx = 0x3762E5D919DF6CF0;
-		rax -= rcx;
-		return rax;
-		break;
+	case 3:
+	{
+		R10 = driver::read<uintptr_t>(globals::pid, globals::base + 0x68FE117);
+		RSI = globals::base + 0x6AC;
+		R11 = globals::base + 0x7D269E03;
+		RCX = 0xB179BC20C4853E9B;
+		RAX *= RCX;
+		RCX = globals::base;
+		RAX -= RCX;
+		RCX = 0x4A9F7DDA7B6600D7;
+		RAX -= RCX;
+		RCX = RAX;
+		RCX >>= 0x22;
+		RAX ^= RCX;
+		RCX = RAX;
+		RCX >>= 0x8;
+		RAX ^= RCX;
+		RCX = RAX;
+		RCX >>= 0x10;
+		RAX ^= RCX;
+		RCX = RAX;
+		RCX >>= 0x20;
+		RAX ^= RCX;
+		// mov rdx,[rbp+0E8h]
+		RCX = 0x67EE65DA588AACB0;
+		RCX += RAX;
+		RDX -= RSI;
+		RDX = 0; // Special case
+		RDX = _rotl64(RDX, 0x10);
+		RDX ^= R10;
+		RDX = _byteswap_uint64(RDX);
+		RAX = driver::read<uintptr_t>(globals::pid, RDX + 0x11);
+		RAX *= RCX;
+		RCX = RDI;
+		RCX ^= R11;
+		RAX -= RCX;
+		return RAX;
 	}
-
-	case 4: {
-		rdi = (globals::base + 0x1D4);
-		r11 = globals::base;
-		r15 = (globals::base + 0x455B9C25);
-		r9 = driver::read<QWORD>(globals::pid, globals::base + 0x66FA12A);
-		rcx = rbx;
-		rcx ^= driver::read<QWORD>(globals::pid, globals::base + 0x1C3DD8A);
-		rax += rcx;
-		//            rcx = driver::read<QWORD>(globals::pid, rbp + 0x108);
-		//            rcx -= rdi;
-		//            rcx &= 0xffffffffc0000000;
-		rcx = 0;
-		rcx <<= 0x10;
-		rcx ^= r9;
-		rcx = (~rcx);
-		rcx = driver::read<QWORD>(globals::pid, rcx + 0x17);
-		rcx *= 0xDC393A1CB26C59A9;
-		rax *= rcx;
-		rax -= rbx;
-		rcx = rbx;
-		rcx ^= r15;
-		rax -= rcx;
-		rcx = rax;
-		rcx >>= 0x11;
-		rax ^= rcx;
-		rcx = rax;
-		rcx >>= 0x22;
-		rax ^= rcx;
-		rax -= r11;
-		rax += r11;
-		return rax;
-		break;
+	case 4:
+	{
+		RSI = globals::base + 0x6AC;
+		R11 = globals::base + 0x379408E5;
+		R9 = driver::read<uintptr_t>(globals::pid, globals::base + 0x68FE117);
+		// mov rcx,[rbp+0E8h]
+		RCX -= RSI;
+		RCX = 0; // Special case
+		RCX = _rotl64(RCX, 0x10);
+		RCX ^= R9;
+		RCX = _byteswap_uint64(RCX);
+		RCX = driver::read<uintptr_t>(globals::pid, RCX + 0x11);
+		RSP = 0x62E007A4AB5B56AB;
+		RCX *= RSP;
+		RAX *= RCX;
+		RCX = RDI;
+		RCX = (~RCX);
+		RCX ^= R11;
+		RAX += RCX;
+		RCX = RAX;
+		RCX >>= 0x15;
+		RAX ^= RCX;
+		RCX = RAX;
+		RCX >>= 0x2A;
+		RAX ^= RCX;
+		RAX ^= RDI;
+		RCX = 0xC1E61306CF319D97;
+		RAX *= RCX;
+		RCX = 0xF6A67E73491A1EFB;
+		RCX -= globals::base;
+		RAX += RCX;
+		return RAX;
 	}
-
-	case 5: {
-		rdi = (globals::base + 0x1D4);
-		r11 = (globals::base + 0x739C6080);
-		r9 = driver::read<QWORD>(globals::pid, globals::base + 0x66FA12A);
-		rcx = 0xE56F47E25078E80C;
-		rax ^= rcx;
-		rcx = 0x36BCDD71AC89676F;
-		rax *= rcx;
-		rcx = rax;
-		rcx >>= 0xD;
-		rax ^= rcx;
-		rcx = rax;
-		rcx >>= 0x1A;
-		rax ^= rcx;
-		rcx = rax;
-		rcx >>= 0x34;
-		rax ^= rcx;
-		rcx = r11;
-		rcx = (~rcx);
-		rcx ^= rbx;
-		rax ^= rcx;
-		rax += rbx;
-		rcx = 0xC824B36FD4F56BF3;
-		rax *= rcx;
-		//            rcx = driver::read<QWORD>(globals::pid, rbp + 0x108);
-		//            rcx -= rdi;
-		//            rcx &= 0xffffffffc0000000;
-		rcx = 0;
-		rcx <<= 0x10;
-		rcx ^= r9;
-		rcx = (~rcx);
-		rax *= driver::read<QWORD>(globals::pid, rcx + 0x17);
-		rcx = rax;
-		rcx >>= 0xA;
-		rax ^= rcx;
-		rcx = rax;
-		rcx >>= 0x14;
-		rax ^= rcx;
-		rcx = rax;
-		rcx >>= 0x28;
-		rax ^= rcx;
-		return rax;
-		break;
+	case 5:
+	{
+		RSI = globals::base + 0x6AC;
+		R10 = driver::read<uintptr_t>(globals::pid, globals::base + 0x68FE117);
+		RCX = globals::base;
+		RAX = RAX + RCX * 0x2;
+		RAX ^= RCX;
+		RCX = 0x76E88693C2A89DC9;
+		RAX *= RCX;
+		RCX = globals::base;
+		RAX ^= RCX;
+		// mov rdx,[rbp+0E8h]
+		RDX -= RSI;
+		RDX = 0; // Special case
+		RCX = RDI + RAX;
+		RDX = _rotl64(RDX, 0x10);
+		RAX = globals::base + 0x2D9B;
+		RCX += RAX;
+		RDX ^= R10;
+		RDX = _byteswap_uint64(RDX);
+		RAX = driver::read<uintptr_t>(globals::pid, RDX + 0x11);
+		RAX *= RCX;
+		RCX = RAX;
+		RCX >>= 0x26;
+		RAX ^= RCX;
+		return RAX;
 	}
-
-	case 6: {
-		r10 = driver::read<QWORD>(globals::pid, globals::base + 0x66FA12A);
-		rdi = (globals::base + 0x1D4);
-		r11 = globals::base;
-		rcx = 0x2EBB8A785E1A856A;
-		rax += rcx;
-		rax ^= r11;
-		rcx = 0xC5EE09076CC9FE1C;
-		rax ^= rcx;
-		rax -= rbx;
-		rcx = rax;
-		rcx >>= 0x1B;
-		rax ^= rcx;
-		rcx = rax;
-		rcx >>= 0x36;
-		rax ^= rcx;
-		rcx = 0x1AEFC88777814F31;
-		rax *= rcx;
-		//            rcx = driver::read<QWORD>(globals::pid, rbp + 0x108);
-		//            rcx -= rdi;
-		//            rcx &= 0xffffffffc0000000;
-		rcx = 0;
-		rcx <<= 0x10;
-		rcx ^= r10;
-		rcx = (~rcx);
-		rax *= driver::read<QWORD>(globals::pid, rcx + 0x17);
-		rax -= rbx;
-		return rax;
-		break;
+	case 6:
+	{
+		RSI = globals::base + 0x6AC;
+		R15 = globals::base + 0x25792B82;
+		R10 = driver::read<uintptr_t>(globals::pid, globals::base + 0x68FE117);
+		RCX = globals::base;
+		RDX = RCX + 0x44E66251;
+		RCX += RAX;
+		RDX += RDI;
+		RDX ^= RCX;
+		RCX = RDX;
+		RAX = RDX;
+		RCX >>= 0xE;
+		RAX ^= RCX;
+		RCX = RAX;
+		RCX >>= 0x1C;
+		RAX ^= RCX;
+		RDX = globals::base + 0x3ED51D49;
+		RCX = RAX;
+		RCX >>= 0x38;
+		RAX ^= RCX;
+		RCX = RDI;
+		RCX ^= RDX;
+		RAX -= RCX;
+		RCX = RDI;
+		RCX *= R15;
+		RAX ^= RCX;
+		RCX = globals::base;
+		RAX += RCX;
+		// mov rcx,[rbp+0E8h]
+		RCX -= RSI;
+		RCX = 0; // Special case
+		RCX = _rotl64(RCX, 0x10);
+		RCX ^= R10;
+		RCX = _byteswap_uint64(RCX);
+		RAX *= driver::read<uintptr_t>(globals::pid, RCX + 0x11);
+		RCX = 0xD821E1F8F10CC0E5;
+		RAX *= RCX;
+		return RAX;
 	}
-
-	case 7: {
-		r10 = driver::read<QWORD>(globals::pid, globals::base + 0x66FA12A);
-		rdi = (globals::base + 0x1D4);
-		r15 = (globals::base + 0x39BD428F);
-		rcx = 0x4A8E836720C9B049;
-		rax += rcx;
-		rax ^= rbx;
-		rax ^= r15;
-		rcx = 0x47ADAA0C40AA79CE;
-		rax += rcx;
-		rax += rbx;
-		rcx = rax;
-		rcx >>= 0x13;
-		rax ^= rcx;
-		rcx = rax;
-		rcx >>= 0x26;
-		rax ^= rcx;
-		rcx = rax;
-		rcx >>= 0x18;
-		rax ^= rcx;
-		rcx = rax;
-		rcx >>= 0x30;
-		rax ^= rcx;
-		rcx = 0x7404B5F5DE776B17;
-		rax *= rcx;
-		//            rcx = driver::read<QWORD>(globals::pid, rbp + 0x108);
-		//            rcx -= rdi;
-		//            rcx &= 0xffffffffc0000000;
-		rcx = 0;
-		rcx <<= 0x10;
-		rcx ^= r10;
-		rcx = (~rcx);
-		rax *= driver::read<QWORD>(globals::pid, rcx + 0x17);
-		return rax;
-		break;
+	case 7:
+	{
+		RSI = globals::base + 0x6AC;
+		R9 = driver::read<uintptr_t>(globals::pid, globals::base + 0x68FE117);
+		RCX = globals::base;
+		RAX += RCX;
+		RCX = 0xCDD63885C351FBB5;
+		RAX *= RCX;
+		RCX = RAX;
+		RCX >>= 0x28;
+		RAX ^= RCX;
+		// mov rcx,[rbp+0E8h]
+		RCX -= RSI;
+		RCX = 0; // Special case
+		RCX = _rotl64(RCX, 0x10);
+		RCX ^= R9;
+		RCX = _byteswap_uint64(RCX);
+		RCX = driver::read<uintptr_t>(globals::pid, RCX + 0x11);
+		RBP = 0xD86054F77497C21F;
+		RCX *= RBP;
+		RAX *= RCX;
+		RCX = 0xE9FBCF5BFD0D9235;
+		RAX *= RCX;
+		RCX = globals::base + 0x2B58;
+		RCX -= RDI;
+		RAX += RCX;
+		RAX += RDI;
+		return RAX;
 	}
-
-	case 8: {
-		rdi = (globals::base + 0x1D4);
-		r11 = globals::base;
-		r10 = driver::read<QWORD>(globals::pid, globals::base + 0x66FA12A);
-		rdx = rbx;
-		rcx = (globals::base + 0x1818822A);
-		rdx *= rcx;
-		rcx = r11;
-		rcx -= rdx;
-		rax += rcx;
-		rcx = 0xF3DCF6EBF3A3997;
-		rax += rcx;
-		rcx = 0x4C42D15E4A2708E5;
-		rax *= rcx;
-		//            rcx = driver::read<QWORD>(globals::pid, rbp + 0x108);
-		//            rcx -= rdi;
-		//            rcx &= 0xffffffffc0000000;
-		rcx = 0;
-		rcx <<= 0x10;
-		rcx ^= r10;
-		rcx = (~rcx);
-		rax *= driver::read<QWORD>(globals::pid, rcx + 0x17);
-		rcx = 0x83DBAD3327E0A500;
-		rax ^= rcx;
-		rax -= rbx;
-		rcx = rax;
-		rcx >>= 0x12;
-		rax ^= rcx;
-		rcx = rax;
-		rcx >>= 0x24;
-		rax ^= rcx;
-		return rax;
-		break;
+	case 8:
+	{
+		R10 = driver::read<uintptr_t>(globals::pid, globals::base + 0x68FE117);
+		RSI = globals::base + 0x6AC;
+		R15 = globals::base + 0x261CDD99;
+		RBX = globals::base + 0x6877DAE4;
+		RCX = 0x74F032451C0F3AAB;
+		RAX += RCX;
+		RCX = 0x91AAF2F4B147480D;
+		RAX ^= RCX;
+		RCX = RAX;
+		RCX >>= 0x28;
+		RAX ^= RCX;
+		RCX = RAX;
+		RCX >>= 0xD;
+		RAX ^= RCX;
+		RCX = RAX;
+		RCX >>= 0x1A;
+		RAX ^= RCX;
+		RDX = RAX;
+		RDX >>= 0x34;
+		RDX ^= RAX;
+		RAX = RDI;
+		RAX ^= RBX;
+		RCX = 0xAE4F1D68CD4FA409;
+		RAX += RDX;
+		RAX *= RCX;
+		// mov rcx,[rbp+0E8h]
+		RCX -= RSI;
+		RCX = 0; // Special case
+		RCX = _rotl64(RCX, 0x10);
+		RCX ^= R10;
+		RCX = _byteswap_uint64(RCX);
+		RAX *= driver::read<uintptr_t>(globals::pid, RCX + 0x11);
+		RCX = R15;
+		RCX = (~RCX);
+		RCX += RDI;
+		RAX ^= RCX;
+		return RAX;
 	}
-
-	case 9: {
-		rdi = (globals::base + 0x1D4);
-		r11 = globals::base;
-		r10 = driver::read<QWORD>(globals::pid, globals::base + 0x66FA12A);
-		rcx = r11 + 0xf50;
-		rcx += rbx;
-		rax += rcx;
-		rax ^= rbx;
-		//            rdx = driver::read<QWORD>(globals::pid, rbp + 0x108);
-		//            rdx -= rdi;
-		//            rdx &= 0xffffffffc0000000;
-		rdx = 0;
-		rcx = 0x9475C968613A0C67;
-		rdx <<= 0x10;
-		rcx += rax;
-		rdx ^= r10;
-		rdx = (~rdx);
-		rax = driver::read<QWORD>(globals::pid, rdx + 0x17);
-		rax *= rcx;
-		rcx = (globals::base + 0x6E91D3AB);
-		rcx = (~rcx);
-		rcx *= rbx;
-		rax ^= rcx;
-		rcx = 0x1A81BB2AD0B4F3AC;
-		rax -= rcx;
-		rcx = 0xBBB2C4BB8CE6593;
-		rax *= rcx;
-		rcx = rax;
-		rcx >>= 0x19;
-		rax ^= rcx;
-		rcx = rax;
-		rcx >>= 0x32;
-		rax ^= rcx;
-		return rax;
-		break;
+	case 9:
+	{
+		R10 = driver::read<uintptr_t>(globals::pid, globals::base + 0x68FE117);
+		RSI = globals::base + 0x6AC;
+		R15 = globals::base + 0x19301967;
+		RCX = 0xA03A5CAEA4279C49;
+		RAX *= RCX;
+		RCX = 0x71C02514CF8A9DA8;
+		RAX += RCX;
+		// mov rcx,[rbp+0E8h]
+		RCX -= RSI;
+		RCX = 0; // Special case
+		RCX = _rotl64(RCX, 0x10);
+		RCX ^= R10;
+		RCX = _byteswap_uint64(RCX);
+		RAX *= driver::read<uintptr_t>(globals::pid, RCX + 0x11);
+		RCX = 0x9EDB961AC1CA708C;
+		RAX ^= RCX;
+		RAX += R15;
+		RDX = RDI;
+		RDX = (~RDX);
+		RAX += RDX;
+		RCX = RAX;
+		RCX >>= 0x10;
+		RAX ^= RCX;
+		RCX = RAX;
+		RCX >>= 0x20;
+		RAX ^= RCX;
+		RCX = globals::base;
+		RAX ^= RCX;
+		RCX = RAX;
+		RCX >>= 0x7;
+		RAX ^= RCX;
+		RCX = RAX;
+		RCX >>= 0xE;
+		RAX ^= RCX;
+		RCX = RAX;
+		RCX >>= 0x1C;
+		RAX ^= RCX;
+		RCX = RAX;
+		RCX >>= 0x38;
+		RAX ^= RCX;
+		return RAX;
 	}
-
-	case 10: {
-		r9 = driver::read<QWORD>(globals::pid, globals::base + 0x66FA12A);
-		rdi = (globals::base + 0x1D4);
-		r11 = globals::base;
-		r15 = (globals::base + 0x6EA15250);
-		rax += rbx;
-		rax *= 0x9BD059290DCB43D3;
-		rcx = rbx;
-		rcx = (~rcx);
-		rcx ^= r15;
-		rax -= rcx;
-		rax ^= rbx;
-		rax -= r11;
-		//            rcx = driver::read<QWORD>(globals::pid, rbp + 0x108);
-		//            rcx -= rdi;
-		//            rcx &= 0xffffffffc0000000;
-		rcx = 0;
-		rcx <<= 0x10;
-		rcx ^= r9;
-		rcx = (~rcx);
-		rax *= driver::read<QWORD>(globals::pid, rcx + 0x17);
-		rcx = rax;
-		rcx >>= 0x8;
-		rax ^= rcx;
-		rcx = rax;
-		rcx >>= 0x10;
-		rax ^= rcx;
-		rcx = rax;
-		rcx >>= 0x20;
-		rax ^= rcx;
-		rax -= rbx;
-		return rax;
-		break;
+	case 10:
+	{
+		RSI = globals::base + 0x6AC;
+		RBX = globals::base + 0x1A015076;
+		R9 = driver::read<uintptr_t>(globals::pid, globals::base + 0x68FE117);
+		RCX = RAX;
+		RCX >>= 0x1C;
+		RAX ^= RCX;
+		RCX = RAX;
+		RCX >>= 0x38;
+		RAX ^= RCX;
+		// mov rcx,[rbp+0E8h]
+		RCX -= RSI;
+		RCX = 0; // Special case
+		RCX = _rotl64(RCX, 0x10);
+		RCX ^= R9;
+		RCX = _byteswap_uint64(RCX);
+		RAX *= driver::read<uintptr_t>(globals::pid, RCX + 0x11);
+		RCX = RAX;
+		RCX >>= 0x15;
+		RAX ^= RCX;
+		RCX = RAX;
+		RCX >>= 0x2A;
+		RAX ^= RCX;
+		RCX = RDI;
+		RCX ^= RBX;
+		RAX += RCX;
+		RCX = RAX;
+		RCX >>= 0xC;
+		RAX ^= RCX;
+		RCX = RAX;
+		RCX >>= 0x18;
+		RAX ^= RCX;
+		RCX = RAX;
+		RCX >>= 0x30;
+		RAX ^= RCX;
+		RCX = 0x11B19D41A5FE8AE1;
+		RAX *= RCX;
+		RCX = RAX;
+		RCX >>= 0x26;
+		RAX ^= RCX;
+		RCX = globals::base;
+		RAX ^= RCX;
+		return RAX;
 	}
-
-	case 11: {
-		rdi = (globals::base + 0x1D4);
-		r11 = globals::base;
-		r10 = driver::read<QWORD>(globals::pid, globals::base + 0x66FA12A);
-		rcx = rax;
-		rcx >>= 0x14;
-		rax ^= rcx;
-		rcx = rax;
-		rcx >>= 0x28;
-		rax ^= rcx;
-		rcx = 0x60FC131021EA9670;
-		rax ^= rcx;
-		rcx = r11 + 0x8054;
-		rcx += rbx;
-		rax += rcx;
-		rax ^= r11;
-		//            rdx = driver::read<QWORD>(globals::pid, rbp + 0x108);
-		//            rdx -= rdi;
-		//            rdx &= 0xffffffffc0000000;
-		rdx = 0;
-		rcx = rax;
-		rdx <<= 0x10;
-		rcx ^= r11;
-		rdx ^= r10;
-		rdx = (~rdx);
-		rax = driver::read<QWORD>(globals::pid, rdx + 0x17);
-		rax *= rcx;
-		rcx = 0x989F1826B9D2513F;
-		rax *= rcx;
-		return rax;
-		break;
+	case 11:
+	{
+		RSI = globals::base + 0x6AC;
+		R15 = globals::base + 0x78378FCB;
+		RBX = globals::base + 0x7998;
+		R9 = driver::read<uintptr_t>(globals::pid, globals::base + 0x68FE117);
+		RCX = globals::base;
+		RAX += RCX;
+		RCX = RAX;
+		RCX >>= 0x1F;
+		RAX ^= RCX;
+		RCX = RAX;
+		RCX >>= 0x3E;
+		RAX ^= RCX;
+		RCX = 0x41CF04660260443;
+		RAX += RCX;
+		RCX = 0x740D13B79DE35AE6;
+		RAX += RCX;
+		// mov rcx,[rbp+0E8h]
+		RCX -= RSI;
+		RCX = 0; // Special case
+		RCX = _rotl64(RCX, 0x10);
+		RCX ^= R9;
+		RCX = _byteswap_uint64(RCX);
+		RCX = driver::read<uintptr_t>(globals::pid, RCX + 0x11);
+		RAX *= RCX;
+		RAX ^= RDI;
+		RAX ^= RBX;
+		RCX = 0x7712A4C8F3E6DF2D;
+		RAX *= RCX;
+		RCX = RDI;
+		RCX = (~RCX);
+		RAX += RCX;
+		RAX += R15;
+		return RAX;
 	}
-
-	case 12: {
-		r10 = driver::read<QWORD>(globals::pid, globals::base + 0x66FA12A);
-		rdi = (globals::base + 0x1D4);
-		r11 = globals::base;
-		rcx = (globals::base + 0x56E1284B);
-		rcx = (~rcx);
-		rcx -= rbx;
-		rax ^= rcx;
-		rcx = (globals::base + 0xD4EC);
-		rcx = (~rcx);
-		rcx -= rbx;
-		rax += rcx;
-		rcx = 0xBBA27374E8361FEB;
-		rax *= rcx;
-		rcx = rax;
-		rcx >>= 0x1C;
-		rax ^= rcx;
-		rcx = rax;
-		rcx >>= 0x38;
-		rax ^= rcx;
-		rcx = r11 + 0x42c2;
-		rcx += rbx;
-		rax ^= rcx;
-		//            rcx = driver::read<QWORD>(globals::pid, rbp + 0x108);
-		//            rcx -= rdi;
-		//            rcx &= 0xffffffffc0000000;
-		rcx = 0;
-		rcx <<= 0x10;
-		rcx ^= r10;
-		rcx = (~rcx);
-		rax *= driver::read<QWORD>(globals::pid, rcx + 0x17);
-		rcx = (globals::base + 0x4FE2BA2B);
-		rdx = rbx;
-		rax += rcx;
-		rdx = (~rdx);
-		rax += rdx;
-		rcx = 0x1EE121203251119E;
-		rax += rcx;
-		return rax;
-		break;
+	case 12:
+	{
+		RSI = globals::base + 0x6AC;
+		R9 = driver::read<uintptr_t>(globals::pid, globals::base + 0x68FE117);
+		RAX -= RDI;
+		// mov rcx,[rbp+0E8h]
+		RCX -= RSI;
+		RCX = 0; // Special case
+		RCX = _rotl64(RCX, 0x10);
+		RCX ^= R9;
+		RCX = _byteswap_uint64(RCX);
+		RCX = driver::read<uintptr_t>(globals::pid, RCX + 0x11);
+		RSP = 0xDCBB02268230C67;
+		RCX *= RSP;
+		RAX *= RCX;
+		RCX = RDI + RDI;
+		RCX -= globals::base;
+		RCX += 0xFFFFFFFFFFFF5629;
+		RAX += RCX;
+		RCX = RAX;
+		RCX >>= 0x12;
+		RAX ^= RCX;
+		RCX = RAX;
+		RCX >>= 0x24;
+		RAX ^= RCX;
+		RCX = RAX;
+		RCX >>= 0xD;
+		RAX ^= RCX;
+		RCX = RAX;
+		RCX >>= 0x1A;
+		RAX ^= RCX;
+		RCX = RAX;
+		RCX >>= 0x34;
+		RAX ^= RCX;
+		RAX += RDI;
+		return RAX;
 	}
-
-	case 13: {
-		rdi = (globals::base + 0x1D4);
-		r11 = globals::base;
-		r10 = driver::read<QWORD>(globals::pid, globals::base + 0x66FA12A);
-		//            rcx = driver::read<QWORD>(globals::pid, rbp + 0x108);
-		//            rcx -= rdi;
-		//            rcx &= 0xffffffffc0000000;
-		rcx = 0;
-		rcx <<= 0x10;
-		rcx ^= r10;
-		rcx = (~rcx);
-		rax *= driver::read<QWORD>(globals::pid, rcx + 0x17);
-		rax += rbx;
-		rax -= r11;
-		rcx = 0xF2C3607F255C85D7;
-		rax *= rcx;
-		rcx = 0xA0E2B3FEB404B52;
-		rax ^= rcx;
-		rcx = rbx;
-		rcx *= 0x7FF7BA153B74;
-		rax += rcx;
-		rcx = rax;
-		rcx >>= 0x4;
-		rax ^= rcx;
-		rcx = rax;
-		rcx >>= 0x8;
-		rax ^= rcx;
-		rcx = rax;
-		rcx >>= 0x10;
-		rax ^= rcx;
-		rcx = rax;
-		rcx >>= 0x20;
-		rax ^= rcx;
-		rcx = rax;
-		rcx >>= 0x1E;
-		rax ^= rcx;
-		rcx = rax;
-		rcx >>= 0x3C;
-		rax ^= rcx;
-		return rax;
-		break;
+	case 13:
+	{
+		RSI = globals::base + 0x6AC;
+		R15 = globals::base + 0x22DB7F31;
+		R10 = driver::read<uintptr_t>(globals::pid, globals::base + 0x68FE117);
+		RDX = RAX;
+		RDX >>= 0x21;
+		RDX ^= RAX;
+		RAX = RDI;
+		RAX = (~RAX);
+		RAX *= R15;
+		RAX += RDX;
+		RAX += RDI;
+		// mov rcx,[rbp+0E8h]
+		RCX -= RSI;
+		RCX = 0; // Special case
+		RCX = _rotl64(RCX, 0x10);
+		RCX ^= R10;
+		RCX = _byteswap_uint64(RCX);
+		RCX = driver::read<uintptr_t>(globals::pid, RCX + 0x11);
+		RAX *= RCX;
+		RCX = 0x8DDCF2B3E1571114;
+		RAX ^= RCX;
+		RCX = globals::base;
+		RAX -= RCX;
+		RCX = 0x6010B0A9C3D8407D;
+		RAX ^= RCX;
+		RCX = 0x4B13677AC2BC8B55;
+		RAX *= RCX;
+		return RAX;
 	}
-
-	case 14: {
-		rdi = (globals::base + 0x1D4);
-		r11 = globals::base;
-		r9 = driver::read<QWORD>(globals::pid, globals::base + 0x66FA12A);
-		rax -= rbx;
-		rax -= r11;
-		rax -= 0x8DEB;
-		rax ^= rbx;
-		//            rcx = driver::read<QWORD>(globals::pid, rbp + 0x108);
-		//            rcx -= rdi;
-		//            rcx &= 0xffffffffc0000000;
-		rcx = 0;
-		rcx <<= 0x10;
-		rcx ^= r9;
-		rcx = (~rcx);
-		rcx = driver::read<QWORD>(globals::pid, rcx + 0x17);
-		rcx *= 0x87F2757EC1B54FAB;
-		rax *= rcx;
-		rcx = rax;
-		rcx >>= 0xD;
-		rax ^= rcx;
-		rcx = rax;
-		rcx >>= 0x1A;
-		rax ^= rcx;
-		rcx = rax;
-		rcx >>= 0x34;
-		rax ^= rcx;
-		rcx = (globals::base + 0x7E28C7A5);
-		rcx -= rbx;
-		rax += rcx;
-		rax -= r11;
-		return rax;
-		break;
+	case 14:
+	{
+		RSI = globals::base + 0x6AC;
+		RBX = globals::base + 0x7B82;
+		R10 = driver::read<uintptr_t>(globals::pid, globals::base + 0x68FE117);
+		RCX = RAX;
+		RCX >>= 0xD;
+		RAX ^= RCX;
+		RCX = RAX;
+		RCX >>= 0x1A;
+		RAX ^= RCX;
+		// mov rdx,[rbp+0E8h]
+		RDX -= RSI;
+		RDX = 0; // Special case
+		RDX = _rotl64(RDX, 0x10);
+		RCX = RAX;
+		RDX ^= R10;
+		RCX >>= 0x34;
+		RCX ^= RAX;
+		RAX = globals::base;
+		RDX = _byteswap_uint64(RDX);
+		RCX ^= RAX;
+		RAX = driver::read<uintptr_t>(globals::pid, RDX + 0x11);
+		RAX *= RCX;
+		RCX = 0x294BF04F8056DBA0;
+		RAX += RCX;
+		RCX = RDI;
+		RCX ^= RBX;
+		RAX -= RCX;
+		RAX += RDI;
+		RCX = globals::base + 0x22D3C70A;
+		RAX += RCX;
+		RCX = 0xF4E5078B5230FB51;
+		RAX *= RCX;
+		RCX = 0x5B401C942FFFFB4D;
+		RAX += RCX;
+		return RAX;
 	}
-
-	case 15: {
-		r10 = driver::read<QWORD>(globals::pid, globals::base + 0x66FA12A);
-		rdi = (globals::base + 0x1D4);
-		rcx = 0x73482614CEAA9160;
-		rax ^= rcx;
-		rax += rbx;
-		rcx = rax;
-		rcx >>= 0xB;
-		rax ^= rcx;
-		rcx = rax;
-		rcx >>= 0x16;
-		rax ^= rcx;
-		rcx = rax;
-		rcx >>= 0x2C;
-		rax ^= rcx;
-		rcx = rax;
-		rcx >>= 0x12;
-		rax ^= rcx;
-		rcx = rax;
-		rcx >>= 0x24;
-		rax ^= rcx;
-		//            rcx = driver::read<QWORD>(globals::pid, rbp + 0x108);
-		//            rcx -= rdi;
-		//            rcx &= 0xffffffffc0000000;
-		rcx = 0;
-		rcx <<= 0x10;
-		rcx ^= r10;
-		rcx = (~rcx);
-		rax *= driver::read<QWORD>(globals::pid, rcx + 0x17);
-		rcx = 0xFD678AA3934E2FC7;
-		rax *= rcx;
-		rcx = (globals::base + 0x80E2);
-		rax += rcx;
-		return rax;
-		break;
+	case 15:
+	{
+		R10 = driver::read<uintptr_t>(globals::pid, globals::base + 0x68FE117);
+		RSI = globals::base + 0x6AC;
+		RAX -= RDI;
+		RCX = 0x867F13D085A61055;
+		RAX *= RCX;
+		// mov rcx,[rbp+0E8h]
+		RCX -= RSI;
+		RCX = 0; // Special case
+		RCX = _rotl64(RCX, 0x10);
+		RCX ^= R10;
+		RCX = _byteswap_uint64(RCX);
+		RCX = driver::read<uintptr_t>(globals::pid, RCX + 0x11);
+		RSP = 0x341894F65D84D9E7;
+		RCX *= RSP;
+		RAX *= RCX;
+		RCX = RAX;
+		RCX >>= 0x1A;
+		RAX ^= RCX;
+		RCX = RAX;
+		RCX >>= 0x34;
+		RAX ^= RCX;
+		RCX = globals::base;
+		RAX -= RCX;
+		RCX = 0x5AB80474995D546;
+		RAX += RCX;
+		RAX += RDI;
+		RCX = globals::base;
+		RAX += RCX;
+		return RAX;
 	}
+	default:
+		return 0;
 	}
 }
