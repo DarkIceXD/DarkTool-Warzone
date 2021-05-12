@@ -386,6 +386,10 @@ extern "C"
 		OUT PEPROCESS*		Process
 	);
 
+	NTKERNELAPI PPEB PsGetProcessPeb(
+		IN PEPROCESS Process
+	);
+
 	NTKERNELAPI PVOID PsGetProcessSectionBaseAddress(
 		IN PEPROCESS		Process
 	);

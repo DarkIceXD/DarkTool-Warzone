@@ -1,4 +1,5 @@
 ﻿#include "driver/driver.h"
+#include "game/globals.h"
 #include <iostream>
 #include <TlHelp32.h>
 #include <array>
@@ -7,39 +8,7 @@
 #include <iostream>
 #include <thread>
 
-void overlay_execute() {
-	if (!overlay::create_overlay(L"Counter-Strike: Global Offensive"))
-		return;
-
-	MSG message;
-	do
-	{
-		if (PeekMessageW(&message, overlay::overlay_window, 0, 0, PM_REMOVE)) {
-			TranslateMessage(&message);
-			DispatchMessageW(&message);
-		}
-
-		if (overlay::begin()) {
-			overlay::present();
-			overlay::end();
-		}
-
-		std::this_thread::sleep_for(std::chrono::milliseconds(1));
-
-	} while (message.message != WM_QUIT);
-
-	return;
-}
-
-int main(int argc, char* argv[]) {
-	std::cout << "Close this to disable DarkTool Overlay\n";
-	std::thread overlay_thread(overlay_execute);
-	overlay_thread.join();
-	return 0;
-}
-
-/*
-std::uint32_t find_process_by_id(const std::string& name)
+std::uint32_t find_process_by_id(const std::wstring& name)
 {
 	const auto snap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
 	if (snap == INVALID_HANDLE_VALUE) {
@@ -64,6 +33,42 @@ std::uint32_t find_process_by_id(const std::string& name)
 		? proc_entry.th32ProcessID
 		: 0;
 }
+
+
+void overlay_execute() {
+	if (!overlay::create_overlay(L"Call of Duty®: Modern Warfare®"))
+		return;
+
+	MSG message;
+	do
+	{
+		if (PeekMessageW(&message, overlay::overlay_window, 0, 0, PM_REMOVE)) {
+			TranslateMessage(&message);
+			DispatchMessageW(&message);
+		}
+
+		if (overlay::begin()) {
+			overlay::present();
+			overlay::end();
+		}
+
+		std::this_thread::sleep_for(std::chrono::milliseconds(1));
+
+	} while (message.message != WM_QUIT);
+
+	return;
+}
+
+int main(int argc, char* argv[]) {
+	driver::initialize();
+	std::cout << "Close this to disable DarkTool Overlay\n";
+	globals::pid = find_process_by_id(L"ModernWarfare.exe");
+	std::thread overlay_thread(overlay_execute);
+	overlay_thread.join();
+	return 0;
+}
+
+/*
 
 void example()
 {

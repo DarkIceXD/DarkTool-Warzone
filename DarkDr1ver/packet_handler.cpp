@@ -201,6 +201,20 @@ static uint64_t spoof_drives()
 	return 1;
 }
 
+static uint64_t get_peb(const PacketGetPeb& packet)
+{
+	PEPROCESS process = nullptr;
+	NTSTATUS  status = PsLookupProcessByProcessId(HANDLE(packet.process_id), &process);
+
+	if (!NT_SUCCESS(status))
+		return 0;
+
+	const auto peb_base_address = uint64_t(PsGetProcessPeb(process));
+	ObDereferenceObject(process);
+
+	return peb_base_address;
+}
+
 uint64_t packet_handler::handle(const Packet& packet)
 {
 	switch (packet.header.type)
@@ -215,6 +229,8 @@ uint64_t packet_handler::handle(const Packet& packet)
 		return clean_unloaded_drivers();
 	case PacketType::packet_spoof_drives:
 		return spoof_drives();
+	case PacketType::packet_get_peb:
+		return get_peb(packet.data.get_peb);
 	default:
 		break;
 	}

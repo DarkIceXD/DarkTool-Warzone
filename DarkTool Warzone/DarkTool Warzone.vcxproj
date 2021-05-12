@@ -43,14 +43,14 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -148,6 +148,9 @@
   <ItemGroup>
     <ClCompile Include="driver\driver.cpp" />
     <ClCompile Include="DarkTool Warzone.cpp" />
+    <ClCompile Include="game\decryption.cpp" />
+    <ClCompile Include="features\esp.cpp" />
+    <ClCompile Include="game\player.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
     <ClCompile Include="imgui\imgui_demo.cpp" />
     <ClCompile Include="imgui\imgui_draw.cpp" />
@@ -156,12 +159,18 @@
     <ClCompile Include="imgui\imgui_stdlib.cpp" />
     <ClCompile Include="imgui\imgui_tables.cpp" />
     <ClCompile Include="imgui\imgui_widgets.cpp" />
+    <ClCompile Include="math\math.cpp" />
     <ClCompile Include="overlay\draw.cpp" />
     <ClCompile Include="overlay\menu.cpp" />
     <ClCompile Include="overlay\overlay.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="driver\driver.h" />
+    <ClInclude Include="game\decryption.h" />
+    <ClInclude Include="features\features.h" />
+    <ClInclude Include="game\globals.h" />
+    <ClInclude Include="game\player.h" />
+    <ClInclude Include="game\structs.h" />
     <ClInclude Include="imgui\imconfig.h" />
     <ClInclude Include="imgui\imgui.h" />
     <ClInclude Include="imgui\imgui_impl_dx9.h" />
@@ -171,6 +180,10 @@
     <ClInclude Include="imgui\imstb_rectpack.h" />
     <ClInclude Include="imgui\imstb_textedit.h" />
     <ClInclude Include="imgui\imstb_truetype.h" />
+    <ClInclude Include="math\math.hpp" />
+    <ClInclude Include="math\vector2d.hpp" />
+    <ClInclude Include="math\vector3d.hpp" />
+    <ClInclude Include="game\offsets.h" />
     <ClInclude Include="overlay\overlay.hpp" />
     <ClInclude Include="driver\server_shared.h" />
   </ItemGroup>

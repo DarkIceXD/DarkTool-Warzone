@@ -12,6 +12,7 @@ enum class PacketType
 	packet_clean_piddbcachetable,
 	packet_clean_mmunloadeddrivers,
 	packet_spoof_drives,
+	packet_get_peb,
 	packet_completed
 };
 
@@ -45,6 +46,10 @@ struct PacketCleanMMUnloadedDrivers {
 struct PacketSpoofDrives {
 };
 
+struct PacketGetPeb {
+	uint32_t process_id;
+};
+
 struct PackedCompleted
 {
 	uint64_t result;
@@ -64,11 +69,12 @@ struct Packet
 	PacketHeader header;
 	union
 	{
-		PacketCopyMemory	 copy_memory;
-		PacketGetBaseAddress get_base_address;
-		PacketCleanPiDDBCacheTable clean_piddbcachetable;
-		PacketCleanMMUnloadedDrivers clean_mmunloadeddrivers;
-		PacketSpoofDrives	 spoof_drives;
-		PackedCompleted		 completed;
+		PacketCopyMemory				copy_memory;
+		PacketGetBaseAddress			get_base_address;
+		PacketCleanPiDDBCacheTable		clean_piddbcachetable;
+		PacketCleanMMUnloadedDrivers	clean_mmunloadeddrivers;
+		PacketSpoofDrives				spoof_drives;
+		PacketGetPeb					get_peb;
+		PackedCompleted					completed;
 	} data;
 };
