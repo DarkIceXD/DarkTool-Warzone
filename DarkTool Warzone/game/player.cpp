@@ -3,43 +3,56 @@
 #include "offsets.h"
 #include "../driver/driver.h"
 #include "../math/math.hpp"
+#include <iostream>
 
 player::player(const uintptr_t base, const int index) : base(base), index(index) {}
 
 bool player::valid() const
 {
-	const auto valid = driver::read<int>(globals::pid, base + offset::character_info::VALID);
+	const auto valid = driver::read<int>(base + offset::character_info::VALID);
 	if (valid != 1)
+	{
+		std::cout << "valid\n";
 		return false;
+	}
 
-	const auto dead_1 = driver::read<int>(globals::pid, base + offset::character_info::DEAD_1);
+	const auto dead_1 = driver::read<int>(base + offset::character_info::DEAD_1);
 	if (dead_1 != 0)
+	{
+		std::cout << "dead1\n";
 		return false;
+	}
 
-	const auto dead_2 = driver::read<int>(globals::pid, base + offset::character_info::DEAD_2);
+	const auto dead_2 = driver::read<int>(base + offset::character_info::DEAD_2);
 	if (dead_2 != 0)
+	{
+		std::cout << "dead2\n";
 		return false;
+	}
 
 	return true;
 }
 
 vec3_t player::origin() const
 {
-	const auto position_address = driver::read<uintptr_t>(globals::pid, base + offset::character_info::POS_PTR);
+	const auto position_address = driver::read<uintptr_t>(base + offset::character_info::POS_PTR);
 	if (position_address == 0 || position_address >= 0xFFFFFFFFFFFFFFF)
-		return{};
+	{
+		std::cout << "position invalid\n";
+		return {};
+	}
 
-	return driver::read<vec3_t>(globals::pid, position_address + 0x40);
+	return driver::read<vec3_t>(position_address + 0x40);
 }
 
 character_stance player::stance() const
 {
-	return driver::read<character_stance>(globals::pid, base + offset::character_info::STANCE);
+	return driver::read<character_stance>(base + offset::character_info::STANCE);
 }
 
 int player::team() const
 {
-	return driver::read<int>(globals::pid, base + offset::character_info::TEAM);
+	return driver::read<int>(base + offset::character_info::TEAM);
 }
 
 void player::get_bounding_box_fallback(vec2_t& min, vec2_t& max) const

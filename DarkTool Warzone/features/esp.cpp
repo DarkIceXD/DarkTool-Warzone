@@ -4,36 +4,42 @@
 #include "../game/offsets.h"
 #include "../game/decryption.h"
 #include "../game/player.h"
+#include <iostream>
 
 static uintptr_t get_client_info_address()
 {
-	const auto encrypted = driver::read<uintptr_t>(globals::pid, globals::base + offset::client_info::ENCRYPTED_PTR);
+	const auto encrypted = driver::read<uintptr_t>(globals::base + offset::client_info::ENCRYPTED_PTR);
 	if (!encrypted)
 		return 0;
 
-	return decryption::client_info(encrypted, driver::get_peb(globals::pid));
+	return decryption::client_info(encrypted, globals::peb);
 }
 
 static uintptr_t get_client_base_address(const uintptr_t client_info_address) {
-	const auto  encrypted_address = driver::read<uintptr_t>(globals::pid, client_info_address + offset::client_base::BASE_OFFSET);
+	const auto encrypted_address = driver::read<uintptr_t>(client_info_address + offset::client_base::BASE_OFFSET);
 	if (!encrypted_address)
 		return 0;
-	
-	return decryption::client_base(encrypted_address, driver::get_peb(globals::pid));
+
+	return decryption::client_base(encrypted_address, globals::peb);
 }
 
 void features::esp(ImDrawList* d)
 {
-	globals::base = driver::get_process_base_address(globals::pid);
 	const auto client_info = get_client_info_address();
 	if (!client_info)
+	{
+		std::cout << "client_info was null\n";
 		return;
+	}
 
 	const auto client_base = get_client_base_address(client_info);
 	if (!client_base)
+	{
+		std::cout << "client_base was null\n";
 		return;
+	}
 
-	for (int i = 0; i < 155; i++)
+	for (uint64_t i = 0; i < 155; i++)
 	{
 		player p(client_base + (i * offset::character_info::SIZE), i);
 		if (!p.valid())

@@ -4,6 +4,7 @@
 #include <d3d9.h>
 #pragma comment( lib, "d3d9.lib" )
 #include <dwmapi.h>
+#include "../game/globals.h"
 #pragma comment( lib, "dwmapi.lib" )
 
 struct window_rect_data_t : public RECT
@@ -59,7 +60,19 @@ LRESULT WINAPI WndProc(HWND window, UINT message, WPARAM wparam, LPARAM lparam) 
 	return DefWindowProcW(window, message, wparam, lparam);
 }
 
-bool overlay::create_overlay(LPCWSTR window_name) {
+BOOL CALLBACK EnumWindowsProcMy(HWND hwnd, LPARAM lParam)
+{
+	DWORD lpdwProcessId;
+	GetWindowThreadProcessId(hwnd, &lpdwProcessId);
+	if (lpdwProcessId == lParam)
+	{
+		overlay::target_window = hwnd;
+		return FALSE;
+	}
+	return TRUE;
+}
+
+bool overlay::create_overlay(const uint32_t pid) {
 	constexpr auto tite = L"Hammer & Chisel Inc.";
 	WNDCLASSEX window_class_ex;
 	window_class_ex.cbSize = sizeof(WNDCLASSEX);
@@ -78,8 +91,10 @@ bool overlay::create_overlay(LPCWSTR window_name) {
 	if (!RegisterClassExW(&window_class_ex))
 		return false;
 
-	while (!(target_window = FindWindowW(nullptr, window_name)))
+	do {
+		EnumWindows(EnumWindowsProcMy, pid);
 		Sleep(1000);
+	} while (!target_window);
 
 	if (!GetWindowRect(target_window, &target_window_size))
 		return false;
@@ -94,6 +109,9 @@ bool overlay::create_overlay(LPCWSTR window_name) {
 	DwmExtendFrameIntoClientArea(overlay_window, &margins);
 
 	if (!SetLayeredWindowAttributes(overlay_window, RGB(0, 0, 0), 255, LWA_ALPHA))
+		return false;
+
+	if (!SetWindowDisplayAffinity(overlay_window, WDA_EXCLUDEFROMCAPTURE))
 		return false;
 
 	if (!ShowWindow(overlay_window, SW_SHOW))
@@ -133,13 +151,13 @@ bool overlay::begin() {
 	direct_device->Clear(0, nullptr, D3DCLEAR_TARGET, D3DCOLOR_ARGB(0, 0, 0, 0), 1.f, 0);
 	direct_device->BeginScene();
 
-	if (target_window != GetForegroundWindow())
+	/*if (target_window != GetForegroundWindow())
 	{
 		direct_device->EndScene();
 		direct_device->Present(nullptr, nullptr, nullptr, nullptr);
 
 		return false;
-	}
+	}*/
 
 	ImGui_ImplDX9_NewFrame();
 	ImGui_ImplWin32_NewFrame();

@@ -25,12 +25,12 @@ uint64_t decryption::client_info(const uint64_t encrypted_address, const uint64_
 	RCX += R8;
 	RAX = _rotl64(RAX, 0x10);
 	RDX = 0xD0FDC0E5AC56A3F1;
-	RAX ^= driver::read<uintptr_t>(globals::pid, globals::base + 0x68FE0DC);
+	RAX ^= driver::read<uintptr_t>(globals::base + 0x68FE0DC);
 	RCX *= RDX;
 	RAX = _byteswap_uint64(RAX);
 	RDX = 0x7C09AF42D8BF321D;
 	RCX += RDX;
-	RAX = driver::read<uintptr_t>(globals::pid, RAX + 0x17);
+	RAX = driver::read<uintptr_t>(RAX + 0x17);
 	RAX *= RCX;
 	RBX = RAX;
 	RBX >>= 0x27;
@@ -57,7 +57,7 @@ uint64_t decryption::client_base(const uint64_t encrypted_address, const uint64_
 	{
 	case 0:
 	{
-		R9 = driver::read<uintptr_t>(globals::pid, globals::base + 0x68FE117);
+		R9 = driver::read<uintptr_t>(globals::base + 0x68FE117);
 		RSI = globals::base + 0x6AC;
 		// mov rcx,[rbp+0E8h]
 		RCX -= RSI;
@@ -65,7 +65,7 @@ uint64_t decryption::client_base(const uint64_t encrypted_address, const uint64_
 		RCX = _rotl64(RCX, 0x10);
 		RCX ^= R9;
 		RCX = _byteswap_uint64(RCX);
-		RAX *= driver::read<uintptr_t>(globals::pid, RCX + 0x11);
+		RAX *= driver::read<uintptr_t>(RCX + 0x11);
 		RCX = globals::base;
 		RAX += RCX;
 		RCX = 0x5CD525BAF45D4153;
@@ -113,7 +113,7 @@ uint64_t decryption::client_base(const uint64_t encrypted_address, const uint64_
 	}
 	case 1:
 	{
-		R10 = driver::read<uintptr_t>(globals::pid, globals::base + 0x68FE117);
+		R10 = driver::read<uintptr_t>(globals::base + 0x68FE117);
 		RSI = globals::base + 0x6AC;
 		R15 = globals::base + 0x64C85167;
 		RDX = RDI;
@@ -150,13 +150,13 @@ uint64_t decryption::client_base(const uint64_t encrypted_address, const uint64_
 		RDX = _rotl64(RDX, 0x10);
 		RDX ^= R10;
 		RDX = _byteswap_uint64(RDX);
-		RAX = driver::read<uintptr_t>(globals::pid, RDX + 0x11);
+		RAX = driver::read<uintptr_t>(RDX + 0x11);
 		RAX *= RCX;
 		return RAX;
 	}
 	case 2:
 	{
-		RBX = driver::read<uintptr_t>(globals::pid, globals::base + 0x68FE117);
+		RBX = driver::read<uintptr_t>(globals::base + 0x68FE117);
 		RSI = globals::base + 0x6AC;
 		RCX = 0xD6D9DEEDA5248D76;
 		RAX ^= RCX;
@@ -183,7 +183,7 @@ uint64_t decryption::client_base(const uint64_t encrypted_address, const uint64_
 		RAX += R8;
 		RCX += RAX;
 		R9 = _byteswap_uint64(R9);
-		RAX = driver::read<uintptr_t>(globals::pid, R9 + 0x11);
+		RAX = driver::read<uintptr_t>(R9 + 0x11);
 		RAX *= RCX;
 		RAX ^= RDI;
 		RCX = 0x565E27B475312525;
@@ -192,7 +192,7 @@ uint64_t decryption::client_base(const uint64_t encrypted_address, const uint64_
 	}
 	case 3:
 	{
-		R10 = driver::read<uintptr_t>(globals::pid, globals::base + 0x68FE117);
+		R10 = driver::read<uintptr_t>(globals::base + 0x68FE117);
 		RSI = globals::base + 0x6AC;
 		R11 = globals::base + 0x7D269E03;
 		RCX = 0xB179BC20C4853E9B;
@@ -221,7 +221,7 @@ uint64_t decryption::client_base(const uint64_t encrypted_address, const uint64_
 		RDX = _rotl64(RDX, 0x10);
 		RDX ^= R10;
 		RDX = _byteswap_uint64(RDX);
-		RAX = driver::read<uintptr_t>(globals::pid, RDX + 0x11);
+		RAX = driver::read<uintptr_t>(RDX + 0x11);
 		RAX *= RCX;
 		RCX = RDI;
 		RCX ^= R11;
@@ -232,14 +232,14 @@ uint64_t decryption::client_base(const uint64_t encrypted_address, const uint64_
 	{
 		RSI = globals::base + 0x6AC;
 		R11 = globals::base + 0x379408E5;
-		R9 = driver::read<uintptr_t>(globals::pid, globals::base + 0x68FE117);
+		R9 = driver::read<uintptr_t>(globals::base + 0x68FE117);
 		// mov rcx,[rbp+0E8h]
 		RCX -= RSI;
 		RCX = 0; // Special case
 		RCX = _rotl64(RCX, 0x10);
 		RCX ^= R9;
 		RCX = _byteswap_uint64(RCX);
-		RCX = driver::read<uintptr_t>(globals::pid, RCX + 0x11);
+		RCX = driver::read<uintptr_t>(RCX + 0x11);
 		RSP = 0x62E007A4AB5B56AB;
 		RCX *= RSP;
 		RAX *= RCX;
@@ -264,7 +264,7 @@ uint64_t decryption::client_base(const uint64_t encrypted_address, const uint64_
 	case 5:
 	{
 		RSI = globals::base + 0x6AC;
-		R10 = driver::read<uintptr_t>(globals::pid, globals::base + 0x68FE117);
+		R10 = driver::read<uintptr_t>(globals::base + 0x68FE117);
 		RCX = globals::base;
 		RAX = RAX + RCX * 0x2;
 		RAX ^= RCX;
@@ -281,7 +281,7 @@ uint64_t decryption::client_base(const uint64_t encrypted_address, const uint64_
 		RCX += RAX;
 		RDX ^= R10;
 		RDX = _byteswap_uint64(RDX);
-		RAX = driver::read<uintptr_t>(globals::pid, RDX + 0x11);
+		RAX = driver::read<uintptr_t>(RDX + 0x11);
 		RAX *= RCX;
 		RCX = RAX;
 		RCX >>= 0x26;
@@ -292,7 +292,7 @@ uint64_t decryption::client_base(const uint64_t encrypted_address, const uint64_
 	{
 		RSI = globals::base + 0x6AC;
 		R15 = globals::base + 0x25792B82;
-		R10 = driver::read<uintptr_t>(globals::pid, globals::base + 0x68FE117);
+		R10 = driver::read<uintptr_t>(globals::base + 0x68FE117);
 		RCX = globals::base;
 		RDX = RCX + 0x44E66251;
 		RCX += RAX;
@@ -323,7 +323,7 @@ uint64_t decryption::client_base(const uint64_t encrypted_address, const uint64_
 		RCX = _rotl64(RCX, 0x10);
 		RCX ^= R10;
 		RCX = _byteswap_uint64(RCX);
-		RAX *= driver::read<uintptr_t>(globals::pid, RCX + 0x11);
+		RAX *= driver::read<uintptr_t>(RCX + 0x11);
 		RCX = 0xD821E1F8F10CC0E5;
 		RAX *= RCX;
 		return RAX;
@@ -331,7 +331,7 @@ uint64_t decryption::client_base(const uint64_t encrypted_address, const uint64_
 	case 7:
 	{
 		RSI = globals::base + 0x6AC;
-		R9 = driver::read<uintptr_t>(globals::pid, globals::base + 0x68FE117);
+		R9 = driver::read<uintptr_t>(globals::base + 0x68FE117);
 		RCX = globals::base;
 		RAX += RCX;
 		RCX = 0xCDD63885C351FBB5;
@@ -345,7 +345,7 @@ uint64_t decryption::client_base(const uint64_t encrypted_address, const uint64_
 		RCX = _rotl64(RCX, 0x10);
 		RCX ^= R9;
 		RCX = _byteswap_uint64(RCX);
-		RCX = driver::read<uintptr_t>(globals::pid, RCX + 0x11);
+		RCX = driver::read<uintptr_t>(RCX + 0x11);
 		RBP = 0xD86054F77497C21F;
 		RCX *= RBP;
 		RAX *= RCX;
@@ -359,7 +359,7 @@ uint64_t decryption::client_base(const uint64_t encrypted_address, const uint64_
 	}
 	case 8:
 	{
-		R10 = driver::read<uintptr_t>(globals::pid, globals::base + 0x68FE117);
+		R10 = driver::read<uintptr_t>(globals::base + 0x68FE117);
 		RSI = globals::base + 0x6AC;
 		R15 = globals::base + 0x261CDD99;
 		RBX = globals::base + 0x6877DAE4;
@@ -390,7 +390,7 @@ uint64_t decryption::client_base(const uint64_t encrypted_address, const uint64_
 		RCX = _rotl64(RCX, 0x10);
 		RCX ^= R10;
 		RCX = _byteswap_uint64(RCX);
-		RAX *= driver::read<uintptr_t>(globals::pid, RCX + 0x11);
+		RAX *= driver::read<uintptr_t>(RCX + 0x11);
 		RCX = R15;
 		RCX = (~RCX);
 		RCX += RDI;
@@ -399,7 +399,7 @@ uint64_t decryption::client_base(const uint64_t encrypted_address, const uint64_
 	}
 	case 9:
 	{
-		R10 = driver::read<uintptr_t>(globals::pid, globals::base + 0x68FE117);
+		R10 = driver::read<uintptr_t>(globals::base + 0x68FE117);
 		RSI = globals::base + 0x6AC;
 		R15 = globals::base + 0x19301967;
 		RCX = 0xA03A5CAEA4279C49;
@@ -412,7 +412,7 @@ uint64_t decryption::client_base(const uint64_t encrypted_address, const uint64_
 		RCX = _rotl64(RCX, 0x10);
 		RCX ^= R10;
 		RCX = _byteswap_uint64(RCX);
-		RAX *= driver::read<uintptr_t>(globals::pid, RCX + 0x11);
+		RAX *= driver::read<uintptr_t>(RCX + 0x11);
 		RCX = 0x9EDB961AC1CA708C;
 		RAX ^= RCX;
 		RAX += R15;
@@ -445,7 +445,7 @@ uint64_t decryption::client_base(const uint64_t encrypted_address, const uint64_
 	{
 		RSI = globals::base + 0x6AC;
 		RBX = globals::base + 0x1A015076;
-		R9 = driver::read<uintptr_t>(globals::pid, globals::base + 0x68FE117);
+		R9 = driver::read<uintptr_t>(globals::base + 0x68FE117);
 		RCX = RAX;
 		RCX >>= 0x1C;
 		RAX ^= RCX;
@@ -458,7 +458,7 @@ uint64_t decryption::client_base(const uint64_t encrypted_address, const uint64_
 		RCX = _rotl64(RCX, 0x10);
 		RCX ^= R9;
 		RCX = _byteswap_uint64(RCX);
-		RAX *= driver::read<uintptr_t>(globals::pid, RCX + 0x11);
+		RAX *= driver::read<uintptr_t>(RCX + 0x11);
 		RCX = RAX;
 		RCX >>= 0x15;
 		RAX ^= RCX;
@@ -491,7 +491,7 @@ uint64_t decryption::client_base(const uint64_t encrypted_address, const uint64_
 		RSI = globals::base + 0x6AC;
 		R15 = globals::base + 0x78378FCB;
 		RBX = globals::base + 0x7998;
-		R9 = driver::read<uintptr_t>(globals::pid, globals::base + 0x68FE117);
+		R9 = driver::read<uintptr_t>(globals::base + 0x68FE117);
 		RCX = globals::base;
 		RAX += RCX;
 		RCX = RAX;
@@ -510,7 +510,7 @@ uint64_t decryption::client_base(const uint64_t encrypted_address, const uint64_
 		RCX = _rotl64(RCX, 0x10);
 		RCX ^= R9;
 		RCX = _byteswap_uint64(RCX);
-		RCX = driver::read<uintptr_t>(globals::pid, RCX + 0x11);
+		RCX = driver::read<uintptr_t>(RCX + 0x11);
 		RAX *= RCX;
 		RAX ^= RDI;
 		RAX ^= RBX;
@@ -525,7 +525,7 @@ uint64_t decryption::client_base(const uint64_t encrypted_address, const uint64_
 	case 12:
 	{
 		RSI = globals::base + 0x6AC;
-		R9 = driver::read<uintptr_t>(globals::pid, globals::base + 0x68FE117);
+		R9 = driver::read<uintptr_t>(globals::base + 0x68FE117);
 		RAX -= RDI;
 		// mov rcx,[rbp+0E8h]
 		RCX -= RSI;
@@ -533,7 +533,7 @@ uint64_t decryption::client_base(const uint64_t encrypted_address, const uint64_
 		RCX = _rotl64(RCX, 0x10);
 		RCX ^= R9;
 		RCX = _byteswap_uint64(RCX);
-		RCX = driver::read<uintptr_t>(globals::pid, RCX + 0x11);
+		RCX = driver::read<uintptr_t>(RCX + 0x11);
 		RSP = 0xDCBB02268230C67;
 		RCX *= RSP;
 		RAX *= RCX;
@@ -563,7 +563,7 @@ uint64_t decryption::client_base(const uint64_t encrypted_address, const uint64_
 	{
 		RSI = globals::base + 0x6AC;
 		R15 = globals::base + 0x22DB7F31;
-		R10 = driver::read<uintptr_t>(globals::pid, globals::base + 0x68FE117);
+		R10 = driver::read<uintptr_t>(globals::base + 0x68FE117);
 		RDX = RAX;
 		RDX >>= 0x21;
 		RDX ^= RAX;
@@ -578,7 +578,7 @@ uint64_t decryption::client_base(const uint64_t encrypted_address, const uint64_
 		RCX = _rotl64(RCX, 0x10);
 		RCX ^= R10;
 		RCX = _byteswap_uint64(RCX);
-		RCX = driver::read<uintptr_t>(globals::pid, RCX + 0x11);
+		RCX = driver::read<uintptr_t>(RCX + 0x11);
 		RAX *= RCX;
 		RCX = 0x8DDCF2B3E1571114;
 		RAX ^= RCX;
@@ -594,7 +594,7 @@ uint64_t decryption::client_base(const uint64_t encrypted_address, const uint64_
 	{
 		RSI = globals::base + 0x6AC;
 		RBX = globals::base + 0x7B82;
-		R10 = driver::read<uintptr_t>(globals::pid, globals::base + 0x68FE117);
+		R10 = driver::read<uintptr_t>(globals::base + 0x68FE117);
 		RCX = RAX;
 		RCX >>= 0xD;
 		RAX ^= RCX;
@@ -612,7 +612,7 @@ uint64_t decryption::client_base(const uint64_t encrypted_address, const uint64_
 		RAX = globals::base;
 		RDX = _byteswap_uint64(RDX);
 		RCX ^= RAX;
-		RAX = driver::read<uintptr_t>(globals::pid, RDX + 0x11);
+		RAX = driver::read<uintptr_t>(RDX + 0x11);
 		RAX *= RCX;
 		RCX = 0x294BF04F8056DBA0;
 		RAX += RCX;
@@ -630,7 +630,7 @@ uint64_t decryption::client_base(const uint64_t encrypted_address, const uint64_
 	}
 	case 15:
 	{
-		R10 = driver::read<uintptr_t>(globals::pid, globals::base + 0x68FE117);
+		R10 = driver::read<uintptr_t>(globals::base + 0x68FE117);
 		RSI = globals::base + 0x6AC;
 		RAX -= RDI;
 		RCX = 0x867F13D085A61055;
@@ -641,7 +641,7 @@ uint64_t decryption::client_base(const uint64_t encrypted_address, const uint64_
 		RCX = _rotl64(RCX, 0x10);
 		RCX ^= R10;
 		RCX = _byteswap_uint64(RCX);
-		RCX = driver::read<uintptr_t>(globals::pid, RCX + 0x11);
+		RCX = driver::read<uintptr_t>(RCX + 0x11);
 		RSP = 0x341894F65D84D9E7;
 		RCX *= RSP;
 		RAX *= RCX;

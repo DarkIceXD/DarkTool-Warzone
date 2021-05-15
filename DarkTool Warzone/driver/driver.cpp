@@ -1,9 +1,11 @@
 ﻿#include "driver.h"
 #include "server_shared.h"
+#include <TlHelp32.h>
 
 #pragma comment(lib, "Ws2_32")
 
 static SOCKET connection;
+static uint32_t _pid;
 
 static bool send_packet(
 	const Packet& packet,
@@ -45,10 +47,39 @@ static uint32_t copy_memory(
 	return 0;
 }
 
-void driver::initialize()
+static uint32_t find_process_by_id(const std::wstring_view& name)
 {
+	const auto snap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+	if (snap == INVALID_HANDLE_VALUE) {
+		return 0;
+	}
+
+	PROCESSENTRY32 proc_entry{};
+	proc_entry.dwSize = sizeof proc_entry;
+
+	if (!!Process32First(snap, &proc_entry)) {
+		do {
+			if (name == proc_entry.szExeFile) {
+				CloseHandle(snap);
+				return proc_entry.th32ProcessID;
+			}
+		} while (!!Process32Next(snap, &proc_entry));
+	}
+
+	CloseHandle(snap);
+	return 0;
+}
+
+void driver::initialize(const std::wstring_view& process)
+{
+	_pid = find_process_by_id(process);
 	WSADATA wsa_data;
 	WSAStartup(MAKEWORD(2, 2), &wsa_data);
+}
+
+uint32_t driver::pid()
+{
+	return _pid;
 }
 
 void driver::deinitialize()
@@ -83,31 +114,23 @@ void driver::disconnect()
 	closesocket(connection);
 }
 
-uint32_t driver::read_memory(
-	const uint32_t	process_id,
-	const uintptr_t address,
-	const uintptr_t buffer,
-	const size_t	size)
+uint32_t driver::read_memory(const uintptr_t address, const uintptr_t buffer, const size_t size)
 {
-	return copy_memory(process_id, address, GetCurrentProcessId(), buffer, size);
+	return copy_memory(_pid, address, GetCurrentProcessId(), buffer, size);
 }
 
-uint32_t driver::write_memory(
-	const uint32_t	process_id,
-	const uintptr_t address,
-	const uintptr_t buffer,
-	const size_t	size)
+uint32_t driver::write_memory(const uintptr_t address, const uintptr_t buffer, const size_t size)
 {
-	return copy_memory(GetCurrentProcessId(), buffer, process_id, address, size);
+	return copy_memory(GetCurrentProcessId(), buffer, _pid, address, size);
 }
 
-uint64_t driver::get_process_base_address(const uint32_t process_id)
+uint64_t driver::get_process_base_address()
 {
 	Packet packet{ };
 	packet.header.type = PacketType::packet_get_base_address;
 
 	auto& data = packet.data.get_base_address;
-	data.process_id = process_id;
+	data.process_id = _pid;
 
 	uint64_t result = 0;
 	if (send_packet(packet, result))
@@ -158,13 +181,13 @@ uint64_t driver::spoof_drives()
 	return 0;
 }
 
-uint64_t driver::get_peb(const uint32_t process_id)
+uint64_t driver::get_peb()
 {
 	Packet packet{ };
 	packet.header.type = PacketType::packet_get_peb;
 
 	auto& data = packet.data.get_peb;
-	data.process_id = process_id;
+	data.process_id = _pid;
 
 	uint64_t result = 0;
 	if (send_packet(packet, result))

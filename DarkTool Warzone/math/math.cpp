@@ -16,12 +16,12 @@ vec2_t math::world_to_screen(const vec3_t& world_location, const vec3_t& camera_
 
 vec2_t math::world_to_screen(const vec3_t& world_location)
 {
-	const auto refdef_ptr = driver::read<uintptr_t>(globals::pid, globals::base + offset::REFDEF);
-	const auto refdef = driver::read<RefDef>(globals::pid, refdef_ptr);
-	const auto camera_addr = driver::read<uintptr_t>(globals::pid, globals::base + offset::CAMERA_POINTER);
-	if(!camera_addr)
+	const auto refdef_ptr = driver::read<uintptr_t>(globals::base + offset::REFDEF);
+	const auto refdef = driver::read<RefDef>(refdef_ptr);
+	const auto camera_addr = driver::read<uintptr_t>(globals::base + offset::CAMERA_POINTER);
+	if (!camera_addr)
 		return {};
 
-	const auto pos = driver::read<vec3_t>(globals::pid, camera_addr + offset::CAMERA_OFFSET);
+	const auto pos = driver::read<vec3_t>(camera_addr + offset::CAMERA_OFFSET);
 	return world_to_screen(world_location, pos, refdef.width, refdef.height, refdef.view.tan_half_fov, refdef.view.axis);
 }
