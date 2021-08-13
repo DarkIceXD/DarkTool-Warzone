@@ -1,18 +1,19 @@
 #pragma once
 #include "../math/vector2d.hpp"
+#include <array>
 
-struct RefdefView {
+struct ref_def_view {
 	vec2_t tan_half_fov;
-	char unk6[0xC];
+	char pad0[0xC];
 	std::array<vec3_t, 3> axis;
 };
 
-struct RefDef {
+struct ref_def {
 	int x;
 	int y;
 	int width;
 	int height;
-	RefdefView view;
+	ref_def_view view;
 };
 
 struct Name

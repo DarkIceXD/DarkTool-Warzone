@@ -1,8 +1,8 @@
 #pragma once
 #include <cstdint>
 
-namespace decryption
-{
-	uint64_t client_info(const uint64_t encrypted_address, const uint64_t peb);
-	uint64_t client_base(const uint64_t encrypted_address, const uint64_t peb);
+namespace decryption {
+	extern "C" auto decrypt_client_info(uint64_t imageBase, uint64_t peb)->uint64_t;
+	extern "C" auto decrypt_client_base(uint64_t clientInfo, uint64_t imageBase, uint64_t peb)->uint64_t;
+	uintptr_t get_ref_def(const uintptr_t ref_def_ptr);
 }

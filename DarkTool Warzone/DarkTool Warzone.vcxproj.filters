@@ -45,10 +45,10 @@
     <ClCompile Include="imgui\imgui_widgets.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="overlay\draw.cpp">
+    <ClCompile Include="features\draw.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="overlay\menu.cpp">
+    <ClCompile Include="features\menu.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="overlay\overlay.cpp">
@@ -129,6 +129,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="game\decryption.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="features\config.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

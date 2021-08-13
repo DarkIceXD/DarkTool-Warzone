@@ -1,6 +1,4 @@
 #pragma once
-#include <limits>
-#include <algorithm>
 #include <cmath>
 
 class vec3_t {

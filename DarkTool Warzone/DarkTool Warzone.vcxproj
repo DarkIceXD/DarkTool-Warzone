@@ -160,12 +160,13 @@
     <ClCompile Include="imgui\imgui_tables.cpp" />
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="math\math.cpp" />
-    <ClCompile Include="overlay\draw.cpp" />
-    <ClCompile Include="overlay\menu.cpp" />
+    <ClCompile Include="features\draw.cpp" />
+    <ClCompile Include="features\menu.cpp" />
     <ClCompile Include="overlay\overlay.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="driver\driver.h" />
+    <ClInclude Include="features\config.h" />
     <ClInclude Include="game\decryption.h" />
     <ClInclude Include="features\features.h" />
     <ClInclude Include="game\globals.h" />

@@ -1,6 +1,6 @@
 #pragma once
 #include <cstdint>
-#include "../math/vector2d.hpp"
+#include "structs.h"
 
 enum class character_stance
 {
@@ -16,7 +16,7 @@ struct player {
 	vec3_t origin() const;
 	character_stance stance() const;
 	int team() const;
-	void get_bounding_box_fallback(vec2_t& min, vec2_t& max) const;
+	void get_bounding_box_fallback(vec2_t& min, vec2_t& max, const vec3_t& camera_pos, const ref_def& ref_def) const;
 	float estimate_head_position_from_origin() const;
 	int index;
 	uintptr_t base;

@@ -3,8 +3,7 @@
 #include <windows.h>
 #include <cstdint>
 
-namespace overlay
-{
+namespace overlay {
 	inline HWND target_window;
 	inline HWND overlay_window;
 	bool create_overlay(const uint32_t pid);
@@ -13,4 +12,4 @@ namespace overlay
 	void draw(ImDrawList* d);
 	void menu();
 	void end();
-};
+}
