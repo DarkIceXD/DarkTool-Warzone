@@ -31,7 +31,7 @@ void features::esp(ImDrawList* d)
 		if (!p.valid())
 			continue;
 
-		vec2_t min, max;
+		vector2 min, max;
 		//p.get_bounding_box_fallback(min, max, camera_pos, refdef);
 		if (math::world_to_screen(p.origin(), camera_pos, refdef, min))
 			d->AddText({ min.x, min.y }, IM_COL32_WHITE, "enemy");

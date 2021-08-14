@@ -23,13 +23,13 @@ bool player::valid() const
 	return true;
 }
 
-vec3_t player::origin() const
+vector3 player::origin() const
 {
 	const auto position_address = driver::read<uintptr_t>(base + offsets::player::pos);
 	if (position_address == 0 || position_address >= 0xFFFFFFFFFFFFFFF)
 		return {};
 
-	return driver::read<vec3_t>(position_address + 0x40);
+	return driver::read<vector3>(position_address + 0x40);
 }
 
 character_stance player::stance() const
@@ -42,12 +42,12 @@ int player::team() const
 	return driver::read<int>(base + offsets::player::team);
 }
 
-void player::get_bounding_box_fallback(vec2_t& min, vec2_t& max, const vec3_t& camera_pos, const ref_def& ref_def) const
+void player::get_bounding_box_fallback(vector2& min, vector2& max, const vector3& camera_pos, const ref_def& ref_def) const
 {
 	const auto origin_pos = origin();
-	const auto head_pos = origin_pos + vec3_t(0, 0, estimate_head_position_from_origin());
-	vec2_t head_pos_screen, feet_pos_screen;
-	math::world_to_screen(head_pos + vec3_t(0, 0, 10), camera_pos, ref_def, head_pos_screen);
+	const auto head_pos = origin_pos + vector3(0, 0, estimate_head_position_from_origin());
+	vector2 head_pos_screen, feet_pos_screen;
+	math::world_to_screen(head_pos + vector3(0, 0, 10), camera_pos, ref_def, head_pos_screen);
 	math::world_to_screen(origin_pos, camera_pos, ref_def, feet_pos_screen);
 	const auto height = feet_pos_screen.y - head_pos.y;
 	const auto width = height / 2;

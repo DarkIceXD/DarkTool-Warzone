@@ -1,5 +1,5 @@
 #include "../overlay/overlay.hpp"
-#include "config.h"
+#include "../game/config.h"
 
 void overlay::menu()
 {

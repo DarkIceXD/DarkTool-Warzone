@@ -110,10 +110,10 @@
     <ClInclude Include="math\math.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="math\vector2d.hpp">
+    <ClInclude Include="math\vector2.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="math\vector3d.hpp">
+    <ClInclude Include="math\vector3.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="game\offsets.h">
@@ -131,7 +131,7 @@
     <ClInclude Include="game\decryption.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="features\config.h">
+    <ClInclude Include="game\config.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

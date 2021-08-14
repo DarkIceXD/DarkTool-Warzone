@@ -30,7 +30,11 @@ void overlay_execute() {
 
 int main(int argc, char* argv[]) {
 	driver::initialize(L"ModernWarfare.exe");
-	driver::connect();
+	if (!driver::connect())
+	{
+		std::cout << "Cannot connect to driver. Did you start the driver?\n";
+		return 0;
+	}
 	driver::clean_piddbcachetable();
 	driver::clean_mmunloadeddrivers();
 	globals::base = driver::get_process_base_address();

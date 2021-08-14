@@ -166,7 +166,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="driver\driver.h" />
-    <ClInclude Include="features\config.h" />
+    <ClInclude Include="game\config.h" />
     <ClInclude Include="game\decryption.h" />
     <ClInclude Include="features\features.h" />
     <ClInclude Include="game\globals.h" />
@@ -182,8 +182,8 @@
     <ClInclude Include="imgui\imstb_textedit.h" />
     <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="math\math.hpp" />
-    <ClInclude Include="math\vector2d.hpp" />
-    <ClInclude Include="math\vector3d.hpp" />
+    <ClInclude Include="math\vector2.hpp" />
+    <ClInclude Include="math\vector3.hpp" />
     <ClInclude Include="game\offsets.h" />
     <ClInclude Include="overlay\overlay.hpp" />
     <ClInclude Include="driver\server_shared.h" />

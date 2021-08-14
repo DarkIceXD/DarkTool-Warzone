@@ -1,11 +1,11 @@
 #pragma once
-#include "../math/vector2d.hpp"
+#include "../math/vector2.hpp"
 #include <array>
 
 struct ref_def_view {
-	vec2_t tan_half_fov;
+	vector2 tan_half_fov;
 	char pad0[0xC];
-	std::array<vec3_t, 3> axis;
+	std::array<vector3, 3> axis;
 };
 
 struct ref_def {
