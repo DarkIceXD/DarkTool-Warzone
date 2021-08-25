@@ -42,13 +42,16 @@ int player::team() const
 	return driver::read<int>(base + offsets::player::team);
 }
 
-void player::get_bounding_box_fallback(vector2& min, vector2& max, const vector3& camera_pos, const ref_def& ref_def) const
+bool player::get_bounding_box_fallback(vector2& min, vector2& max, const vector3& camera_pos, const ref_def& ref_def) const
 {
 	const auto origin_pos = origin();
 	const auto head_pos = origin_pos + vector3(0, 0, estimate_head_position_from_origin());
 	vector2 head_pos_screen, feet_pos_screen;
-	math::world_to_screen(head_pos + vector3(0, 0, 10), camera_pos, ref_def, head_pos_screen);
-	math::world_to_screen(origin_pos, camera_pos, ref_def, feet_pos_screen);
+
+	if (!math::world_to_screen(head_pos + vector3(0, 0, 10), camera_pos, ref_def, head_pos_screen) ||
+		!math::world_to_screen(origin_pos, camera_pos, ref_def, feet_pos_screen))
+		return false;
+
 	const auto height = feet_pos_screen.y - head_pos.y;
 	const auto width = height / 2;
 
@@ -58,6 +61,7 @@ void player::get_bounding_box_fallback(vector2& min, vector2& max, const vector3
 	min.y = feet_pos_screen.y + size;
 	max.x = feet_pos_screen.x + width + size;
 	max.y = head_pos_screen.y - size;
+	return true;
 }
 
 float player::estimate_head_position_from_origin() const
