@@ -50,7 +50,7 @@ WSK_CLIENT_DISPATCH  WskDispatch = { MAKE_WSK_VERSION(1,0), 0, NULL };
 NTSTATUS
 NTAPI
 KspAsyncContextAllocate(
-  _Inout_ PKSOCKET_ASYNC_CONTEXT AsyncContext
+  _Out_ PKSOCKET_ASYNC_CONTEXT AsyncContext
   );
 
 VOID
@@ -87,7 +87,7 @@ KspAsyncContextWaitForCompletion(
 NTSTATUS
 NTAPI
 KspAsyncContextAllocate(
-  _Inout_ PKSOCKET_ASYNC_CONTEXT AsyncContext
+  _Out_ PKSOCKET_ASYNC_CONTEXT AsyncContext
   )
 {
   //
@@ -364,6 +364,11 @@ KsCreateSocket(
 
   PKSOCKET NewSocket = ExAllocatePoolWithTag(PagedPool, sizeof(KSOCKET), MEMORY_TAG);
 
+  if (!NewSocket)
+  {
+    return STATUS_INSUFFICIENT_RESOURCES;
+  }
+
   //
   // Allocate async context for the socket.
   //
@@ -558,6 +563,11 @@ KsAccept(
   {
     PKSOCKET KNewSocket = ExAllocatePoolWithTag(PagedPool, sizeof(KSOCKET), MEMORY_TAG);
 
+    if (!KNewSocket)
+    {
+      return STATUS_INSUFFICIENT_RESOURCES;
+    }
+
     KNewSocket->WskSocket = (PWSK_SOCKET)Socket->AsyncContext.Irp->IoStatus.Information;
     KNewSocket->WskDispatch = (PVOID)KNewSocket->WskSocket->Dispatch;
     KspAsyncContextAllocate(&KNewSocket->AsyncContext);
@@ -659,7 +669,7 @@ KsSendRecv(
   __except (EXCEPTION_EXECUTE_HANDLER)
   {
     Status = STATUS_ACCESS_VIOLATION;
-    goto Exit;
+    goto Error;
   }
 
   //
@@ -702,11 +712,13 @@ KsSendRecv(
     *Length = (ULONG)Socket->AsyncContext.Irp->IoStatus.Information;
   }
 
-Exit:
   //
   // Free the MDL.
   //
 
+  MmUnlockPages(WskBuffer.Mdl);
+
+Error:
   IoFreeMdl(WskBuffer.Mdl);
   return Status;
 }
@@ -740,7 +752,7 @@ KsSendRecvUdp(
   __except (EXCEPTION_EXECUTE_HANDLER)
   {
     Status = STATUS_ACCESS_VIOLATION;
-    goto Exit;
+    goto Error;
   }
 
   //
@@ -767,12 +779,29 @@ KsSendRecvUdp(
   }
   else
   {
+    //
+    // Use #pragma prefast (suppress: ...), because SAL annotation is wrong
+    // for this function.
+    //
+    // From MSDN:
+    //   ControlLength
+    //   ControlInfo
+    //
+    //   ... This pointer is optional and can be NULL.  If the ControlInfoLength
+    //   parameter is NULL, the ControlInfo parameter should be NULL.
+    //
+
+#pragma prefast (                                                                           \
+    suppress:__WARNING_INVALID_PARAM_VALUE_1,                                               \
+    "If the ControlInfoLength parameter is NULL, the ControlInfo parameter should be NULL." \
+    )
+
     Status = Socket->WskDatagramDispatch->WskReceiveFrom(
       Socket->WskSocket,        // Socket
       &WskBuffer,               // Buffer
       Flags,                    // Flags (reserved)
       RemoteAddress,            // RemoteAddress
-      0,                        // ControlInfoLength
+      NULL,                     // ControlInfoLength
       NULL,                     // ControlInfo
       NULL,                     // ControlFlags
       Socket->AsyncContext.Irp  // Irp
@@ -790,11 +819,13 @@ KsSendRecvUdp(
     *Length = (ULONG)Socket->AsyncContext.Irp->IoStatus.Information;
   }
 
-Exit:
   //
   // Free the MDL.
   //
 
+  MmUnlockPages(WskBuffer.Mdl);
+
+Error:
   IoFreeMdl(WskBuffer.Mdl);
   return Status;
 }
