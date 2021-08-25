@@ -1,5 +1,8 @@
 #pragma once
 
 namespace config {
-	inline auto esp = true;
+	namespace esp {
+		inline auto enabled = true;
+		inline auto max_distance = 0;
+	}
 }

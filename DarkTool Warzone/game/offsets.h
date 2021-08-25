@@ -4,6 +4,8 @@ namespace offsets {
 	constexpr auto ref_def = 0x17CADC30;
 	constexpr auto camera_base = 0x14D2BE70;
 	constexpr auto camera_pos = 0x1D8;
+	constexpr auto local_index = 0x6E10;
+	constexpr auto local_index_pos = 0x1FC;
 	namespace player {
 		constexpr auto size = 0x3AC8;
 		constexpr auto valid = 0x684;

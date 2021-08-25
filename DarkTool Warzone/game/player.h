@@ -16,8 +16,9 @@ struct player {
 	vector3 origin() const;
 	character_stance stance() const;
 	int team() const;
-	bool get_bounding_box_fallback(vector2& min, vector2& max, const vector3& camera_pos, const ref_def& ref_def) const;
-	float estimate_head_position_from_origin() const;
+	bool get_bounding_box_fallback(vector2& min, vector2& max, const vector3& origin_pos, const vector3& camera_pos, const ref_def& ref_def) const;
+	float estimate_head_position(const character_stance stance) const;
+	float estimate_width(const character_stance stance) const;
 	int index;
 	uintptr_t base;
 };

@@ -42,18 +42,18 @@ int player::team() const
 	return driver::read<int>(base + offsets::player::team);
 }
 
-bool player::get_bounding_box_fallback(vector2& min, vector2& max, const vector3& camera_pos, const ref_def& ref_def) const
+bool player::get_bounding_box_fallback(vector2& min, vector2& max, const vector3& origin_pos, const vector3& camera_pos, const ref_def& ref_def) const
 {
-	const auto origin_pos = origin();
-	const auto head_pos = origin_pos + vector3(0, 0, estimate_head_position_from_origin());
+	const auto stance_ = stance();
+	const auto head_pos = origin_pos + vector3(0, 0, estimate_head_position(stance_) + 10);
 	vector2 head_pos_screen, feet_pos_screen;
 
-	if (!math::world_to_screen(head_pos + vector3(0, 0, 10), camera_pos, ref_def, head_pos_screen) ||
+	if (!math::world_to_screen(head_pos, camera_pos, ref_def, head_pos_screen) ||
 		!math::world_to_screen(origin_pos, camera_pos, ref_def, feet_pos_screen))
 		return false;
 
-	const auto height = feet_pos_screen.y - head_pos.y;
-	const auto width = height / 2;
+	const auto height = feet_pos_screen.y - head_pos_screen.y;
+	const auto width = height * estimate_width(stance_);
 
 	constexpr auto size = 1;
 
@@ -64,9 +64,9 @@ bool player::get_bounding_box_fallback(vector2& min, vector2& max, const vector3
 	return true;
 }
 
-float player::estimate_head_position_from_origin() const
+float player::estimate_head_position(const character_stance stance) const
 {
-	switch (stance())
+	switch (stance)
 	{
 	case character_stance::Crouching:
 		return 40;
@@ -76,5 +76,20 @@ float player::estimate_head_position_from_origin() const
 		return 20;
 	default:
 		return 58;
+	}
+}
+
+float player::estimate_width(const character_stance stance) const
+{
+	switch (stance)
+	{
+	case character_stance::Crouching:
+		return 1 / 2.5f;
+	case character_stance::Crawling:
+		return 2.5f;
+	case character_stance::Downed:
+		return 2.f;
+	default:
+		return 1 / 4.f;
 	}
 }
