@@ -1,10 +1,12 @@
 ﻿#include "driver/driver.h"
 #include "game/globals.h"
 #include "overlay/overlay.hpp"
+#include "features/data.h"
 #include <iostream>
 #include <thread>
 
-void overlay_execute() {
+void overlay_execute()
+{
 	if (!overlay::create_overlay(driver::pid()))
 		return;
 
@@ -22,13 +24,28 @@ void overlay_execute() {
 		}
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(1));
-
 	} while (message.message != WM_QUIT);
-
-	return;
 }
 
-int main(int argc, char* argv[]) {
+void collect_data()
+{
+	globals::base = driver::get_process_base_address();
+	globals::peb = driver::get_peb();
+	std::cout << "base: " << std::hex << globals::base << '\n';
+	std::cout << "peb: " << std::hex << globals::peb << '\n';
+	while (true)
+	{
+		data::collect();
+
+		if (GetAsyncKeyState(VK_END))
+			break;
+
+		std::this_thread::sleep_for(std::chrono::milliseconds(10));
+	}
+}
+
+int main()
+{
 	driver::initialize(L"ModernWarfare.exe");
 	if (!driver::connect())
 	{
@@ -37,12 +54,12 @@ int main(int argc, char* argv[]) {
 	}
 	driver::clean_piddbcachetable();
 	driver::clean_mmunloadeddrivers();
-	globals::base = driver::get_process_base_address();
-	globals::peb = driver::get_peb();
-	std::cout << "base: " << globals::base << '\n';
-	std::cout << "peb: " << globals::peb << '\n';
-	std::cout << "Close this to disable DarkTool Overlay\n";
+	std::cout
+		<< "Close this to disable DarkTool Overlay\n"
+		<< "Press INS to open Menu\n"
+		<< "Press END to close (panic button)\n";
 	std::thread overlay_thread(overlay_execute);
-	overlay_thread.join();
+	overlay_thread.detach();
+	collect_data();
 	return 0;
 }

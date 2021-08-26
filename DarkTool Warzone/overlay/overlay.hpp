@@ -4,7 +4,6 @@
 #include <cstdint>
 
 namespace overlay {
-	inline HWND target_window;
 	inline HWND overlay_window;
 	bool create_overlay(const uint32_t pid);
 	bool begin();

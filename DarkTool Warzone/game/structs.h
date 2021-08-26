@@ -16,7 +16,7 @@ struct ref_def {
 	ref_def_view view;
 };
 
-struct Name
+struct name
 {
 	int entity_index;
 	char name[0x24];

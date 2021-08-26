@@ -1,7 +1,9 @@
 #pragma once
 
 namespace offsets {
-	constexpr auto ref_def = 0x17CADC30;
+	constexpr auto refdef = 0x17CADC30;
+	constexpr auto name_array = 0x17CB9258;
+	constexpr auto name_array_pos = 0x4C70;
 	constexpr auto camera_base = 0x14D2BE70;
 	constexpr auto camera_pos = 0x1D8;
 	constexpr auto local_index = 0x6E10;

@@ -3,5 +3,5 @@
 
 void overlay::draw(ImDrawList* d)
 {
-	features::esp(d);
+	features::esp::draw(d);
 }

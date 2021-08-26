@@ -1,5 +1,4 @@
 #pragma once
-#include <array>
 #include "../game/structs.h"
 #include "vector2.hpp"
 

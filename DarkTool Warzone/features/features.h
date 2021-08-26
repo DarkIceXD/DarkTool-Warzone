@@ -1,6 +1,10 @@
 #pragma once
 #include "../imgui/imgui.h"
+#include "data.h"
 
 namespace features {
-	void esp(ImDrawList* d);
+	namespace esp {
+		void draw(ImDrawList* d);
+		void collect(const uint64_t client_info, const uint64_t client_base);
+	}
 }

@@ -4,9 +4,9 @@
 #include "../driver/driver.h"
 #include "../math/math.hpp"
 
-player::player(const uintptr_t base, const int index) : base(base), index(index) {}
+player::player(const uintptr_t client_base, const int index) : base(client_base + ((uint64_t)index * offsets::player::size)), index(index) {}
 
-bool player::valid() const
+[[nodiscard]] bool player::valid() const
 {
 	const auto valid = driver::read<int>(base + offsets::player::valid);
 	if (valid != 1)
@@ -23,7 +23,7 @@ bool player::valid() const
 	return true;
 }
 
-vector3 player::origin() const
+[[nodiscard]] vector3 player::origin() const
 {
 	const auto position_address = driver::read<uintptr_t>(base + offsets::player::pos);
 	if (position_address == 0 || position_address >= 0xFFFFFFFFFFFFFFF)
@@ -32,54 +32,49 @@ vector3 player::origin() const
 	return driver::read<vector3>(position_address + 0x40);
 }
 
-character_stance player::stance() const
+[[nodiscard]] character_stance player::stance() const
 {
 	return driver::read<character_stance>(base + offsets::player::stance);
 }
 
-int player::team() const
+[[nodiscard]] int player::team() const
 {
 	return driver::read<int>(base + offsets::player::team);
 }
 
-bool player::get_bounding_box_fallback(vector2& min, vector2& max, const vector3& origin_pos, const vector3& camera_pos, const ref_def& ref_def) const
+[[nodiscard]] bool player::get_bounding_box_fallback(vector2& min, vector2& max, const vector3& origin_pos, const vector3& camera_pos, const ref_def& ref_def) const
 {
 	const auto stance_ = stance();
-	const auto head_pos = origin_pos + vector3(0, 0, estimate_head_position(stance_) + 10);
-	vector2 head_pos_screen, feet_pos_screen;
+	const auto head_pos = origin_pos + vector3(0, 0, estimate_head_position(stance_));
 
+	vector2 head_pos_screen, feet_pos_screen;
 	if (!math::world_to_screen(head_pos, camera_pos, ref_def, head_pos_screen) ||
 		!math::world_to_screen(origin_pos, camera_pos, ref_def, feet_pos_screen))
 		return false;
 
-	const auto height = feet_pos_screen.y - head_pos_screen.y;
-	const auto width = height * estimate_width(stance_);
+	const auto width = (feet_pos_screen.y - head_pos_screen.y) * estimate_width(stance_);
+	min = { feet_pos_screen.x - width, feet_pos_screen.y };
+	max = { feet_pos_screen.x + width, head_pos_screen.y };
 
-	constexpr auto size = 1;
-
-	min.x = feet_pos_screen.x - width - size;
-	min.y = feet_pos_screen.y + size;
-	max.x = feet_pos_screen.x + width + size;
-	max.y = head_pos_screen.y - size;
 	return true;
 }
 
-float player::estimate_head_position(const character_stance stance) const
+[[nodiscard]] float player::estimate_head_position(const character_stance stance) const
 {
 	switch (stance)
 	{
 	case character_stance::Crouching:
-		return 40;
+		return 50;
 	case character_stance::Crawling:
-		return 10;
-	case character_stance::Downed:
 		return 20;
+	case character_stance::Downed:
+		return 30;
 	default:
-		return 58;
+		return 68;
 	}
 }
 
-float player::estimate_width(const character_stance stance) const
+[[nodiscard]] float player::estimate_width(const character_stance stance) const
 {
 	switch (stance)
 	{
@@ -92,4 +87,22 @@ float player::estimate_width(const character_stance stance) const
 	default:
 		return 1 / 4.f;
 	}
+}
+
+[[nodiscard]] name player::get_name_struct(const uintptr_t name_array_base) const
+{
+	return driver::read<name>(name_array_base + offsets::name_array_pos + ((uint64_t)index * 0xD0));
+}
+
+[[nodiscard]] uintptr_t player::get_name_array_base(const uintptr_t base)
+{
+	return driver::read<uintptr_t>(base + offsets::name_array);
+}
+
+[[nodiscard]] int player::get_local_index(const uintptr_t client_info)
+{
+	const auto local_index = driver::read<uintptr_t>(client_info + offsets::local_index);
+	if (!local_index)
+		return -1;
+	return driver::read<int>(local_index + offsets::local_index_pos);
 }

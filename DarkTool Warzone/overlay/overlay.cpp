@@ -13,6 +13,7 @@ struct window_rect_data_t : public RECT
 	constexpr int height() const { return bottom - top; }
 };
 
+static HWND target_window;
 static window_rect_data_t target_window_size;
 static IDirect3DDevice9* direct_device;
 
@@ -66,7 +67,7 @@ BOOL CALLBACK EnumWindowsProcMy(HWND hwnd, LPARAM lParam)
 	GetWindowThreadProcessId(hwnd, &lpdwProcessId);
 	if (lpdwProcessId == lParam)
 	{
-		overlay::target_window = hwnd;
+		target_window = hwnd;
 		return FALSE;
 	}
 	return TRUE;
