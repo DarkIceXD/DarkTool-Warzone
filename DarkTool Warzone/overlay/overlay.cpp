@@ -16,6 +16,7 @@ struct window_rect_data_t : public RECT
 static HWND target_window;
 static window_rect_data_t target_window_size;
 static IDirect3DDevice9* direct_device;
+static bool imgui = false;
 
 LRESULT CALLBACK mouse_manager(int nCode, WPARAM wParam, LPARAM lParam) {
 	ImGuiIO& io = ImGui::GetIO();
@@ -44,17 +45,19 @@ LRESULT CALLBACK mouse_manager(int nCode, WPARAM wParam, LPARAM lParam) {
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 LRESULT WINAPI WndProc(HWND window, UINT message, WPARAM wparam, LPARAM lparam) {
-	ImGuiIO& io = ImGui::GetIO();
-	switch (message)
+	if (imgui)
 	{
-	case WM_MOUSEMOVE:
-		io.MousePos.x = (signed short)(lparam);
-		io.MousePos.y = (signed short)(lparam >> 16);
-		break;
+		ImGuiIO& io = ImGui::GetIO();
+		switch (message)
+		{
+		case WM_MOUSEMOVE:
+			io.MousePos.x = (signed short)(lparam);
+			io.MousePos.y = (signed short)(lparam >> 16);
+			break;
+		}
+		if (ImGui_ImplWin32_WndProcHandler(window, message, wparam, lparam))
+			return true;
 	}
-	if (ImGui_ImplWin32_WndProcHandler(window, message, wparam, lparam))
-		return true;
-
 	if (message == WM_DESTROY)
 		ExitProcess(EXIT_SUCCESS);
 
@@ -143,6 +146,7 @@ bool overlay::create_overlay(const uint32_t pid) {
 	if (!ImGui_ImplDX9_Init(direct_device))
 		return false;
 
+	imgui = true;
 	SetWindowsHookEx(WH_MOUSE, mouse_manager, 0, GetCurrentThreadId());
 
 	return true;

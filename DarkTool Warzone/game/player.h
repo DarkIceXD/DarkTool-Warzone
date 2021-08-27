@@ -17,7 +17,7 @@ struct player {
 	[[nodiscard]] character_stance get_stance() const;
 	[[nodiscard]] int get_team() const;
 	[[nodiscard]] name get_name_struct(const uintptr_t name_array_base) const;
-	[[nodiscard]] static bool get_bounding_box_fallback(vector2& min, vector2& max, const vector3& origin_pos, const character_stance stance_, const vector3& camera_pos, const ref_def& ref_def);
+	[[nodiscard]] static bool get_bounding_box_fallback(vector2& min, vector2& max, const vector3& origin_pos, const character_stance stance, const vector3& camera_pos, const ref_def& ref_def);
 	[[nodiscard]] static float estimate_head_position(const character_stance stance);
 	[[nodiscard]] static float estimate_width(const character_stance stance);
 	[[nodiscard]] static uintptr_t get_name_array_base(const uintptr_t base);

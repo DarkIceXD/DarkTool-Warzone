@@ -8,7 +8,10 @@
 void overlay_execute()
 {
 	if (!overlay::create_overlay(driver::pid()))
+	{
+		std::cout << "Cannot create overlay.\n";
 		return;
+	}
 
 	MSG message;
 	do
@@ -23,6 +26,9 @@ void overlay_execute()
 			overlay::end();
 		}
 
+		if (GetAsyncKeyState(VK_END) & 1)
+			break;
+
 		std::this_thread::sleep_for(std::chrono::milliseconds(1));
 	} while (message.message != WM_QUIT);
 }
@@ -36,11 +42,7 @@ void collect_data()
 	while (true)
 	{
 		data::collect();
-
-		if (GetAsyncKeyState(VK_END) & 1)
-			break;
-
-		std::this_thread::sleep_for(std::chrono::milliseconds(35));
+		std::this_thread::sleep_for(std::chrono::milliseconds(20));
 	}
 }
 
@@ -58,8 +60,7 @@ int main()
 		<< "Close this to disable DarkTool Overlay\n"
 		<< "Press INS to open Menu\n"
 		<< "Press END to close (panic button)\n";
-	std::thread overlay_thread(overlay_execute);
-	overlay_thread.detach();
-	collect_data();
-	return 0;
+	std::thread worker(collect_data);
+	worker.detach();
+	overlay_execute();
 }

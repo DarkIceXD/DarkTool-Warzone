@@ -47,16 +47,16 @@ player::player(const uintptr_t client_base, const int index) : base(client_base 
 	return driver::read<name>(name_array_base + offsets::name_array_pos + ((uint64_t)index * 0xD0));
 }
 
-[[nodiscard]] bool player::get_bounding_box_fallback(vector2& min, vector2& max, const vector3& origin_pos, const character_stance stance_, const vector3& camera_pos, const ref_def& ref_def)
+[[nodiscard]] bool player::get_bounding_box_fallback(vector2& min, vector2& max, const vector3& origin_pos, const character_stance stance, const vector3& camera_pos, const ref_def& ref_def)
 {
-	const auto head_pos = origin_pos + vector3(0, 0, estimate_head_position(stance_));
+	const auto head_pos = origin_pos + vector3(0, 0, estimate_head_position(stance));
 
 	vector2 head_pos_screen, feet_pos_screen;
 	if (!math::world_to_screen(head_pos, camera_pos, ref_def, head_pos_screen) ||
 		!math::world_to_screen(origin_pos, camera_pos, ref_def, feet_pos_screen))
 		return false;
 
-	const auto width = (feet_pos_screen.y - head_pos_screen.y) * estimate_width(stance_);
+	const auto width = (feet_pos_screen.y - head_pos_screen.y) * estimate_width(stance);
 	min = { feet_pos_screen.x - width, feet_pos_screen.y };
 	max = { feet_pos_screen.x + width, head_pos_screen.y };
 

@@ -17,7 +17,11 @@ void features::esp::draw(ImDrawList* d)
 	if (!math::get_camera_position(camera_pos))
 		return;
 
-	const auto refdef = driver::read<ref_def>(decryption::get_ref_def(globals::base, offsets::refdef));
+	const auto ref_def_ptr = decryption::get_ref_def(globals::base, offsets::refdef);
+	if (!ref_def_ptr)
+		return;
+
+	const auto refdef = driver::read<ref_def>(ref_def_ptr);
 	for (const auto& player : data::players)
 	{
 		if (!player.valid)
