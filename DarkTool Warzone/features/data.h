@@ -1,10 +1,12 @@
 #pragma once
 #include "../imgui/imgui.h"
+#include "../game/player.h"
 #include <array>
 
 namespace data {
 	struct player_data {
-		ImVec2 min, max, feet;
+		vector3 origin;
+		character_stance stance;
 		int distance;
 		bool valid;
 	};

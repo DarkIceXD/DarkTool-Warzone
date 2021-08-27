@@ -3,13 +3,14 @@
 #include "../game/globals.h"
 #include "../game/offsets.h"
 
-[[nodiscard]] vector3 math::get_camera_position() noexcept
+[[nodiscard]] bool math::get_camera_position(vector3& out) noexcept
 {
 	const auto camera = driver::read<uintptr_t>(globals::base + offsets::camera_base);
 	if (!camera)
-		return {};
+		return false;
 
-	return driver::read<vector3>(camera + offsets::camera_pos);
+	out = driver::read<vector3>(camera + offsets::camera_pos);
+	return true;
 }
 
 [[nodiscard]] bool math::world_to_screen(const vector3& world_location, const vector3& camera_position, const int screen_width, const int screen_height, const vector2& field_of_view, const std::array<vector3, 3>& matrices, vector2& out) noexcept

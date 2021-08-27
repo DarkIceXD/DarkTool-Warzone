@@ -37,10 +37,10 @@ void collect_data()
 	{
 		data::collect();
 
-		if (GetAsyncKeyState(VK_END))
+		if (GetAsyncKeyState(VK_END) & 1)
 			break;
 
-		std::this_thread::sleep_for(std::chrono::milliseconds(10));
+		std::this_thread::sleep_for(std::chrono::milliseconds(35));
 	}
 }
 
