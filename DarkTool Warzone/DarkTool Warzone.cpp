@@ -2,6 +2,7 @@
 #include "game/globals.h"
 #include "overlay/overlay.hpp"
 #include "features/data.h"
+#include "config/config.h"
 #include <iostream>
 #include <thread>
 
@@ -42,7 +43,7 @@ void collect_data()
 	while (true)
 	{
 		data::collect();
-		std::this_thread::sleep_for(std::chrono::milliseconds(20));
+		std::this_thread::sleep_for(std::chrono::milliseconds(40));
 	}
 }
 
@@ -60,7 +61,9 @@ int main()
 		<< "Close this to disable DarkTool Overlay\n"
 		<< "Press INS to open Menu\n"
 		<< "Press END to close (panic button)\n";
+	cfg = new config();
 	std::thread worker(collect_data);
 	worker.detach();
 	overlay_execute();
+	cfg->save();
 }

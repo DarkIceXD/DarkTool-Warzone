@@ -1,7 +1,7 @@
 #include "features.h"
 #include "../driver/driver.h"
 #include "../game/globals.h"
-#include "../game/config.h"
+#include "../config/config.h"
 #include "../game/offsets.h"
 #include "../game/decryption.h"
 #include "../game/player.h"
@@ -10,7 +10,7 @@
 
 void features::esp::draw(ImDrawList* d)
 {
-	if (!config::esp::enabled)
+	if (!cfg->esp.enabled)
 		return;
 
 	vector3 camera_pos;
@@ -22,6 +22,7 @@ void features::esp::draw(ImDrawList* d)
 		return;
 
 	const auto refdef = driver::read<ref_def>(ref_def_ptr);
+	const auto color = cfg->esp.box_color.to_u32();
 	for (const auto& player : data::players)
 	{
 		if (!player.valid)
@@ -31,21 +32,19 @@ void features::esp::draw(ImDrawList* d)
 		if (math::world_to_screen(player.origin, camera_pos, refdef, feet))
 		{
 			const auto meters_text = std::string("[") + std::to_string(player.distance) + " m]";
-			const auto size = ImGui::CalcTextSize(meters_text.c_str());
-			d->AddText({ feet.x - size.x / 2, feet.y }, IM_COL32_WHITE, meters_text.c_str());
+			const auto size = ImGui::CalcTextSize(meters_text.c_str()).x;
+			d->AddText({ feet.x - size / 2, feet.y }, IM_COL32_WHITE, meters_text.c_str());
 		}
 
 		vector2 min, max;
 		if (player::get_bounding_box_fallback(min, max, player.origin, player.stance, camera_pos, refdef))
-		{
-			d->AddRect({ min.x, min.y }, { max.x, max.y }, IM_COL32(255, 0, 0, 255));
-		}
+			d->AddRect({ min.x, min.y }, { max.x, max.y }, color);
 	}
 }
 
 void features::esp::collect(const uint64_t client_info, const uint64_t client_base)
 {
-	if (!config::esp::enabled)
+	if (!cfg->esp.enabled)
 		return;
 
 	const auto local_index = player::get_local_index(client_info);
@@ -68,7 +67,7 @@ void features::esp::collect(const uint64_t client_info, const uint64_t client_ba
 
 		player_data.origin = p.get_origin();
 		player_data.distance = (int)math::units_to_m((player_data.origin - local_origin).length());
-		if (config::esp::max_distance && player_data.distance > config::esp::max_distance)
+		if (cfg->esp.max_distance && player_data.distance > cfg->esp.max_distance)
 			continue;
 
 		player_data.stance = p.get_stance();

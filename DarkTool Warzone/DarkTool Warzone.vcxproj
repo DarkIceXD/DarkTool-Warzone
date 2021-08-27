@@ -146,6 +146,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="config\config.cpp" />
     <ClCompile Include="features\data.cpp" />
     <ClCompile Include="driver\driver.cpp" />
     <ClCompile Include="DarkTool Warzone.cpp" />
@@ -166,9 +167,11 @@
     <ClCompile Include="overlay\overlay.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="config\config.h" />
+    <ClInclude Include="config\common.h" />
+    <ClInclude Include="config\json.hpp" />
     <ClInclude Include="features\data.h" />
     <ClInclude Include="driver\driver.h" />
-    <ClInclude Include="game\config.h" />
     <ClInclude Include="game\decryption.h" />
     <ClInclude Include="features\features.h" />
     <ClInclude Include="game\globals.h" />

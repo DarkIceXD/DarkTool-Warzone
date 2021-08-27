@@ -69,6 +69,9 @@
     <ClCompile Include="features\data.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="config\config.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="driver\driver.h">
@@ -134,10 +137,16 @@
     <ClInclude Include="game\decryption.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="game\config.h">
+    <ClInclude Include="features\data.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="features\data.h">
+    <ClInclude Include="config\json.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="config\common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="config\config.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
