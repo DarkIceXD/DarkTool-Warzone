@@ -1,16 +1,18 @@
 ﻿#include "driver.h"
 #include "server_shared.h"
 #include <TlHelp32.h>
-
 #pragma comment(lib, "Ws2_32")
+#include <mutex>
 
 static SOCKET connection;
 static uint32_t _pid;
+static std::mutex mtx;
 
 static bool send_packet(
 	const Packet& packet,
 	uint64_t& out_result)
 {
+	std::lock_guard<std::mutex> lck(mtx);
 	if (send(connection, (const char*)&packet, sizeof(Packet), 0) == SOCKET_ERROR)
 		return false;
 
