@@ -56,7 +56,11 @@ struct config {
 		rgb box_color{ 1, 0, 0, 1 };
 		JSON_SERIALIZE(esp, enabled, max_distance, box_color)
 	} esp;
-	JSON_SERIALIZE(config, esp)
+	struct aimbot {
+		bool enabled{ false };
+		JSON_SERIALIZE(aimbot, enabled)
+	} aimbot;
+	JSON_SERIALIZE(config, esp, aimbot)
 };
 
 inline config* cfg;

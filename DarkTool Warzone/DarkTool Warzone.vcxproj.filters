@@ -72,6 +72,9 @@
     <ClCompile Include="config\config.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="features\aimbot.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="driver\driver.h">

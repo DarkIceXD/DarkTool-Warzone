@@ -10,6 +10,7 @@ config::config()
 		if (!json.is_discarded())
 		{
 			esp = json.value<struct esp>("esp", {});
+			aimbot = json.value<struct aimbot>("aimbot", {});
 		}
 	}
 }

@@ -1,27 +1,14 @@
 #include "features.h"
 #include "../driver/driver.h"
-#include "../game/globals.h"
 #include "../config/config.h"
-#include "../game/offsets.h"
-#include "../game/decryption.h"
-#include "../game/player.h"
 #include "../math/math.hpp"
 #include <string>
 
-void features::esp::draw(ImDrawList* d)
+void features::esp::draw(ImDrawList* d, const ref_def& refdef, const vector3& camera_pos)
 {
 	if (!cfg->esp.enabled)
 		return;
 
-	vector3 camera_pos;
-	if (!math::get_camera_position(camera_pos))
-		return;
-
-	const auto ref_def_ptr = decryption::get_ref_def(globals::base, offsets::refdef);
-	if (!ref_def_ptr)
-		return;
-
-	const auto refdef = driver::read<ref_def>(ref_def_ptr);
 	const auto color = cfg->esp.box_color.to_u32();
 	for (const auto& player : data::players)
 	{

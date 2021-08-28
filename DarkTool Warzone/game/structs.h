@@ -16,6 +16,11 @@ struct ref_def {
 	ref_def_view view;
 };
 
+struct camera {
+	vector3 position;
+	vector2 angles;
+};
+
 struct name
 {
 	int entity_index;

@@ -147,6 +147,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="config\config.cpp" />
+    <ClCompile Include="features\aimbot.cpp" />
     <ClCompile Include="features\data.cpp" />
     <ClCompile Include="driver\driver.cpp" />
     <ClCompile Include="DarkTool Warzone.cpp" />

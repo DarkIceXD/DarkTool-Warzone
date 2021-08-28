@@ -3,14 +3,14 @@
 #include "../game/globals.h"
 #include "../game/offsets.h"
 
-[[nodiscard]] bool math::get_camera_position(vector3& out) noexcept
+[[nodiscard]] uintptr_t math::get_camera_base(const uintptr_t base) noexcept
 {
-	const auto camera = driver::read<uintptr_t>(globals::base + offsets::camera_base);
-	if (!camera)
-		return false;
+	return driver::read<uintptr_t>(base + offsets::camera_base);
+}
 
-	out = driver::read<vector3>(camera + offsets::camera_pos);
-	return true;
+[[nodiscard]] camera math::get_camera_struct(const uintptr_t base) noexcept
+{
+	return driver::read<camera>(base + offsets::camera_pos);
 }
 
 [[nodiscard]] bool math::world_to_screen(const vector3& world_location, const vector3& camera_position, const int screen_width, const int screen_height, const vector2& field_of_view, const std::array<vector3, 3>& matrices, vector2& out) noexcept
@@ -35,4 +35,25 @@
 [[nodiscard]] float math::units_to_m(const float units) noexcept
 {
 	return units * 0.0254f;
+}
+
+[[nodiscard]] vector2 math::calculate_angle(const vector3& src, const vector3& dst) noexcept
+{
+	const auto delta = dst - src;
+	vector2 angle(std::atan2(-delta.z, std::hypot(delta.x, delta.y)) * rad2deg, std::atan2(delta.y, delta.x) * rad2deg);
+	angle.normalize();
+	return angle;
+}
+
+[[nodiscard]] vector2 math::calculate_angle_relative(const vector3& src, const vector3& dst, const vector2& angles) noexcept
+{
+	const auto delta = dst - src;
+	vector2 angle(std::atan2(-delta.z, std::hypot(delta.x, delta.y)) * rad2deg - angles.x, std::atan2(delta.y, delta.x) * rad2deg - angles.y);
+	angle.normalize();
+	return angle;
+}
+
+[[nodiscard]] float math::fov(const vector2& a) noexcept
+{
+	return sin(a.length() * deg2rad / 2.0f) * 180.0f;
 }

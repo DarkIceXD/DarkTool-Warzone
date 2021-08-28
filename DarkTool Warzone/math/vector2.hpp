@@ -54,4 +54,27 @@ public:
 	[[nodiscard]] float length() const noexcept {
 		return sqrt((x * x) + (y * y));
 	}
+	constexpr void normalize() noexcept
+	{
+		constexpr auto normalize_angle = [](float angle) {
+			float flRevolutions = angle / 360;
+			if (angle > 180 || angle < -180)
+			{
+				if (flRevolutions < 0)
+					flRevolutions = -flRevolutions;
+				flRevolutions = std::round(flRevolutions);
+				if (angle < 0)
+				{
+					angle += 360 * flRevolutions;
+				}
+				else
+				{
+					angle -= 360 * flRevolutions;
+				}
+			}
+			return angle;
+		};
+		x = normalize_angle(x);
+		y = normalize_angle(y);
+	}
 };
