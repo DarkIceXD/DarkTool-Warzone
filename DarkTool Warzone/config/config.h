@@ -1,5 +1,6 @@
 #pragma once
 #include "common.h"
+#include <Windows.h>
 
 struct rgb {
 	float r{ 1 }, g{ 1 }, b{ 1 }, a{ 1 };
@@ -46,19 +47,38 @@ struct rgb {
 	JSON_SERIALIZE(rgb, r, g, b, a, enabled)
 };
 
+struct keybind {
+	bool enabled{ false };
+	int type{ 0 };
+	int key_bind{ 0 };
+	constexpr void run()
+	{
+		if (type == 1 && GetAsyncKeyState(key_bind) & 1)
+			enabled = !enabled;
+		else if (type == 2)
+			enabled = GetAsyncKeyState(key_bind);
+	}
+	JSON_SERIALIZE(keybind, enabled, type, key_bind)
+};
+
 struct config {
 	static constexpr const char* conf_name = "DarkTool Warzone.json";
 	config();
 	void save() const;
 	struct esp {
-		bool enabled{ true };
+		keybind bind{};
 		int max_distance{ 0 };
 		rgb box_color{ 1, 0, 0, 1 };
-		JSON_SERIALIZE(esp, enabled, max_distance, box_color)
+		JSON_SERIALIZE(esp, bind, max_distance, box_color)
 	} esp;
 	struct aimbot {
-		bool enabled{ false };
-		JSON_SERIALIZE(aimbot, enabled)
+		keybind bind{};
+		int max_distance{ 0 };
+		int max_pixels{ 300 };
+		int hitbox{ 0 };
+		bool aim_at_downed_players{ false };
+		bool show_aim_spot{ true };
+		JSON_SERIALIZE(aimbot, bind, max_distance, max_pixels, hitbox, aim_at_downed_players, show_aim_spot)
 	} aimbot;
 	JSON_SERIALIZE(config, esp, aimbot)
 };

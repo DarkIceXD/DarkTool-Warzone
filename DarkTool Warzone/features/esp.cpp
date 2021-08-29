@@ -6,13 +6,14 @@
 
 void features::esp::draw(ImDrawList* d, const ref_def& refdef, const vector3& camera_pos)
 {
-	if (!cfg->esp.enabled)
+	cfg->esp.bind.run();
+	if (!cfg->esp.bind.enabled)
 		return;
 
 	const auto color = cfg->esp.box_color.to_u32();
 	for (const auto& player : data::players)
 	{
-		if (!player.valid)
+		if (!player.esp_valid)
 			continue;
 
 		vector2 feet;
@@ -29,35 +30,19 @@ void features::esp::draw(ImDrawList* d, const ref_def& refdef, const vector3& ca
 	}
 }
 
-void features::esp::collect(const uint64_t client_info, const uint64_t client_base)
+void features::esp::collect()
 {
-	if (!cfg->esp.enabled)
+	if (!cfg->esp.bind.enabled)
 		return;
 
-	const auto local_index = player::get_local_index(client_info);
-	if (local_index < 0)
-		return;
-
-	const player local_player(client_base, local_index);
-	const auto local_origin = local_player.get_origin();
-	const auto local_team = local_player.get_team();
-	for (int i = 0; i < 150; i++)
+	for (auto& player : data::players)
 	{
-		auto& player_data = data::players[i];
-		player_data.valid = false;
-		const player p(client_base, i);
-		if (!p.is_valid())
+		if (!player.valid)
 			continue;
 
-		if (p.get_team() == local_team)
+		if (cfg->esp.max_distance && player.distance > cfg->esp.max_distance)
 			continue;
 
-		player_data.origin = p.get_origin();
-		player_data.distance = (int)math::units_to_m((player_data.origin - local_origin).length());
-		if (cfg->esp.max_distance && player_data.distance > cfg->esp.max_distance)
-			continue;
-
-		player_data.stance = p.get_stance();
-		player_data.valid = true;
+		player.esp_valid = true;
 	}
 }

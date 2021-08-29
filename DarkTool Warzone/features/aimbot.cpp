@@ -2,38 +2,28 @@
 #include "../driver/driver.h"
 #include "../config/config.h"
 #include "../math/math.hpp"
+#include "../game/decryption.h"
+#include "../game/globals.h"
 
-void features::aimbot::draw(ImDrawList* d, const ref_def& refdef, const vector3& camera_pos, const vector2& camera_angles)
+static uint64_t bone_base = 0;
+static vector3 bone_base_pos;
+
+void features::aimbot::draw(ImDrawList* d, const ref_def& refdef, const vector3& camera_pos)
 {
-	if (!cfg->aimbot.enabled)
+	cfg->aimbot.bind.run();
+	if (!cfg->aimbot.bind.enabled)
 		return;
 
-	if (!GetAsyncKeyState(0x56))
+	if (!bone_base)
 		return;
 
 	auto smallest_fov = FLT_MAX;
-	vector2 new_angle{};
-	/*for (int i = 0; i < data::players.size(); i++)
-	{
-		const auto& player = data::players[i];
-		if (!player.valid)
-			continue;
-
-		const auto current_angle = math::calculate_angle_relative(camera_pos, player.origin, camera_angles);
-		const auto fov = math::fov(current_angle);
-		if (fov < smallest_fov)
-		{
-			smallest_fov = fov;
-			new_angle = current_angle;
-		}
-	}
-	const auto dx = -new_angle.y;
-	const auto dy = new_angle.x;*/
+	int best_index;
 	const vector2 middle(refdef.width / 2, refdef.height / 2);
 	for (int i = 0; i < data::players.size(); i++)
 	{
 		const auto& player = data::players[i];
-		if (!player.valid)
+		if (!player.aimbot_valid)
 			continue;
 
 		vector2 feet;
@@ -45,14 +35,61 @@ void features::aimbot::draw(ImDrawList* d, const ref_def& refdef, const vector3&
 		if (fov < smallest_fov)
 		{
 			smallest_fov = fov;
-			new_angle = feet;
+			best_index = i;
 		}
 	}
-	const auto dx = new_angle.x;
-	const auto dy = new_angle.y;
-	mouse_event(MOUSEEVENTF_MOVE, dx, dy, 0, 0);
+
+	if (smallest_fov > cfg->aimbot.max_pixels)
+		return;
+
+	const auto bone_index = decryption::get_bone_index(best_index, globals::base);
+	const auto bone_ptr = player::get_bone_ptr(bone_base, bone_index);
+	if (!bone_ptr)
+		return;
+
+	const auto bone_pos = player::get_bone_position(bone_ptr, bone_base_pos, ((cfg->aimbot.hitbox == 0) ? 5 : 8));
+	vector2 screen_pos;
+	if (!math::world_to_screen(bone_pos, camera_pos, refdef, screen_pos))
+		return;
+
+	if (cfg->aimbot.show_aim_spot)
+	{
+		d->AddLine({ screen_pos.x - 5, screen_pos.y - 5 }, { screen_pos.x + 5, screen_pos.y + 5 }, IM_COL32_WHITE);
+		d->AddLine({ screen_pos.x - 5, screen_pos.y + 5 }, { screen_pos.x + 5, screen_pos.y - 5 }, IM_COL32_WHITE);
+	}
+	screen_pos -= middle;
+	INPUT Input = { 0 };
+	Input.type = INPUT_MOUSE;
+	Input.mi.dwFlags = MOUSEEVENTF_MOVE;
+	Input.mi.dx = screen_pos.x;
+	Input.mi.dy = screen_pos.y;
+	SendInput(1, &Input, sizeof(INPUT));
 }
 
-void features::aimbot::collect(const uint64_t client_info, const uint64_t client_base)
+void features::aimbot::collect(const uint64_t client_info)
 {
+	if (!cfg->aimbot.bind.enabled)
+		return;
+
+	auto any_valid = false;
+	for (auto& player : data::players)
+	{
+		if (!player.valid)
+			continue;
+
+		if (cfg->aimbot.max_distance && player.distance > cfg->aimbot.max_distance)
+			continue;
+
+		if (!cfg->aimbot.aim_at_downed_players && player.stance == character_stance::downed)
+			continue;
+
+		player.aimbot_valid = true;
+		any_valid = true;
+	}
+
+	if (any_valid)
+	{
+		bone_base = decryption::decrypt_bone_base(globals::base, globals::peb);
+		bone_base_pos = player::get_bone_base_pos(client_info);
+	}
 }

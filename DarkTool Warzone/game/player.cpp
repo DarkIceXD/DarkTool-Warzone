@@ -1,5 +1,4 @@
 #include "player.h"
-#include "globals.h"
 #include "offsets.h"
 #include "../driver/driver.h"
 #include "../math/math.hpp"
@@ -67,11 +66,11 @@ player::player(const uintptr_t client_base, const int index) : base(client_base 
 {
 	switch (stance)
 	{
-	case character_stance::Crouching:
+	case character_stance::crouching:
 		return 50;
-	case character_stance::Crawling:
+	case character_stance::crawling:
 		return 20;
-	case character_stance::Downed:
+	case character_stance::downed:
 		return 30;
 	default:
 		return 68;
@@ -82,11 +81,11 @@ player::player(const uintptr_t client_base, const int index) : base(client_base 
 {
 	switch (stance)
 	{
-	case character_stance::Crouching:
+	case character_stance::crouching:
 		return 1 / 2.5f;
-	case character_stance::Crawling:
+	case character_stance::crawling:
 		return 2.5f;
-	case character_stance::Downed:
+	case character_stance::downed:
 		return 2.f;
 	default:
 		return 1 / 4.f;
@@ -104,4 +103,19 @@ player::player(const uintptr_t client_base, const int index) : base(client_base 
 	if (!local_index)
 		return -1;
 	return driver::read<int>(local_index + offsets::local_index_pos);
+}
+
+[[nodiscard]] uintptr_t player::get_bone_ptr(const uint64_t bone_base, const uint64_t bone_index)
+{
+	return driver::read<uintptr_t>(bone_base + (bone_index * offsets::bone::index_struct_size) + 0xC0);
+}
+
+[[nodiscard]] vector3 player::get_bone_base_pos(const uintptr_t client_info)
+{
+	return driver::read<vector3>(client_info + offsets::bone::base_pos);
+}
+
+[[nodiscard]] vector3 player::get_bone_position(const uintptr_t bone_ptr, const vector3& base_pos, const int bone)
+{
+	return base_pos + driver::read<vector3>(bone_ptr + ((uint64_t)bone * 0x20) + 0x10);
 }

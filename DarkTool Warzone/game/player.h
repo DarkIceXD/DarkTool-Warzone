@@ -4,10 +4,10 @@
 
 enum class character_stance
 {
-	Standing = 0,
-	Crouching = 1,
-	Crawling = 2,
-	Downed = 3,
+	standing = 0,
+	crouching = 1,
+	crawling = 2,
+	downed = 3,
 };
 
 struct player {
@@ -22,6 +22,9 @@ struct player {
 	[[nodiscard]] static float estimate_width(const character_stance stance);
 	[[nodiscard]] static uintptr_t get_name_array_base(const uintptr_t base);
 	[[nodiscard]] static int get_local_index(const uintptr_t client_info);
+	[[nodiscard]] static uintptr_t get_bone_ptr(const uint64_t bone_base, const uint64_t bone_index);
+	[[nodiscard]] static vector3 get_bone_base_pos(const uintptr_t client_info);
+	[[nodiscard]] static vector3 get_bone_position(const uintptr_t bone_ptr, const vector3& base_pos, const int bone);
 	uintptr_t base;
 	int index;
 };

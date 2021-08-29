@@ -17,4 +17,8 @@ namespace offsets {
 		constexpr auto dead_1 = 0x27C;
 		constexpr auto dead_2 = 0x570;
 	}
+	namespace bone {
+		constexpr auto base_pos = 0x2DC;
+		constexpr auto index_struct_size = 0x150;
+	}
 }

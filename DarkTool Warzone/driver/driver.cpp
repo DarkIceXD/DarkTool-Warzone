@@ -12,7 +12,7 @@ static bool send_packet(
 	const Packet& packet,
 	uint64_t& out_result)
 {
-	std::lock_guard<std::mutex> lck(mtx);
+	std::lock_guard lck(mtx);
 	if (send(connection, (const char*)&packet, sizeof(Packet), 0) == SOCKET_ERROR)
 		return false;
 

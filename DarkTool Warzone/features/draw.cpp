@@ -8,6 +8,9 @@
 
 void overlay::draw(ImDrawList* d)
 {
+	if (!data::local_player.valid)
+		return;
+
 	const auto camera_base = math::get_camera_base(globals::base);
 	if (!camera_base)
 		return;
@@ -20,5 +23,5 @@ void overlay::draw(ImDrawList* d)
 
 	const auto refdef = driver::read<ref_def>(ref_def_ptr);
 	features::esp::draw(d, refdef, camera.position);
-	features::aimbot::draw(d, refdef, camera.position, camera.angles);
+	features::aimbot::draw(d, refdef, camera.position);
 }
