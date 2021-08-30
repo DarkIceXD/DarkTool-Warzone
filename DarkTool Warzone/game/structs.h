@@ -21,8 +21,7 @@ struct camera {
 	vector2 angles;
 };
 
-struct name
-{
+struct name {
 	int entity_index;
 	char name[0x24];
 	char unk1[0x24];

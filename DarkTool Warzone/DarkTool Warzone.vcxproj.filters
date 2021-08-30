@@ -45,9 +45,6 @@
     <ClCompile Include="imgui\imgui_widgets.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="features\draw.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="features\menu.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -66,13 +63,13 @@
     <ClCompile Include="game\decryption.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="features\data.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="config\config.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="features\aimbot.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="features\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -140,7 +137,7 @@
     <ClInclude Include="game\decryption.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="features\data.h">
+    <ClInclude Include="game\data.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="config\json.hpp">

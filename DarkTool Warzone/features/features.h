@@ -1,6 +1,6 @@
 #pragma once
 #include "../imgui/imgui.h"
-#include "data.h"
+#include "../game/data.h"
 
 namespace features {
 	namespace esp {

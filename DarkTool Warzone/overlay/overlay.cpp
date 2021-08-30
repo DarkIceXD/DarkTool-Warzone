@@ -18,9 +18,9 @@ static window_rect_data_t target_window_size;
 static IDirect3DDevice9* direct_device;
 
 LRESULT CALLBACK mouse_manager(int nCode, WPARAM wParam, LPARAM lParam) {
-	ImGuiIO& io = ImGui::GetIO();
 	MOUSEHOOKSTRUCT* pMouseStruct = (MOUSEHOOKSTRUCT*)lParam;
 	if (pMouseStruct != NULL) {
+		ImGuiIO& io = ImGui::GetIO();
 		switch (wParam)
 		{
 		case WM_LBUTTONDOWN:

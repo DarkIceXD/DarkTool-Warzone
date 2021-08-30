@@ -148,9 +148,9 @@
   <ItemGroup>
     <ClCompile Include="config\config.cpp" />
     <ClCompile Include="features\aimbot.cpp" />
-    <ClCompile Include="features\data.cpp" />
     <ClCompile Include="driver\driver.cpp" />
     <ClCompile Include="DarkTool Warzone.cpp" />
+    <ClCompile Include="features\main.cpp" />
     <ClCompile Include="game\decryption.cpp" />
     <ClCompile Include="features\esp.cpp" />
     <ClCompile Include="game\player.cpp" />
@@ -163,7 +163,6 @@
     <ClCompile Include="imgui\imgui_tables.cpp" />
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="math\math.cpp" />
-    <ClCompile Include="features\draw.cpp" />
     <ClCompile Include="features\menu.cpp" />
     <ClCompile Include="overlay\overlay.cpp" />
   </ItemGroup>
@@ -171,7 +170,7 @@
     <ClInclude Include="config\config.h" />
     <ClInclude Include="config\common.h" />
     <ClInclude Include="config\json.hpp" />
-    <ClInclude Include="features\data.h" />
+    <ClInclude Include="game\data.h" />
     <ClInclude Include="driver\driver.h" />
     <ClInclude Include="game\decryption.h" />
     <ClInclude Include="features\features.h" />

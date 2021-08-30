@@ -1,5 +1,5 @@
 #pragma once
-#include "../game/player.h"
+#include "player.h"
 #include <array>
 
 namespace data {
