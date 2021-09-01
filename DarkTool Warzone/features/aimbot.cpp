@@ -8,6 +8,30 @@
 static uint64_t bone_base = 0;
 static vector3 bone_base_pos;
 
+float fov(const vector2& screen, const float screen_width, const float game_fov)
+{
+	return (screen / screen_width).length() * game_fov / 2;
+}
+
+void aim_at(const float x, const float y, const bool absolute)
+{
+	INPUT input = { 0 };
+	input.type = INPUT_MOUSE;
+	if (absolute)
+	{
+		input.mi.dwFlags = MOUSEEVENTF_MOVE | MOUSEEVENTF_ABSOLUTE;
+		input.mi.dx = x * (65536.f / GetSystemMetrics(SM_CXSCREEN));
+		input.mi.dy = y * (65536.f / GetSystemMetrics(SM_CYSCREEN));
+	}
+	else
+	{
+		input.mi.dwFlags = MOUSEEVENTF_MOVE;
+		input.mi.dx = x;
+		input.mi.dy = y;
+	}
+	SendInput(1, &input, sizeof(input));
+}
+
 void features::aimbot::draw(ImDrawList* d, const ref_def& refdef, const vector3& camera_pos)
 {
 	cfg->aimbot.bind.run();
@@ -27,11 +51,10 @@ void features::aimbot::draw(ImDrawList* d, const ref_def& refdef, const vector3&
 			continue;
 
 		vector2 feet;
-		if (!math::world_to_screen(player.origin + vector3(0, 0, 50), camera_pos, refdef, feet))
+		if (!math::world_to_screen(player.origin + vector3(0, 0, 40), camera_pos, refdef, feet))
 			continue;
 
-		feet -= middle;
-		const auto fov = feet.length();
+		const auto fov = (feet - middle).length();
 		if (fov < smallest_fov)
 		{
 			smallest_fov = fov;
@@ -39,7 +62,7 @@ void features::aimbot::draw(ImDrawList* d, const ref_def& refdef, const vector3&
 		}
 	}
 
-	if (smallest_fov > cfg->aimbot.max_pixels)
+	if (smallest_fov >= FLT_MAX || smallest_fov > cfg->aimbot.max_pixels)
 		return;
 
 	const auto bone_index = decryption::get_bone_index(best_index, globals::base);
@@ -47,7 +70,7 @@ void features::aimbot::draw(ImDrawList* d, const ref_def& refdef, const vector3&
 	if (!bone_ptr)
 		return;
 
-	const auto bone_pos = player::get_bone_position(bone_ptr, bone_base_pos, ((cfg->aimbot.hitbox == 0) ? 5 : 8));
+	const auto bone_pos = player::get_bone_position(bone_ptr, bone_base_pos, ((cfg->aimbot.hitbox == 0) ? 5 : 7));
 	vector2 screen_pos;
 	if (!math::world_to_screen(bone_pos, camera_pos, refdef, screen_pos))
 		return;
@@ -58,12 +81,7 @@ void features::aimbot::draw(ImDrawList* d, const ref_def& refdef, const vector3&
 		d->AddLine({ screen_pos.x - 5, screen_pos.y + 5 }, { screen_pos.x + 5, screen_pos.y - 5 }, IM_COL32_WHITE);
 	}
 	screen_pos -= middle;
-	INPUT Input = { 0 };
-	Input.type = INPUT_MOUSE;
-	Input.mi.dwFlags = MOUSEEVENTF_MOVE;
-	Input.mi.dx = screen_pos.x;
-	Input.mi.dy = screen_pos.y;
-	SendInput(1, &Input, sizeof(INPUT));
+	aim_at(screen_pos.x, screen_pos.y, false);
 }
 
 void features::aimbot::collect(const uint64_t client_info)
