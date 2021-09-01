@@ -46,6 +46,13 @@ void data::collect()
 		return;
 	}
 
+	const auto name_base = player::get_name_array_base(globals::base);
+	if (!name_base)
+	{
+		data::local_player.valid = false;
+		return;
+	}
+
 	const auto local_index = player::get_local_index(client_info);
 	if (local_index < 0)
 	{
@@ -72,6 +79,9 @@ void data::collect()
 		player_data.origin = p.get_origin();
 		player_data.stance = p.get_stance();
 		player_data.distance = (int)math::units_to_m((player_data.origin - data::local_player.origin).length());
+		const auto name = p.get_name_struct(name_base);
+		player_data.health = name.health / 127.f;
+		strcpy_s(player_data.name, name.name);
 		player_data.valid = true;
 	}
 	data::local_player.valid = true;

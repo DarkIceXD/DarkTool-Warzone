@@ -7,6 +7,8 @@ namespace data {
 		vector3 origin;
 		character_stance stance;
 		int distance;
+		float health;
+		char name[0x24];
 		bool valid;
 		bool esp_valid;
 		bool aimbot_valid;
