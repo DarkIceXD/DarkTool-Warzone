@@ -11,6 +11,7 @@ void features::esp::draw(ImDrawList* d, const ref_def& refdef, const vector3& ca
 		return;
 
 	const auto color = cfg->esp.box_color.to_u32();
+	const auto downed = cfg->esp.box_color_downed.to_u32();
 	for (const auto& player : data::players)
 	{
 		if (!player.esp_valid)
@@ -20,7 +21,8 @@ void features::esp::draw(ImDrawList* d, const ref_def& refdef, const vector3& ca
 		if (!player::get_bounding_box_fallback(min, max, player.origin, player.stance, camera_pos, refdef))
 			continue;
 
-		d->AddRect({ min.x, min.y }, { max.x, max.y }, color);
+		const auto player_color = player.stance == character_stance::downed ? downed : color;
+		d->AddRect({ min.x, min.y }, { max.x, max.y }, player_color);
 		const auto middle = (max.x - min.x) / 2 + min.x;
 		const auto meters_text = std::string("[") + std::to_string(player.distance) + " m]";
 		const auto distance_size = ImGui::CalcTextSize(meters_text.c_str());

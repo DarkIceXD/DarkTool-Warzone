@@ -15,4 +15,5 @@ namespace math {
 	[[nodiscard]] vector2 calculate_angle(const vector3& src, const vector3& dst) noexcept;
 	[[nodiscard]] vector2 calculate_angle_relative(const vector3& src, const vector3& dst, const vector2& angles) noexcept;
 	[[nodiscard]] float fov(const vector2& a) noexcept;
+	[[nodiscard]] float pixels_to_fov(const vector2& screen, const float tan_half_fov);
 }

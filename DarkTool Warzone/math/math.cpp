@@ -57,3 +57,8 @@
 {
 	return sin(a.length() * deg2rad / 2.0f) * 180.0f;
 }
+
+float math::pixels_to_fov(const vector2& screen, const float tan_half_fov)
+{
+	return atan(screen.length() * tan_half_fov) * 2;
+}

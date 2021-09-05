@@ -57,6 +57,7 @@ void overlay::menu()
 				ImGui::KeyBind("ESP", &cfg->esp.bind.type, &cfg->esp.bind.key_bind, &esp_found);
 				ImGui::SliderInt("Max Distance", &cfg->esp.max_distance, 0, 1000);
 				ImGui::ColorEdit4("Box Color", &cfg->esp.box_color.r, ImGuiColorEditFlags_Float | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_AlphaPreview);
+				ImGui::ColorEdit4("Box Color Downed", &cfg->esp.box_color_downed.r, ImGuiColorEditFlags_Float | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_AlphaPreview);
 				ImGui::EndTabItem();
 			}
 			if (ImGui::BeginTabItem("Aimbot"))
@@ -65,7 +66,7 @@ void overlay::menu()
 				static auto aimbot_found = true;
 				ImGui::KeyBind("Aimbot", &cfg->aimbot.bind.type, &cfg->aimbot.bind.key_bind, &aimbot_found);
 				ImGui::SliderInt("Max Distance", &cfg->aimbot.max_distance, 0, 1000);
-				ImGui::SliderInt("Max Pixels", &cfg->aimbot.max_pixels, 0, 2000);
+				ImGui::SliderFloat("Fov", &cfg->aimbot.fov, 1, 90);
 				ImGui::Combo("Hitbox", &cfg->aimbot.hitbox, "Chest\0Head\0");
 				ImGui::Checkbox("Aim at downed players", &cfg->aimbot.aim_at_downed_players);
 				ImGui::Checkbox("Show aim spot", &cfg->aimbot.show_aim_spot);

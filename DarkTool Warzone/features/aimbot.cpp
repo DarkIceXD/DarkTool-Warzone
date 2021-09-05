@@ -8,26 +8,21 @@
 static uint64_t bone_base = 0;
 static vector3 bone_base_pos;
 
-float fov(const vector2& screen, const float screen_width, const float game_fov)
-{
-	return (screen / screen_width).length() * game_fov / 2;
-}
-
-void aim_at(const float x, const float y, const bool absolute)
+void aim_at(const vector2& screen, const bool absolute)
 {
 	INPUT input = { 0 };
 	input.type = INPUT_MOUSE;
 	if (absolute)
 	{
 		input.mi.dwFlags = MOUSEEVENTF_MOVE | MOUSEEVENTF_ABSOLUTE;
-		input.mi.dx = x * (65536.f / GetSystemMetrics(SM_CXSCREEN));
-		input.mi.dy = y * (65536.f / GetSystemMetrics(SM_CYSCREEN));
+		input.mi.dx = screen.x * (65536.f / GetSystemMetrics(SM_CXSCREEN));
+		input.mi.dy = screen.y * (65536.f / GetSystemMetrics(SM_CYSCREEN));
 	}
 	else
 	{
 		input.mi.dwFlags = MOUSEEVENTF_MOVE;
-		input.mi.dx = x;
-		input.mi.dy = y;
+		input.mi.dx = screen.x;
+		input.mi.dy = screen.y;
 	}
 	SendInput(1, &input, sizeof(input));
 }
@@ -41,31 +36,32 @@ void features::aimbot::draw(ImDrawList* d, const ref_def& refdef, const vector3&
 	if (!bone_base)
 		return;
 
-	auto smallest_fov = FLT_MAX;
-	int best_index;
+	const auto tan_half_fov = refdef.view.tan_half_fov.length();
 	const vector2 middle(refdef.width / 2, refdef.height / 2);
+	auto smallest_fov = FLT_MAX;
+	int target;
 	for (int i = 0; i < data::players.size(); i++)
 	{
 		const auto& player = data::players[i];
 		if (!player.aimbot_valid)
 			continue;
 
-		vector2 feet;
-		if (!math::world_to_screen(player.origin + vector3(0, 0, 40), camera_pos, refdef, feet))
+		vector2 body;
+		if (!math::world_to_screen(player.origin + vector3(0, 0, 40), camera_pos, refdef, body))
 			continue;
 
-		const auto fov = (feet - middle).length();
+		const auto fov = math::pixels_to_fov(body - middle, tan_half_fov);
 		if (fov < smallest_fov)
 		{
 			smallest_fov = fov;
-			best_index = i;
+			target = i;
 		}
 	}
 
-	if (smallest_fov >= FLT_MAX || smallest_fov > cfg->aimbot.max_pixels)
+	if (smallest_fov >= FLT_MAX || smallest_fov > cfg->aimbot.fov)
 		return;
 
-	const auto bone_index = decryption::get_bone_index(best_index, globals::base);
+	const auto bone_index = decryption::get_bone_index(target, globals::base);
 	const auto bone_ptr = player::get_bone_ptr(bone_base, bone_index);
 	if (!bone_ptr)
 		return;
@@ -80,8 +76,8 @@ void features::aimbot::draw(ImDrawList* d, const ref_def& refdef, const vector3&
 		d->AddLine({ screen_pos.x - 5, screen_pos.y - 5 }, { screen_pos.x + 5, screen_pos.y + 5 }, IM_COL32_WHITE);
 		d->AddLine({ screen_pos.x - 5, screen_pos.y + 5 }, { screen_pos.x + 5, screen_pos.y - 5 }, IM_COL32_WHITE);
 	}
-	screen_pos -= middle;
-	aim_at(screen_pos.x, screen_pos.y, false);
+
+	aim_at(screen_pos - middle, false);
 }
 
 void features::aimbot::collect(const uint64_t client_info)
