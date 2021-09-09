@@ -6,6 +6,7 @@
 #include "../game/offsets.h"
 #include "../driver/driver.h"
 #include "../config/config.h"
+#include <iostream>
 
 void overlay::draw(ImDrawList* d)
 {
@@ -26,7 +27,7 @@ void overlay::draw(ImDrawList* d)
 	features::esp::draw(d, refdef, camera.position);
 	features::aimbot::draw(d, refdef, camera.position);
 }
-#include <iostream>
+
 void data::collect()
 {
 	if (!cfg->esp.bind.enabled && !cfg->aimbot.bind.enabled)

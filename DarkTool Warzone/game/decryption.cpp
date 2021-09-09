@@ -2,6 +2,7 @@
 #include "globals.h"
 #include <stdlib.h>
 #include "../driver/driver.h"
+#include <iostream>
 
 #define readMemory driver::read
 
@@ -1247,23 +1248,25 @@ uintptr_t decryption::get_ref_def(const uint64_t imageBase, const uintptr_t ref_
 
 uint64_t decryption::get_visible_base(const uint64_t imageBase, const uint64_t visible_offset, const uint64_t distribute)
 {
-	for (int32_t j = 4000; j >= 0; --j)
+	const uint64_t about_visible = imageBase + visible_offset;
+	const auto vis_base = driver::read<uint64_t>(imageBase + distribute);
+	if (!vis_base)
+		return 0;
+
+	for (int32_t i = 4000; i >= 0; --i)
 	{
-		uint64_t n_index = (j + (j << 2)) << 0x6;
-		uint64_t vis_base = driver::read<uint64_t>(imageBase + distribute);
-
-		if (!vis_base)
-			continue;
-
-		uint64_t vis_base_ptr = vis_base + n_index;
-		uint64_t cmp_function = driver::read<uint64_t>(vis_base_ptr + 0x90);
-
+		const uint64_t n_index = (i + (i << 2)) << 0x6;
+		const uint64_t vis_base_ptr = vis_base + n_index;
+		const auto cmp_function = driver::read<uint64_t>(vis_base_ptr + 0x90);
 		if (!cmp_function)
 			continue;
 
-		uint64_t about_visible = imageBase + visible_offset;
 		if (cmp_function == about_visible)
-			return vis_base_ptr;
+		{
+			const auto visible_list = driver::read<uint64_t>(vis_base_ptr + 0x108);
+			std::cout << i << '\n';
+			return visible_list;
+		}
 	}
 	return 0;
 }

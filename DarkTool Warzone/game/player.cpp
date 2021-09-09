@@ -50,24 +50,20 @@ player::player(const uintptr_t client_base, const int index) : base(client_base 
 
 [[nodiscard]] bool player::is_visible(const uintptr_t visible_base) const
 {
-	uint64_t VisibleList = driver::read<uint64_t>(visible_base + 0x108);
-	if (!VisibleList)
-		return false;
-
-	uint64_t rdx = VisibleList + (index * 9 + 0x14E) * 8;
+	const uint64_t rdx = visible_base + (index * 9 + 0x14E) * 8;
 	if (!rdx)
 		return false;
 
-	DWORD VisibleFlags = (rdx + 0x10) ^ driver::read<DWORD>(rdx + 0x14);
-	if (!VisibleFlags)
+	const DWORD visible_flags = (rdx + 0x10) ^ driver::read<DWORD>(rdx + 0x14);
+	if (!visible_flags)
 		return false;
 
-	DWORD v511 = VisibleFlags * (VisibleFlags + 2);
+	const DWORD v511 = visible_flags * (visible_flags + 2);
 	if (!v511)
 		return false;
 
-	BYTE VisibleFlags1 = driver::read<DWORD>(rdx + 0x10) ^ v511 ^ BYTE1(v511);
-	if (VisibleFlags1 == 3)
+	const BYTE visible_flags_1 = driver::read<DWORD>(rdx + 0x10) ^ v511 ^ BYTE1(v511);
+	if (visible_flags_1 == 3)
 		return true;
 
 	return false;

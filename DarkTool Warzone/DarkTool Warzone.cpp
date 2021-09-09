@@ -5,6 +5,7 @@
 #include "config/config.h"
 #include <iostream>
 #include <thread>
+#include "xorstr/xorstr.h"
 
 void overlay_execute()
 {
@@ -49,7 +50,7 @@ void collect_data()
 
 int main()
 {
-	driver::initialize(L"ModernWarfare.exe");
+	driver::initialize(xorstr("ModernWarfare.exe"));
 	if (!driver::connect())
 	{
 		std::cout << "Cannot connect to driver. Did you start the driver?\n";

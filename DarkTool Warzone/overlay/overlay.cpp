@@ -84,7 +84,7 @@ bool overlay::create_overlay(const uint32_t pid) {
 	window_class_ex.cbWndExtra = 0;
 	window_class_ex.hInstance = nullptr;
 	window_class_ex.hIcon = nullptr;
-	window_class_ex.hCursor = LoadCursorW(nullptr, IDC_ARROW);
+	window_class_ex.hCursor = LoadCursor(nullptr, IDC_ARROW);
 	window_class_ex.hbrBackground = HBRUSH(RGB(0, 0, 0));
 	window_class_ex.lpszMenuName = L"";
 	window_class_ex.lpszClassName = tite;
@@ -92,7 +92,7 @@ bool overlay::create_overlay(const uint32_t pid) {
 
 	ImGui::CreateContext();
 
-	if (!RegisterClassExW(&window_class_ex))
+	if (!RegisterClassEx(&window_class_ex))
 		return false;
 
 	do {
@@ -103,7 +103,7 @@ bool overlay::create_overlay(const uint32_t pid) {
 	if (!GetWindowRect(target_window, &target_window_size))
 		return false;
 
-	overlay_window = CreateWindowExW(WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_TOPMOST | WS_EX_NOACTIVATE, tite, L"", WS_POPUP | WS_VISIBLE,
+	overlay_window = CreateWindowEx(WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_TOPMOST | WS_EX_NOACTIVATE, tite, L"", WS_POPUP | WS_VISIBLE,
 		target_window_size.left, target_window_size.top, target_window_size.width(), target_window_size.height(), nullptr, nullptr, nullptr, nullptr);
 
 	if (!overlay_window)

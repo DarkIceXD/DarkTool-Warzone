@@ -72,9 +72,12 @@ static uint32_t find_process_by_id(const std::wstring_view& name)
 	return 0;
 }
 
-void driver::initialize(const std::wstring_view& process)
+void driver::initialize(const std::string_view& process)
 {
-	_pid = find_process_by_id(process);
+	std::wstring wc(process.size(), L'#');
+	size_t ret;
+	mbstowcs_s(&ret, &wc[0], process.size() + 1, process.data(), process.size());
+	_pid = find_process_by_id(wc);
 	WSADATA wsa_data;
 	WSAStartup(MAKEWORD(2, 2), &wsa_data);
 }

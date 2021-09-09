@@ -5,7 +5,7 @@
 
 namespace driver
 {
-	void	initialize(const std::wstring_view& process);
+	void	initialize(const std::string_view& process);
 	uint32_t pid();
 	void	deinitialize();
 

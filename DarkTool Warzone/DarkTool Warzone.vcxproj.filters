@@ -149,5 +149,8 @@
     <ClInclude Include="config\config.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="xorstr\xorstr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
