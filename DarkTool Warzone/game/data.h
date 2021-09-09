@@ -9,6 +9,7 @@ namespace data {
 		int distance;
 		float health;
 		char name[0x24];
+		bool visible;
 		bool valid;
 		bool esp_valid;
 		bool aimbot_valid;

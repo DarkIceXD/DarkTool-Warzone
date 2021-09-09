@@ -91,6 +91,9 @@ void features::aimbot::collect(const uint64_t client_info)
 		if (!player.valid)
 			continue;
 
+		if (cfg->aimbot.visibility_check && !player.visible)
+			continue;
+
 		if (cfg->aimbot.max_distance && player.distance > cfg->aimbot.max_distance)
 			continue;
 

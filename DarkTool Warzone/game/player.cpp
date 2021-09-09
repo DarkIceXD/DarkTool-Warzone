@@ -2,6 +2,8 @@
 #include "offsets.h"
 #include "../driver/driver.h"
 #include "../math/math.hpp"
+#define BYTEn(x, n)	(*((uint8_t*)&(x)+(n)))
+#define BYTE1(x)	BYTEn(x, 1)
 
 player::player(const uintptr_t client_base, const int index) : base(client_base + ((uint64_t)index * offsets::player::size)), index(index) {}
 
@@ -44,6 +46,31 @@ player::player(const uintptr_t client_base, const int index) : base(client_base 
 [[nodiscard]] name player::get_name_struct(const uintptr_t name_array_base) const
 {
 	return driver::read<name>(name_array_base + offsets::name_array_pos + ((uint64_t)index * 0xD0));
+}
+
+[[nodiscard]] bool player::is_visible(const uintptr_t visible_base) const
+{
+	uint64_t VisibleList = driver::read<uint64_t>(visible_base + 0x108);
+	if (!VisibleList)
+		return false;
+
+	uint64_t rdx = VisibleList + (index * 9 + 0x14E) * 8;
+	if (!rdx)
+		return false;
+
+	DWORD VisibleFlags = (rdx + 0x10) ^ driver::read<DWORD>(rdx + 0x14);
+	if (!VisibleFlags)
+		return false;
+
+	DWORD v511 = VisibleFlags * (VisibleFlags + 2);
+	if (!v511)
+		return false;
+
+	BYTE VisibleFlags1 = driver::read<DWORD>(rdx + 0x10) ^ v511 ^ BYTE1(v511);
+	if (VisibleFlags1 == 3)
+		return true;
+
+	return false;
 }
 
 [[nodiscard]] bool player::get_bounding_box_fallback(vector2& min, vector2& max, const vector3& origin_pos, const character_stance stance, const vector3& camera_pos, const ref_def& ref_def)

@@ -69,17 +69,19 @@ struct config {
 		keybind bind{};
 		int max_distance{ 0 };
 		rgb box_color{ 1, 0, 0, 1 };
+		rgb box_color_visible{ 0, 1, 0, 1 };
 		rgb box_color_downed{ 0, 1, 1, 1 };
-		JSON_SERIALIZE(esp, bind, max_distance, box_color, box_color_downed)
+		JSON_SERIALIZE(esp, bind, max_distance, box_color, box_color_visible, box_color_downed)
 	} esp;
 	struct aimbot {
 		keybind bind{};
 		int max_distance{ 0 };
 		float fov{ 5.f };
 		int hitbox{ 0 };
+		bool visibility_check{ true };
 		bool aim_at_downed_players{ false };
 		bool show_aim_spot{ true };
-		JSON_SERIALIZE(aimbot, bind, max_distance, fov, hitbox, aim_at_downed_players, show_aim_spot)
+		JSON_SERIALIZE(aimbot, bind, max_distance, fov, hitbox, visibility_check, aim_at_downed_players, show_aim_spot)
 	} aimbot;
 	JSON_SERIALIZE(config, esp, aimbot)
 };

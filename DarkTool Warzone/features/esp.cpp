@@ -11,6 +11,7 @@ void features::esp::draw(ImDrawList* d, const ref_def& refdef, const vector3& ca
 		return;
 
 	const auto color = cfg->esp.box_color.to_u32();
+	const auto visible = cfg->esp.box_color_visible.to_u32();
 	const auto downed = cfg->esp.box_color_downed.to_u32();
 	for (const auto& player : data::players)
 	{
@@ -21,12 +22,14 @@ void features::esp::draw(ImDrawList* d, const ref_def& refdef, const vector3& ca
 		if (!player::get_bounding_box_fallback(min, max, player.origin, player.stance, camera_pos, refdef))
 			continue;
 
-		const auto player_color = player.stance == character_stance::downed ? downed : color;
+		const auto player_color = player.stance == character_stance::downed ? downed : (player.visible ? visible : color);
 		d->AddRect({ min.x, min.y }, { max.x, max.y }, player_color);
 		const auto middle = (max.x - min.x) / 2 + min.x;
-		const auto meters_text = std::string("[") + std::to_string(player.distance) + " m]";
-		const auto distance_size = ImGui::CalcTextSize(meters_text.c_str());
-		d->AddText({ middle - distance_size.x / 2, min.y }, IM_COL32_WHITE, meters_text.c_str());
+		char meters_text[16];
+		snprintf(meters_text, sizeof(meters_text), "[%dm]", player.distance);
+		//const auto meters_text = std::string("[") + std::to_string(player.distance) + " m]";
+		const auto distance_size = ImGui::CalcTextSize(meters_text);
+		d->AddText({ middle - distance_size.x / 2, min.y }, IM_COL32_WHITE, meters_text);
 		const auto name_size = ImGui::CalcTextSize(player.name);
 		d->AddText({ middle - name_size.x / 2, max.y - name_size.y }, IM_COL32_WHITE, player.name);
 		const ImVec2 hp_min = { max.x + 2, min.y };

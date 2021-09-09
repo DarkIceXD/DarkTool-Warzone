@@ -26,7 +26,7 @@ void overlay::draw(ImDrawList* d)
 	features::esp::draw(d, refdef, camera.position);
 	features::aimbot::draw(d, refdef, camera.position);
 }
-
+#include <iostream>
 void data::collect()
 {
 	if (!cfg->esp.bind.enabled && !cfg->aimbot.bind.enabled)
@@ -49,6 +49,14 @@ void data::collect()
 	const auto name_base = player::get_name_array_base(globals::base);
 	if (!name_base)
 	{
+		data::local_player.valid = false;
+		return;
+	}
+
+	static const auto visible_base = decryption::get_visible_base(globals::base, offsets::visible, offsets::distribute);
+	if (!visible_base)
+	{
+		std::cout << "visible_base was null\n";
 		data::local_player.valid = false;
 		return;
 	}
@@ -82,6 +90,7 @@ void data::collect()
 		const auto name = p.get_name_struct(name_base);
 		player_data.health = name.health / 127.f;
 		strcpy_s(player_data.name, name.name);
+		player_data.visible = p.is_visible(visible_base);
 		player_data.valid = true;
 	}
 	data::local_player.valid = true;
