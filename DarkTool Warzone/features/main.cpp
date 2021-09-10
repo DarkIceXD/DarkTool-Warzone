@@ -47,17 +47,17 @@ void data::collect()
 		return;
 	}
 
-	const auto name_base = player::get_name_array_base(globals::base);
-	if (!name_base)
+	static uint64_t visible_base = 0;
+	if (!visible_base)
 	{
+		visible_base = decryption::get_visible_base(globals::base, offsets::visible, offsets::distribute);
 		data::local_player.valid = false;
 		return;
 	}
 
-	static const auto visible_base = decryption::get_visible_base(globals::base, offsets::visible, offsets::distribute);
-	if (!visible_base)
+	const auto name_base = player::get_name_array_base(globals::base);
+	if (!name_base)
 	{
-		std::cout << "visible_base was null\n";
 		data::local_player.valid = false;
 		return;
 	}

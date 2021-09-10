@@ -2,7 +2,6 @@
 #include "globals.h"
 #include <stdlib.h>
 #include "../driver/driver.h"
-#include <iostream>
 
 #define readMemory driver::read
 
@@ -1264,7 +1263,6 @@ uint64_t decryption::get_visible_base(const uint64_t imageBase, const uint64_t v
 		if (cmp_function == about_visible)
 		{
 			const auto visible_list = driver::read<uint64_t>(vis_base_ptr + 0x108);
-			std::cout << i << '\n';
 			return visible_list;
 		}
 	}
