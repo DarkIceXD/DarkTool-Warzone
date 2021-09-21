@@ -27,7 +27,6 @@ void features::esp::draw(ImDrawList* d, const ref_def& refdef, const vector3& ca
 		const auto middle = (max.x - min.x) / 2 + min.x;
 		char meters_text[16];
 		snprintf(meters_text, sizeof(meters_text), "[%dm]", player.distance);
-		//const auto meters_text = std::string("[") + std::to_string(player.distance) + " m]";
 		const auto distance_size = ImGui::CalcTextSize(meters_text);
 		d->AddText({ middle - distance_size.x / 2, min.y }, IM_COL32_WHITE, meters_text);
 		const auto name_size = ImGui::CalcTextSize(player.name);

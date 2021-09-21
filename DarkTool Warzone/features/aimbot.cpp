@@ -50,7 +50,7 @@ void features::aimbot::draw(ImDrawList* d, const ref_def& refdef, const vector3&
 		if (!math::world_to_screen(player.origin + vector3(0, 0, 40), camera_pos, refdef, body))
 			continue;
 
-		const auto fov = math::pixels_to_fov(body - middle, tan_half_fov);
+		const auto fov = math::pixels_to_fov((body - middle).length(), tan_half_fov, middle.x);
 		if (fov < smallest_fov)
 		{
 			smallest_fov = fov;
@@ -77,7 +77,12 @@ void features::aimbot::draw(ImDrawList* d, const ref_def& refdef, const vector3&
 		d->AddLine({ screen_pos.x - 5, screen_pos.y + 5 }, { screen_pos.x + 5, screen_pos.y - 5 }, IM_COL32_WHITE);
 	}
 
-	aim_at(screen_pos - middle, false);
+	const auto diff = screen_pos - middle;
+	auto dx = diff / cfg->aimbot.game_sensitivity * 8;
+	const auto fov = math::pixels_to_fov(diff.length(), tan_half_fov, middle.x);
+	if (fov > 2)
+		dx /= cfg->aimbot.smoothness;
+	aim_at(dx, false);
 }
 
 void features::aimbot::collect(const uint64_t client_info)

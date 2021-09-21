@@ -75,13 +75,15 @@ struct config {
 	} esp;
 	struct aimbot {
 		keybind bind{};
+		float game_sensitivity{ 2.7f };
 		int max_distance{ 0 };
 		float fov{ 5.f };
+		float smoothness{ 1.f };
 		int hitbox{ 0 };
 		bool visibility_check{ true };
 		bool aim_at_downed_players{ false };
 		bool show_aim_spot{ true };
-		JSON_SERIALIZE(aimbot, bind, max_distance, fov, hitbox, visibility_check, aim_at_downed_players, show_aim_spot)
+		JSON_SERIALIZE(aimbot, bind, game_sensitivity, max_distance, fov, smoothness, hitbox, visibility_check, aim_at_downed_players, show_aim_spot)
 	} aimbot;
 	JSON_SERIALIZE(config, esp, aimbot)
 };

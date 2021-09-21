@@ -37,28 +37,7 @@
 	return units * 0.0254f;
 }
 
-[[nodiscard]] vector2 math::calculate_angle(const vector3& src, const vector3& dst) noexcept
+[[nodiscard]] float math::pixels_to_fov(const float radius, const float tan_half_fov, const float half_screen_width)
 {
-	const auto delta = dst - src;
-	vector2 angle(std::atan2(-delta.z, std::hypot(delta.x, delta.y)) * rad2deg, std::atan2(delta.y, delta.x) * rad2deg);
-	angle.normalize();
-	return angle;
-}
-
-[[nodiscard]] vector2 math::calculate_angle_relative(const vector3& src, const vector3& dst, const vector2& angles) noexcept
-{
-	const auto delta = dst - src;
-	vector2 angle(std::atan2(-delta.z, std::hypot(delta.x, delta.y)) * rad2deg - angles.x, std::atan2(delta.y, delta.x) * rad2deg - angles.y);
-	angle.normalize();
-	return angle;
-}
-
-[[nodiscard]] float math::fov(const vector2& a) noexcept
-{
-	return sin(a.length() * deg2rad / 2.0f) * 180.0f;
-}
-
-float math::pixels_to_fov(const vector2& screen, const float tan_half_fov)
-{
-	return atan(screen.length() * tan_half_fov) * 2;
+	return atan(radius * tan_half_fov / half_screen_width) * 2 * rad2deg;
 }

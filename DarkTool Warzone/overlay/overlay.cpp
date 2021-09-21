@@ -103,7 +103,7 @@ bool overlay::create_overlay(const uint32_t pid) {
 	if (!GetWindowRect(target_window, &target_window_size))
 		return false;
 
-	overlay_window = CreateWindowEx(WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_TOPMOST | WS_EX_NOACTIVATE, tite, L"", WS_POPUP | WS_VISIBLE,
+	overlay_window = CreateWindowEx(WS_EX_TOPMOST | WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_NOACTIVATE, tite, L"", WS_POPUP | WS_VISIBLE,
 		target_window_size.left, target_window_size.top, target_window_size.width(), target_window_size.height(), nullptr, nullptr, nullptr, nullptr);
 
 	if (!overlay_window)
@@ -232,6 +232,5 @@ void overlay::end() {
 	direct_device->EndScene();
 	direct_device->Present(nullptr, nullptr, nullptr, nullptr);
 
-	GetWindowRect(target_window, &target_window_size);
-	SetWindowPos(overlay_window, HWND_TOP, target_window_size.left, target_window_size.top, target_window_size.width(), target_window_size.height(), SWP_ASYNCWINDOWPOS);
+	SetWindowPos(overlay_window, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
 }
