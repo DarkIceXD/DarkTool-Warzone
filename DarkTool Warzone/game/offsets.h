@@ -1,15 +1,15 @@
 #pragma once
 
 namespace offsets {
-	constexpr auto refdef = 0x179EA4F0;
-	constexpr auto name_array = 0x179F5B68;
+	constexpr auto refdef = 0x17757E20;
+	constexpr auto name_array = 0x17763498;
 	constexpr auto name_array_pos = 0x4C70;
-	constexpr auto camera_base = 0x156E0760;
+	constexpr auto camera_base = 0x1544DFF0;
 	constexpr auto camera_pos = 0x1D8;
 	constexpr auto local_index = 0xE88;
 	constexpr auto local_index_pos = 0x1FC;
-	constexpr auto distribute = 0x1A08A978;
-	constexpr auto visible = 0x63ECB70;
+	constexpr auto distribute = 0x19DF8978;
+	constexpr auto visible = 0x614EFC0;
 
 	namespace player {
 		constexpr auto size = 0x3A98;
