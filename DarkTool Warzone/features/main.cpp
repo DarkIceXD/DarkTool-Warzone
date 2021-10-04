@@ -6,24 +6,27 @@
 #include "../game/offsets.h"
 #include "../driver/driver.h"
 #include "../config/config.h"
-#include <iostream>
+#include "../utilities/utils.h"
+
+static uintptr_t camera_base = 0;
 
 void overlay::draw(ImDrawList* d)
 {
 	if (!data::local_player.valid)
 		return;
 
-	const auto camera_base = math::get_camera_base(globals::base);
-	if (!camera_base)
+	if (!utils::is_valid_ptr(camera_base))
 		return;
 
-	const auto camera = math::get_camera_struct(camera_base);
-
-	const auto ref_def_ptr = decryption::get_ref_def(globals::base, offsets::refdef);
-	if (!ref_def_ptr)
+	static auto ref_def_ptr = decryption::get_ref_def(globals::base, offsets::refdef);
+	if (!utils::is_valid_ptr(ref_def_ptr))
+	{
+		ref_def_ptr = decryption::get_ref_def(globals::base, offsets::refdef);
 		return;
+	}
 
 	const auto refdef = driver::read<ref_def>(ref_def_ptr);
+	const auto camera = math::get_camera_struct(camera_base);
 	features::esp::draw(d, refdef, camera.position);
 	features::aimbot::draw(d, refdef, camera.position);
 }
@@ -33,33 +36,53 @@ void data::collect()
 	if (!cfg->esp.bind.enabled && !cfg->aimbot.bind.enabled)
 		return;
 
-	const auto client_info = decryption::decrypt_client_info(globals::base, globals::peb);
-	if (!client_info)
-	{
-		data::local_player.valid = false;
-		return;
-	}
-
-	const auto client_base = decryption::decrypt_client_base(client_info, globals::base, globals::peb);
-	if (!client_base)
-	{
-		data::local_player.valid = false;
-		return;
-	}
-
+	static auto full_refresh = true;
+	static uint64_t client_info = 0;
+	static uint64_t client_base = 0;
 	static uint64_t visible_base = 0;
-	if (!visible_base)
-	{
-		visible_base = decryption::get_visible_base(globals::base, offsets::visible, offsets::distribute);
-		data::local_player.valid = false;
-		return;
-	}
+	static uintptr_t name_base = 0;
 
-	const auto name_base = player::get_name_array_base(globals::base);
-	if (!name_base)
+	const auto client_info_new = decryption::decrypt_client_info(globals::base, globals::peb);
+	if (client_info != client_info_new)
+		full_refresh = true;
+
+	if (full_refresh)
 	{
-		data::local_player.valid = false;
-		return;
+		client_info = client_info_new;
+		if (!utils::is_valid_ptr(client_info))
+		{
+			data::local_player.valid = false;
+			return;
+		}
+
+		client_base = decryption::decrypt_client_base(client_info, globals::base, globals::peb);
+		if (!utils::is_valid_ptr(client_base))
+		{
+			data::local_player.valid = false;
+			return;
+		}
+
+		visible_base = decryption::get_visible_base(globals::base, offsets::visible, offsets::distribute);
+		if (!utils::is_valid_ptr(visible_base))
+		{
+			data::local_player.valid = false;
+			return;
+		}
+
+		name_base = player::get_name_array_base(globals::base);
+		if (!utils::is_valid_ptr(name_base))
+		{
+			data::local_player.valid = false;
+			return;
+		}
+
+		camera_base = math::get_camera_base(globals::base);
+		if (!utils::is_valid_ptr(camera_base))
+		{
+			data::local_player.valid = false;
+			return;
+		}
+		full_refresh = false;
 	}
 
 	const auto local_index = player::get_local_index(client_info);

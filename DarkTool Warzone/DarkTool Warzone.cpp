@@ -3,9 +3,9 @@
 #include "overlay/overlay.hpp"
 #include "game/data.h"
 #include "config/config.h"
+#include "utilities/xorstr.h"
 #include <iostream>
 #include <thread>
-#include "xorstr/xorstr.h"
 
 void overlay_execute()
 {
@@ -31,7 +31,7 @@ void overlay_execute()
 		if (GetAsyncKeyState(VK_END) & 1)
 			break;
 
-		std::this_thread::sleep_for(std::chrono::milliseconds(1));
+		std::this_thread::sleep_for(std::chrono::milliseconds(10));
 	} while (message.message != WM_QUIT);
 }
 

@@ -192,7 +192,8 @@
     <ClInclude Include="game\offsets.h" />
     <ClInclude Include="overlay\overlay.hpp" />
     <ClInclude Include="driver\server_shared.h" />
-    <ClInclude Include="xorstr\xorstr.h" />
+    <ClInclude Include="utilities\utils.h" />
+    <ClInclude Include="utilities\xorstr.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

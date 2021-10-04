@@ -149,7 +149,10 @@
     <ClInclude Include="config\config.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="xorstr\xorstr.h">
+    <ClInclude Include="utilities\xorstr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="utilities\utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

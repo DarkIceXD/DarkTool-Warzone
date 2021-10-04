@@ -78,7 +78,7 @@ void features::aimbot::draw(ImDrawList* d, const ref_def& refdef, const vector3&
 	}
 
 	const auto diff = screen_pos - middle;
-	auto dx = diff / cfg->aimbot.game_sensitivity * 8;
+	auto dx = diff * (7.f / cfg->aimbot.game_sensitivity);
 	const auto fov = math::pixels_to_fov(diff.length(), tan_half_fov, middle.x);
 	if (fov > 2)
 		dx /= cfg->aimbot.smoothness;
