@@ -92,23 +92,23 @@ static uint32_t copy_memory(const uint32_t src_process_id, const uintptr_t src_a
 	return 0;
 }
 
-bool driver::initialize(const std::string_view& process)
+driver::status driver::initialize(const std::string_view& process)
 {
 	if (create_shared_events())
-		return false;
+		return driver::status::events_failed;
 
 	std::wstring wc(process.size(), L'#');
 	size_t ret;
 	mbstowcs_s(&ret, &wc[0], process.size() + 1, process.data(), process.size());
 	_pid = find_process_by_id(wc);
 	if (!_pid)
-		return false;
+		return driver::status::process_not_found;
 
 	_packet = get_packet();
 	if (!_packet)
-		return false;
+		return driver::status::driver_connection_failed;
 
-	return true;
+	return driver::status::success;
 }
 
 uint32_t driver::pid()

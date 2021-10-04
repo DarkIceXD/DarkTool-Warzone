@@ -4,7 +4,13 @@
 #include <string_view>
 
 namespace driver {
-	bool initialize(const std::string_view& process);
+	enum class status {
+		success,
+		events_failed,
+		process_not_found,
+		driver_connection_failed
+	};
+	status initialize(const std::string_view& process);
 	void deinitialize();
 	uint32_t pid();
 	uint64_t get_base();

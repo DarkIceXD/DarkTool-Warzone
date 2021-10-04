@@ -50,10 +50,23 @@ void collect_data()
 
 int main()
 {
-	if (!driver::initialize(xorstr("ModernWarfare.exe")))
+	const auto driver_status = driver::initialize(xorstr("ModernWarfare.exe"));
+	switch (driver_status)
 	{
-		std::cout << "Cannot connect to driver. Did you start the driver?\n";
+	case driver::status::events_failed:
+		std::cout << "Can't create events.\n" << "Press enter to quit.\n";
+		std::cin.get();
 		return 0;
+	case driver::status::process_not_found:
+		std::cout << "Can't find process. Did you start the game?\n" << "Press enter to quit.\n";
+		std::cin.get();
+		return 0;
+	case driver::status::driver_connection_failed:
+		std::cout << "Can't connect to driver. Did you start the driver?\n" << "Press enter to quit.\n";
+		std::cin.get();
+		return 0;
+	default:
+		break;
 	}
 	std::cout
 		<< "Close this to disable DarkTool Overlay\n"
