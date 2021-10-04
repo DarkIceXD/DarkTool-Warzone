@@ -27,45 +27,21 @@
     <ClCompile Include="DarkDr1ver.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="packet_handler.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="server.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ksocket\berkeley.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ksocket\ksocket.c">
+    <ClCompile Include="driver\driver.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="imports.h">
+    <ClInclude Include="driver\driver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="log.h">
+    <ClInclude Include="driver\imports.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="server_shared.h">
+    <ClInclude Include="driver\server_shared.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="sockets.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="stdint.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ksocket\berkeley.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ksocket\ksocket.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="packet_handler.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="server.h">
+    <ClInclude Include="driver\stdint.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

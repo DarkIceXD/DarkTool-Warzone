@@ -37,7 +37,7 @@ void overlay_execute()
 
 void collect_data()
 {
-	globals::base = driver::get_process_base_address();
+	globals::base = driver::get_base();
 	globals::peb = driver::get_peb();
 	std::cout << "base: " << std::hex << globals::base << '\n';
 	std::cout << "peb: " << std::hex << globals::peb << '\n';
@@ -50,14 +50,11 @@ void collect_data()
 
 int main()
 {
-	driver::initialize(xorstr("ModernWarfare.exe"));
-	if (!driver::connect())
+	if (!driver::initialize(xorstr("ModernWarfare.exe")))
 	{
 		std::cout << "Cannot connect to driver. Did you start the driver?\n";
 		return 0;
 	}
-	driver::clean_piddbcachetable();
-	driver::clean_mmunloadeddrivers();
 	std::cout
 		<< "Close this to disable DarkTool Overlay\n"
 		<< "Press INS to open Menu\n"
