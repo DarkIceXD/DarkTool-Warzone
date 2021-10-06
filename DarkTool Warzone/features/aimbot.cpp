@@ -5,9 +5,6 @@
 #include "../game/decryption.h"
 #include "../game/globals.h"
 
-static uint64_t bone_base = 0;
-static vector3 bone_base_pos;
-
 void aim_at(const vector2& screen, const bool absolute)
 {
 	INPUT input = { 0 };
@@ -33,51 +30,38 @@ void features::aimbot::draw(ImDrawList* d, const ref_def& refdef, const vector3&
 	if (!cfg->aimbot.bind.enabled)
 		return;
 
-	if (!bone_base)
-		return;
-
 	const auto tan_half_fov = refdef.view.tan_half_fov.length();
 	const vector2 middle(refdef.width / 2, refdef.height / 2);
 	auto smallest_fov = FLT_MAX;
-	int target;
+	vector2 best_hitbox;
 	for (int i = 0; i < data::players.size(); i++)
 	{
 		const auto& player = data::players[i];
 		if (!player.aimbot_valid)
 			continue;
 
-		vector2 body;
-		if (!math::world_to_screen(player.origin + vector3(0, 0, 40), camera_pos, refdef, body))
+		vector2 hitbox;
+		if (!math::world_to_screen(player.bones[data::player_data::bone_to_index(((cfg->aimbot.hitbox == 0) ? player::bone::chest : player::bone::head))], camera_pos, refdef, hitbox))
 			continue;
 
-		const auto fov = math::pixels_to_fov((body - middle).length(), tan_half_fov, middle.x);
+		const auto fov = math::pixels_to_fov((hitbox - middle).length(), tan_half_fov, middle.x);
 		if (fov < smallest_fov)
 		{
 			smallest_fov = fov;
-			target = i;
+			best_hitbox = hitbox;
 		}
 	}
 
 	if (smallest_fov >= FLT_MAX || smallest_fov > cfg->aimbot.fov)
 		return;
 
-	const auto bone_index = decryption::get_bone_index(target, globals::base);
-	const auto bone_ptr = player::get_bone_ptr(bone_base, bone_index);
-	if (!bone_ptr)
-		return;
-
-	const auto bone_pos = player::get_bone_position(bone_ptr, bone_base_pos, ((cfg->aimbot.hitbox == 0) ? 5 : 7));
-	vector2 screen_pos;
-	if (!math::world_to_screen(bone_pos, camera_pos, refdef, screen_pos))
-		return;
-
 	if (cfg->aimbot.show_aim_spot)
 	{
-		d->AddLine({ screen_pos.x - 5, screen_pos.y - 5 }, { screen_pos.x + 5, screen_pos.y + 5 }, IM_COL32_WHITE);
-		d->AddLine({ screen_pos.x - 5, screen_pos.y + 5 }, { screen_pos.x + 5, screen_pos.y - 5 }, IM_COL32_WHITE);
+		d->AddLine({ best_hitbox.x - 5, best_hitbox.y - 5 }, { best_hitbox.x + 5, best_hitbox.y + 5 }, IM_COL32_WHITE);
+		d->AddLine({ best_hitbox.x - 5, best_hitbox.y + 5 }, { best_hitbox.x + 5, best_hitbox.y - 5 }, IM_COL32_WHITE);
 	}
 
-	const auto diff = screen_pos - middle;
+	const auto diff = best_hitbox - middle;
 	auto dx = diff * (7.f / cfg->aimbot.game_sensitivity);
 	const auto fov = math::pixels_to_fov(diff.length(), tan_half_fov, middle.x);
 	if (fov > 2)
@@ -102,16 +86,10 @@ void features::aimbot::collect(const uint64_t client_info)
 		if (cfg->aimbot.max_distance && player.distance > cfg->aimbot.max_distance)
 			continue;
 
-		if (!cfg->aimbot.aim_at_downed_players && player.stance == character_stance::downed)
+		if (!cfg->aimbot.aim_at_downed_players && player.stance == player::stance::downed)
 			continue;
 
 		player.aimbot_valid = true;
 		any_valid = true;
-	}
-
-	if (any_valid)
-	{
-		bone_base = decryption::decrypt_bone_base(globals::base, globals::peb);
-		bone_base_pos = player::get_bone_base_pos(client_info);
 	}
 }

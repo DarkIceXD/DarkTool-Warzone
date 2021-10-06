@@ -10,9 +10,12 @@ void features::esp::draw(ImDrawList* d, const ref_def& refdef, const vector3& ca
 	if (!cfg->esp.bind.enabled)
 		return;
 
-	const auto color = cfg->esp.box_color.to_u32();
-	const auto visible = cfg->esp.box_color_visible.to_u32();
-	const auto downed = cfg->esp.box_color_downed.to_u32();
+	const auto box_base_color = cfg->esp.box.base.to_u32();
+	const auto box_visible_color = cfg->esp.box.visible.to_u32();
+	const auto box_downed_color = cfg->esp.box.downed.to_u32();
+	const auto skeleton_base_color = cfg->esp.skeleton.base.to_u32();
+	const auto skeleton_visible_color = cfg->esp.skeleton.visible.to_u32();
+	const auto skeleton_downed_color = cfg->esp.skeleton.downed.to_u32();
 	for (const auto& player : data::players)
 	{
 		if (!player.esp_valid)
@@ -22,8 +25,8 @@ void features::esp::draw(ImDrawList* d, const ref_def& refdef, const vector3& ca
 		if (!player::get_bounding_box_fallback(min, max, player.origin, player.stance, camera_pos, refdef))
 			continue;
 
-		const auto player_color = player.stance == character_stance::downed ? downed : (player.visible ? visible : color);
-		d->AddRect({ min.x, min.y }, { max.x, max.y }, player_color);
+		const auto box_color = player.stance == player::stance::downed ? box_downed_color : (player.visible ? box_visible_color : box_base_color);
+		d->AddRect({ min.x, min.y }, { max.x, max.y }, box_color);
 		const auto middle = (max.x - min.x) / 2 + min.x;
 		char meters_text[16];
 		snprintf(meters_text, sizeof(meters_text), "[%dm]", player.distance);
@@ -35,6 +38,17 @@ void features::esp::draw(ImDrawList* d, const ref_def& refdef, const vector3& ca
 		const ImVec2 hp_max = { hp_min.x + 3, hp_min.y + (max.y - min.y) * player.health };
 		d->AddRectFilled(hp_min, hp_max, rgb::scale({ 0, 1, 0, 1 }, { 1, 0, 0, 1 }, player.health).to_u32());
 		d->AddRect(hp_min, hp_max, IM_COL32_BLACK);
+
+		const auto skeleton_color = player.stance == player::stance::downed ? skeleton_downed_color : (player.visible ? skeleton_visible_color : skeleton_base_color);
+		for (const auto& bone_connection : player::bone_connections)
+		{
+			vector2 a, b;
+			if (!math::world_to_screen(player.bones[data::player_data::bone_to_index(bone_connection.first)], camera_pos, refdef, a) ||
+				!math::world_to_screen(player.bones[data::player_data::bone_to_index(bone_connection.second)], camera_pos, refdef, b))
+				continue;
+
+			d->AddLine({ a.x, a.y }, { b.x, b.y }, skeleton_color);
+		}
 	}
 }
 

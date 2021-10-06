@@ -56,9 +56,12 @@ void overlay::menu()
 				static auto esp_found = true;
 				ImGui::KeyBind("ESP", &cfg->esp.bind.type, &cfg->esp.bind.key_bind, &esp_found);
 				ImGui::SliderInt("Max Distance", &cfg->esp.max_distance, 0, 1000);
-				ImGui::ColorEdit4("Box Color", &cfg->esp.box_color.r, ImGuiColorEditFlags_Float | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_AlphaPreview);
-				ImGui::ColorEdit4("Box Color Visible", &cfg->esp.box_color_visible.r, ImGuiColorEditFlags_Float | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_AlphaPreview);
-				ImGui::ColorEdit4("Box Color Downed", &cfg->esp.box_color_downed.r, ImGuiColorEditFlags_Float | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_AlphaPreview);
+				ImGui::ColorEdit4("Box Color", &cfg->esp.box.base.r, ImGuiColorEditFlags_Float | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_AlphaPreview);
+				ImGui::ColorEdit4("Box Color Visible", &cfg->esp.box.visible.r, ImGuiColorEditFlags_Float | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_AlphaPreview);
+				ImGui::ColorEdit4("Box Color Downed", &cfg->esp.box.downed.r, ImGuiColorEditFlags_Float | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_AlphaPreview);
+				ImGui::ColorEdit4("Skeleton Color", &cfg->esp.skeleton.base.r, ImGuiColorEditFlags_Float | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_AlphaPreview);
+				ImGui::ColorEdit4("Skeleton Color Visible", &cfg->esp.skeleton.visible.r, ImGuiColorEditFlags_Float | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_AlphaPreview);
+				ImGui::ColorEdit4("Skeleton Color Downed", &cfg->esp.skeleton.downed.r, ImGuiColorEditFlags_Float | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_AlphaPreview);
 				ImGui::EndTabItem();
 			}
 			if (ImGui::BeginTabItem("Aimbot"))

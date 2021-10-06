@@ -62,6 +62,18 @@ public:
 		lhs -= rhs;
 		return lhs;
 	}
+	[[nodiscard]] constexpr friend bool operator!=(const vector3 lhs, const vector3 rhs) noexcept
+	{
+		return lhs.x != rhs.x || lhs.y != rhs.y || lhs.z != rhs.z;
+	}
+	[[nodiscard]] constexpr friend bool operator==(const vector3 lhs, const vector3 rhs) noexcept
+	{
+		return !(lhs != rhs);
+	}
+	[[nodiscard]] constexpr bool is_zero() const noexcept
+	{
+		return *this == vector3(0, 0, 0);
+	}
 	[[nodiscard]] float length_2d() const noexcept
 	{
 		return sqrt((x * x) + (y * y));

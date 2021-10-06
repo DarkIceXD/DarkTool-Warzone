@@ -68,10 +68,12 @@ struct config {
 	struct esp {
 		keybind bind{};
 		int max_distance{ 0 };
-		rgb box_color{ 1, 0, 0, 1 };
-		rgb box_color_visible{ 0, 1, 0, 1 };
-		rgb box_color_downed{ 0, 1, 1, 1 };
-		JSON_SERIALIZE(esp, bind, max_distance, box_color, box_color_visible, box_color_downed)
+		struct color {
+			rgb base, visible, downed;
+			JSON_SERIALIZE(color, base, visible, downed)
+		}
+		box{ { 1, 0, 0, 1 }, { 0, 1, 0, 1 }, { 0, 1, 1, 1 } }, skeleton{ { 1, 0, 0, 0.5f }, { 0, 1, 0, 0.5f }, { 0, 1, 1, 0.5f } };
+		JSON_SERIALIZE(esp, bind, max_distance, box, skeleton)
 	} esp;
 	struct aimbot {
 		keybind bind{};

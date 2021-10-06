@@ -1,11 +1,12 @@
 #include "player.h"
 #include "offsets.h"
+#include "../utilities/utils.h"
 #include "../driver/driver.h"
 #include "../math/math.hpp"
 #define BYTEn(x, n)	(*((uint8_t*)&(x)+(n)))
 #define BYTE1(x)	BYTEn(x, 1)
 
-player::player(const uintptr_t client_base, const int index) : base(client_base + ((uint64_t)index * offsets::player::size)), index(index) {}
+player::player(const uintptr_t client_base, const int index) : base(client_base + (static_cast<uint64_t>(index) * offsets::player::size)), index(index) {}
 
 [[nodiscard]] bool player::is_valid() const
 {
@@ -24,18 +25,18 @@ player::player(const uintptr_t client_base, const int index) : base(client_base 
 	return true;
 }
 
-[[nodiscard]] vector3 player::get_origin() const
+[[nodiscard]] std::optional<vector3> player::get_origin() const
 {
 	const auto position_address = driver::read<uintptr_t>(base + offsets::player::pos);
-	if (position_address == 0 || position_address >= 0xFFFFFFFFFFFFFFF)
-		return {};
+	if (!utils::is_valid_ptr(position_address))
+		return std::nullopt;
 
 	return driver::read<vector3>(position_address + 0x40);
 }
 
-[[nodiscard]] character_stance player::get_stance() const
+[[nodiscard]] player::stance player::get_stance() const
 {
-	return driver::read<character_stance>(base + offsets::player::stance);
+	return driver::read<player::stance>(base + offsets::player::stance);
 }
 
 [[nodiscard]] int player::get_team() const
@@ -45,12 +46,12 @@ player::player(const uintptr_t client_base, const int index) : base(client_base 
 
 [[nodiscard]] name player::get_name_struct(const uintptr_t name_array_base) const
 {
-	return driver::read<name>(name_array_base + offsets::name_array_pos + ((uint64_t)index * 0xD0));
+	return driver::read<name>(name_array_base + offsets::name_array_pos + (static_cast<uint64_t>(index) * 0xD0));
 }
 
 [[nodiscard]] bool player::is_visible(const uintptr_t visible_base) const
 {
-	const uint64_t rdx = visible_base + (index * 9 + 0x14E) * 8;
+	const uint64_t rdx = visible_base + (static_cast<int64_t>(index) * 9 + 0x14E) * 8;
 	if (!rdx)
 		return false;
 
@@ -69,7 +70,7 @@ player::player(const uintptr_t client_base, const int index) : base(client_base 
 	return false;
 }
 
-[[nodiscard]] bool player::get_bounding_box_fallback(vector2& min, vector2& max, const vector3& origin_pos, const character_stance stance, const vector3& camera_pos, const ref_def& ref_def)
+[[nodiscard]] bool player::get_bounding_box_fallback(vector2& min, vector2& max, const vector3& origin_pos, const player::stance stance, const vector3& camera_pos, const ref_def& ref_def)
 {
 	const auto head_pos = origin_pos + vector3(0, 0, estimate_head_position(stance));
 
@@ -85,30 +86,30 @@ player::player(const uintptr_t client_base, const int index) : base(client_base 
 	return true;
 }
 
-[[nodiscard]] float player::estimate_head_position(const character_stance stance)
+[[nodiscard]] float player::estimate_head_position(const player::stance stance)
 {
 	switch (stance)
 	{
-	case character_stance::crouching:
+	case player::stance::crouching:
 		return 50;
-	case character_stance::crawling:
+	case player::stance::crawling:
 		return 20;
-	case character_stance::downed:
+	case player::stance::downed:
 		return 30;
 	default:
 		return 68;
 	}
 }
 
-[[nodiscard]] float player::estimate_width(const character_stance stance)
+[[nodiscard]] float player::estimate_width(const player::stance stance)
 {
 	switch (stance)
 	{
-	case character_stance::crouching:
+	case player::stance::crouching:
 		return 1 / 2.5f;
-	case character_stance::crawling:
+	case player::stance::crawling:
 		return 2.5f;
-	case character_stance::downed:
+	case player::stance::downed:
 		return 2.f;
 	default:
 		return 1 / 4.f;
@@ -120,11 +121,12 @@ player::player(const uintptr_t client_base, const int index) : base(client_base 
 	return driver::read<uintptr_t>(base + offsets::name_array);
 }
 
-[[nodiscard]] int player::get_local_index(const uintptr_t client_info)
+[[nodiscard]] std::optional<int> player::get_local_index(const uintptr_t client_info)
 {
 	const auto local_index = driver::read<uintptr_t>(client_info + offsets::local_index);
-	if (!local_index)
-		return -1;
+	if (!utils::is_valid_ptr(local_index))
+		return std::nullopt;
+
 	return driver::read<int>(local_index + offsets::local_index_pos);
 }
 
@@ -138,7 +140,20 @@ player::player(const uintptr_t client_base, const int index) : base(client_base 
 	return driver::read<vector3>(client_info + offsets::bone::base_pos);
 }
 
-[[nodiscard]] vector3 player::get_bone_position(const uintptr_t bone_ptr, const vector3& base_pos, const int bone)
+[[nodiscard]] vector3 player::get_bone_position(const uintptr_t bone_ptr, const vector3& base_pos, const player::bone bone)
 {
-	return base_pos + driver::read<vector3>(bone_ptr + ((uint64_t)bone * 0x20) + 0x10);
+	return base_pos + driver::read<vector3>(bone_ptr + (static_cast<uint64_t>(bone) * 0x20) + 0x10);
+}
+
+std::array<vector3, static_cast<size_t>(player::bone::count)> player::get_all_bones(const uintptr_t bone_ptr)
+{
+	struct bone {
+		vector3 position;
+		uint8_t pad0[20];
+	};
+	const auto raw_bones = driver::read<std::array<bone, static_cast<size_t>(player::bone::count)>>(bone_ptr + 0x10);
+	std::array<vector3, raw_bones.size()> bones;
+	for (size_t i = 0; i < raw_bones.size(); i++)
+		bones[i] = raw_bones[i].position;
+	return bones;
 }
