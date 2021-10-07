@@ -64,6 +64,10 @@ namespace data {
 				return 0;
 			}
 		}
+		constexpr const vector3& get_bone(const player::bone bone) const noexcept
+		{
+			return bones[bone_to_index(bone)];
+		}
 		static constexpr player::bone index_to_bone(const size_t index) noexcept
 		{
 			switch (index)
@@ -94,9 +98,9 @@ namespace data {
 				return player::bone::left_hand3;
 			case 12:
 				return player::bone::left_hand4;
-			case 13: 
+			case 13:
 				return player::bone::left_foot1;
-			case 14: 
+			case 14:
 				return player::bone::left_foot2;
 			case 15:
 				return player::bone::left_foot3;
@@ -116,7 +120,6 @@ namespace data {
 		}
 	};
 	struct local_player_data {
-		vector3 origin;
 		bool valid;
 	};
 

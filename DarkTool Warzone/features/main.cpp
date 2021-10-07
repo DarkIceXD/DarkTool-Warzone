@@ -101,16 +101,16 @@ void data::collect()
 	}
 
 	const player local_player(client_base, *local_index);
-	const auto local_origin = local_player.get_origin();
-	if (!local_origin)
+	const auto local_origin_opt = local_player.get_origin();
+	if (!local_origin_opt)
 	{
 		data::local_player.valid = false;
 		return;
 	}
-	data::local_player.origin = *local_origin;
+	const auto local_origin = *local_origin_opt;
 	const auto local_team = local_player.get_team();
 	const auto bone_base_pos = player::get_bone_base_pos(client_info);
-	for (int i = 0; i < data::players.size(); i++)
+	for (size_t i = 0; i < data::players.size(); i++)
 	{
 		auto& player_data = data::players[i];
 		player_data.valid = false;
@@ -138,7 +138,7 @@ void data::collect()
 			player_data.bones[j] = bone_base_pos + bones[static_cast<size_t>(player_data::index_to_bone(j))];
 
 		player_data.stance = p.get_stance();
-		player_data.distance = static_cast<int>(math::units_to_m((player_data.origin - data::local_player.origin).length()));
+		player_data.distance = static_cast<int>(math::units_to_m((player_data.origin - local_origin).length()));
 		const auto name = p.get_name_struct(name_base);
 		player_data.health = name.health / 127.f;
 		strcpy_s(player_data.name, name.name);
@@ -148,5 +148,5 @@ void data::collect()
 	data::local_player.valid = true;
 
 	features::esp::collect();
-	features::aimbot::collect(client_info);
+	features::aimbot::collect();
 }

@@ -51,7 +51,7 @@ player::player(const uintptr_t client_base, const int index) : base(client_base 
 
 [[nodiscard]] bool player::is_visible(const uintptr_t visible_base) const
 {
-	const uint64_t rdx = visible_base + (static_cast<int64_t>(index) * 9 + 0x14E) * 8;
+	const auto rdx = visible_base + (static_cast<int64_t>(index) * 9 + 0x14E) * 8;
 	if (!rdx)
 		return false;
 

@@ -26,7 +26,7 @@ void features::esp::draw(ImDrawList* d, const ref_def& refdef, const vector3& ca
 			continue;
 
 		const auto box_color = player.stance == player::stance::downed ? box_downed_color : (player.visible ? box_visible_color : box_base_color);
-		d->AddRect({ min.x, min.y }, { max.x, max.y }, box_color);
+		d->AddRect(min, max, box_color);
 		const auto middle = (max.x - min.x) / 2 + min.x;
 		char meters_text[16];
 		snprintf(meters_text, sizeof(meters_text), "[%dm]", player.distance);
@@ -43,11 +43,11 @@ void features::esp::draw(ImDrawList* d, const ref_def& refdef, const vector3& ca
 		for (const auto& bone_connection : player::bone_connections)
 		{
 			vector2 a, b;
-			if (!math::world_to_screen(player.bones[data::player_data::bone_to_index(bone_connection.first)], camera_pos, refdef, a) ||
-				!math::world_to_screen(player.bones[data::player_data::bone_to_index(bone_connection.second)], camera_pos, refdef, b))
+			if (!math::world_to_screen(player.get_bone(bone_connection.first), camera_pos, refdef, a) ||
+				!math::world_to_screen(player.get_bone(bone_connection.second), camera_pos, refdef, b))
 				continue;
 
-			d->AddLine({ a.x, a.y }, { b.x, b.y }, skeleton_color);
+			d->AddLine(a, b, skeleton_color);
 		}
 	}
 }

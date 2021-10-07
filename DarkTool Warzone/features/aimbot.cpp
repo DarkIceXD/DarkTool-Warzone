@@ -41,7 +41,7 @@ void features::aimbot::draw(ImDrawList* d, const ref_def& refdef, const vector3&
 			continue;
 
 		vector2 hitbox;
-		if (!math::world_to_screen(player.bones[data::player_data::bone_to_index(((cfg->aimbot.hitbox == 0) ? player::bone::chest : player::bone::head))], camera_pos, refdef, hitbox))
+		if (!math::world_to_screen(player.get_bone(((cfg->aimbot.hitbox == 0) ? player::bone::chest : player::bone::head)), camera_pos, refdef, hitbox))
 			continue;
 
 		const auto fov = math::pixels_to_fov((hitbox - middle).length(), tan_half_fov, middle.x);
@@ -57,8 +57,8 @@ void features::aimbot::draw(ImDrawList* d, const ref_def& refdef, const vector3&
 
 	if (cfg->aimbot.show_aim_spot)
 	{
-		d->AddLine({ best_hitbox.x - 5, best_hitbox.y - 5 }, { best_hitbox.x + 5, best_hitbox.y + 5 }, IM_COL32_WHITE);
-		d->AddLine({ best_hitbox.x - 5, best_hitbox.y + 5 }, { best_hitbox.x + 5, best_hitbox.y - 5 }, IM_COL32_WHITE);
+		d->AddLine(best_hitbox - vector2(5, 5), best_hitbox + vector2(5, 5), IM_COL32_WHITE);
+		d->AddLine(best_hitbox - vector2(5, -5), best_hitbox + vector2(5, -5), IM_COL32_WHITE);
 	}
 
 	const auto diff = best_hitbox - middle;
@@ -69,12 +69,11 @@ void features::aimbot::draw(ImDrawList* d, const ref_def& refdef, const vector3&
 	aim_at(dx, false);
 }
 
-void features::aimbot::collect(const uint64_t client_info)
+void features::aimbot::collect()
 {
 	if (!cfg->aimbot.bind.enabled)
 		return;
 
-	auto any_valid = false;
 	for (auto& player : data::players)
 	{
 		if (!player.valid)
@@ -90,6 +89,5 @@ void features::aimbot::collect(const uint64_t client_info)
 			continue;
 
 		player.aimbot_valid = true;
-		any_valid = true;
 	}
 }

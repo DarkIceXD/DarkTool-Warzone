@@ -9,6 +9,6 @@ namespace features {
 	}
 	namespace aimbot {
 		void draw(ImDrawList* d, const ref_def& refdef, const vector3& camera_pos);
-		void collect(const uint64_t client_info);
+		void collect();
 	}
 }
