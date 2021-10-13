@@ -110,7 +110,7 @@ void data::collect()
 	const auto local_origin = *local_origin_opt;
 	const auto local_team = local_player.get_team();
 	const auto bone_base_pos = player::get_bone_base_pos(client_info);
-	for (size_t i = 0; i < data::players.size(); i++)
+	for (int i = 0; i < data::players.size(); i++)
 	{
 		auto& player_data = data::players[i];
 		player_data.valid = false;

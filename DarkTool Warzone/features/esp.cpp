@@ -40,15 +40,16 @@ void features::esp::draw(ImDrawList* d, const ref_def& refdef, const vector3& ca
 		d->AddRect(hp_min, hp_max, IM_COL32_BLACK);
 
 		const auto skeleton_color = player.stance == player::stance::downed ? skeleton_downed_color : (player.visible ? skeleton_visible_color : skeleton_base_color);
-		for (const auto& bone_connection : player::bone_connections)
-		{
-			vector2 a, b;
-			if (!math::world_to_screen(player.get_bone(bone_connection.first), camera_pos, refdef, a) ||
-				!math::world_to_screen(player.get_bone(bone_connection.second), camera_pos, refdef, b))
-				continue;
+		if ((skeleton_color & 0xFF000000) && math::units_to_m((player.bones[0] - player.origin).length()) <= 2)
+			for (const auto& bone_connection : player::bone_connections)
+			{
+				vector2 a, b;
+				if (!math::world_to_screen(player.get_bone(bone_connection.first), camera_pos, refdef, a) ||
+					!math::world_to_screen(player.get_bone(bone_connection.second), camera_pos, refdef, b))
+					continue;
 
-			d->AddLine(a, b, skeleton_color);
-		}
+				d->AddLine(a, b, skeleton_color);
+			}
 	}
 }
 
