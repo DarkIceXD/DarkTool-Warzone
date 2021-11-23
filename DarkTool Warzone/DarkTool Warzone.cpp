@@ -77,4 +77,5 @@ int main()
 	worker.detach();
 	overlay_execute();
 	cfg->save();
+	delete cfg;
 }

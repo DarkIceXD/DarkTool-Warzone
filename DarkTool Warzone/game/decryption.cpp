@@ -8,1257 +8,1277 @@
 namespace decryption {
 	extern "C" auto decrypt_client_info(uint64_t imageBase, uint64_t peb) -> uint64_t
 	{
-		uint64_t RAX = imageBase, RBX = imageBase, RCX = imageBase, RDX = imageBase, R8 = imageBase, RDI = imageBase, RSI = imageBase, R9 = imageBase, R10 = imageBase, R11 = imageBase, R12 = imageBase, R13 = imageBase, R14 = imageBase, R15 = imageBase;
-
-		RBX = readMemory<uint64_t>(imageBase + 0x1803E988);
-		if (RBX == 0) {
-			return 0;
-		}
-		RAX = imageBase;
-		RDX = RBX + RAX;
-		RAX = 0xF7722301C0F805AF;
-		RDX *= RAX;
-		RAX = RDX;
-		RAX >>= 0x5;
-		RDX ^= RAX;
-		RAX = RDX;
-		RAX >>= 0xA;
-		RDX ^= RAX;
-		RAX = RDX;
-		RAX >>= 0x14;
-		RDX ^= RAX;
-		RAX = RDX;
-		RAX >>= 0x28;
-		RDX ^= RAX;
-		RAX = RDX;
-		RAX >>= 0x12;
-		RDX ^= RAX;
-		RAX = RDX;
-		RCX = 0x0;
-		RAX >>= 0x24;
-		RCX = _rotl64(RCX, 0x10);
-		RAX ^= RDX;
-		RCX ^= readMemory<uint64_t>(imageBase + 0x7420100);
-		RCX = ~RCX;
-		RBX = readMemory<uint64_t>(RCX + 0xB);
-		RBX *= RAX;
-		RAX = 0xF02663FD564FD7EB;
-		RBX *= RAX;
-		return RBX;
+		uint64_t rax = imageBase, rbx = imageBase, rcx = imageBase, rdx = imageBase, rdi = imageBase, rsi = imageBase, r8 = imageBase, r9 = imageBase, r10 = imageBase, r11 = imageBase, r12 = imageBase, r13 = imageBase, r14 = imageBase, r15 = imageBase;
+		rbx = readMemory<uintptr_t>(imageBase + 0x1806E058);
+		if (!rbx)
+			return rbx;
+		r8 = peb;               //mov r8, gs:[rax]
+		rax = rbx;              //mov rax, rbx
+		rax >>= 0xD;            //shr rax, 0x0D
+		rbx ^= rax;             //xor rbx, rax
+		rax = rbx;              //mov rax, rbx
+		rax >>= 0x1A;           //shr rax, 0x1A
+		rbx ^= rax;             //xor rbx, rax
+		rax = 0x75AC52C47565F299;               //mov rax, 0x75AC52C47565F299
+		rdx = rbx;              //mov rdx, rbx
+		rdx >>= 0x34;           //shr rdx, 0x34
+		rdx ^= rbx;             //xor rdx, rbx
+		rdx *= rax;             //imul rdx, rax
+		rax = 0x3F38F2AE23228E30;               //mov rax, 0x3F38F2AE23228E30
+		rdx -= rax;             //sub rdx, rax
+		rax = rdx;              //mov rax, rdx
+		rax >>= 0x7;            //shr rax, 0x07
+		rdx ^= rax;             //xor rdx, rax
+		rax = rdx;              //mov rax, rdx
+		rax >>= 0xE;            //shr rax, 0x0E
+		rdx ^= rax;             //xor rdx, rax
+		rax = rdx;              //mov rax, rdx
+		rax >>= 0x1C;           //shr rax, 0x1C
+		rdx ^= rax;             //xor rdx, rax
+		rax = rdx;              //mov rax, rdx
+		rcx = 0;                //and rcx, 0xFFFFFFFFC0000000
+		rax >>= 0x38;           //shr rax, 0x38
+		rcx = _rotl64(rcx, 0x10);               //rol rcx, 0x10
+		rax ^= rdx;             //xor rax, rdx
+		rcx ^= readMemory<uintptr_t>(imageBase + 0x71D90F2);             //xor rcx, [0x0000000004E90B48]
+		rcx = ~rcx;             //not rcx
+		rbx = readMemory<uintptr_t>(rcx + 0x13);              //mov rbx, [rcx+0x13]
+		rbx *= rax;             //imul rbx, rax
+		rbx -= r8;              //sub rbx, r8
+		return rbx;
 	}
 
 	extern "C" auto decrypt_client_base(uint64_t clientInfo, uint64_t imageBase, uint64_t peb) -> uint64_t
 	{
-		uint64_t RAX = imageBase, RBX = imageBase, RCX = imageBase, RDX = imageBase, R8 = imageBase, RDI = imageBase, RSI = imageBase, R9 = imageBase, R10 = imageBase, R11 = imageBase, R12 = imageBase, R13 = imageBase, R14 = imageBase, R15 = imageBase, RBP = 0, RSP = 0;
-
-		RAX = readMemory<uint64_t>(clientInfo + 0x9FDE8);
-		RBX = peb; // mov rbx,gs:[rcx]
-		RBX = ~RBX;
-		// test rax,rax
-		// je 00007FF7934DB86Eh
-		RCX = RBX;
-		RCX >>= 0x12;
-		RCX &= 0xF;
-		// cmp rcx,0Eh
-		// ja 00007FF7934DB3A6h
-		switch (RCX) {
-		case 0: {
-			R11 = readMemory<uint64_t>(imageBase + 0x742012B);
-			RDX = imageBase + 0x44A7A7BD;
-			RCX = RAX;
-			RCX >>= 0x1F;
-			RAX ^= RCX;
-			RCX = RAX;
-			RCX >>= 0x3E;
-			RAX ^= RCX;
-			RCX = RBX;
-			RCX = ~RCX;
-			RCX += RDX;
-			RAX ^= RCX;
-			RCX = RAX;
-			RCX >>= 0xC;
-			RAX ^= RCX;
-			RCX = RAX;
-			RCX >>= 0x18;
-			RAX ^= RCX;
-			RCX = RAX;
-			RCX >>= 0x30;
-			RAX ^= RCX;
-			RCX = imageBase;
-			RAX ^= RCX;
-			RDX = imageBase + 0x174468E4;
-			R8 = 0x0;
-			R8 = _rotl64(R8, 0x10);
-			RCX = RAX;
-			R8 ^= R11;
-			RDX = ~RDX;
-			RDX ^= RBX;
-			R8 = ~R8;
-			RCX -= RDX;
-			RAX = readMemory<uint64_t>(R8 + 0xD);
-			RAX *= RCX;
-			RCX = 0x85247CBDA5162E69;
-			RAX *= RCX;
-			RCX = 0x5E84500527FE80EE;
-			RAX += RCX;
-			return RAX;
+		uint64_t rax = imageBase, rbx = imageBase, rcx = imageBase, rdx = imageBase, rdi = imageBase, rsi = imageBase, r8 = imageBase, r9 = imageBase, r10 = imageBase, r11 = imageBase, r12 = imageBase, r13 = imageBase, r14 = imageBase, r15 = imageBase;
+		rax = readMemory<uintptr_t>(clientInfo + 0x9fde8);
+		if (!rax)
+			return rax;
+		rdi = peb;              //mov rdi, gs:[rcx]
+		rcx = rdi;              //mov rcx, rdi
+		rcx = _rotr64(rcx, 0x13);               //ror rcx, 0x13
+		rcx &= 0xF;
+		switch (rcx) {
+		case 0:
+		{
+			rbx = imageBase;           //lea rbx, [0xFFFFFFFFFDCB79CF]
+			r9 = readMemory<uintptr_t>(imageBase + 0x71D912F);               //mov r9, [0x0000000004E90A62]
+			rcx = rdi;              //mov rcx, rdi
+			rcx = ~rcx;             //not rcx
+			rcx -= rbx;             //sub rcx, rbx
+			rcx += 0xFFFFFFFFFFFFB03D;              //add rcx, 0xFFFFFFFFFFFFB03D
+			rax += rcx;             //add rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x7;            //shr rcx, 0x07
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0xE;            //shr rcx, 0x0E
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x1C;           //shr rcx, 0x1C
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x38;           //shr rcx, 0x38
+			rax ^= rcx;             //xor rax, rcx
+			rax -= rbx;             //sub rax, rbx
+			rcx = 0x17018B6945529074;               //mov rcx, 0x17018B6945529074
+			rax += rcx;             //add rax, rcx
+			rcx = 0xBC9C2D260721DFFD;               //mov rcx, 0xBC9C2D260721DFFD
+			rax *= rcx;             //imul rax, rcx
+			rax += rbx;             //add rax, rbx
+			rcx = 0xA9FC06249DFE0873;               //mov rcx, 0xA9FC06249DFE0873
+			rax *= rcx;             //imul rax, rcx
+			rcx = 0;                //and rcx, 0xFFFFFFFFC0000000
+			rcx = _rotl64(rcx, 0x10);               //rol rcx, 0x10
+			rcx ^= r9;              //xor rcx, r9
+			rcx = ~rcx;             //not rcx
+			rax *= readMemory<uintptr_t>(rcx + 0x5);              //imul rax, [rcx+0x05]
+			return rax;
 		}
-		case 1: {
-			R14 = imageBase + 0xB275;
-			R10 = readMemory<uint64_t>(imageBase + 0x742012B);
-			RCX = RAX;
-			RCX >>= 0xB;
-			RAX ^= RCX;
-			RCX = RAX;
-			RCX >>= 0x16;
-			RAX ^= RCX;
-			RCX = RAX;
-			RCX >>= 0x2C;
-			RAX ^= RCX;
-			RCX = RAX;
-			RCX >>= 0x11;
-			RAX ^= RCX;
-			RDX = RAX;
-			RDX >>= 0x22;
-			RDX ^= RAX;
-			RAX = RBX;
-			RCX = imageBase + 0x776FC6E9;
-			RAX = ~RAX;
-			RAX += RDX;
-			RAX += RCX;
-			RCX = RBX;
-			RCX *= R14;
-			RAX -= RCX;
-			RCX = 0x5294B8E2B4503BD5;
-			RAX ^= RCX;
-			RDX = 0x0;
-			RCX = RAX;
-			RDX = _rotl64(RDX, 0x10);
-			RDX ^= R10;
-			RAX = 0x46AF1918BC28C49;
-			RCX ^= RAX;
-			RDX = ~RDX;
-			RAX = readMemory<uint64_t>(RDX + 0xD);
-			RAX *= RCX;
-			RCX = 0xC04ECE04B97543B9;
-			RAX *= RCX;
-			return RAX;
+		case 1:
+		{
+			r11 = readMemory<uintptr_t>(imageBase + 0x71D912F);              //mov r11, [0x0000000004E9057D]
+			rbx = imageBase;           //lea rbx, [0xFFFFFFFFFDCB7447]
+			rdx = imageBase + 0x290C;          //lea rdx, [0xFFFFFFFFFDCB9CFD]
+			rcx = 0xAB38D0F7B94B733D;               //mov rcx, 0xAB38D0F7B94B733D
+			rax *= rcx;             //imul rax, rcx
+			r15 = 0xF4AD9C5147247AE8;               //mov r15, 0xF4AD9C5147247AE8
+			rcx = rdi;              //mov rcx, rdi
+			rcx *= rdx;             //imul rcx, rdx
+			rcx -= rbx;             //sub rcx, rbx
+			rcx += r15;             //add rcx, r15
+			rax += rcx;             //add rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x1D;           //shr rcx, 0x1D
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x3A;           //shr rcx, 0x3A
+			rax ^= rcx;             //xor rax, rcx
+			rcx = 0;                //and rcx, 0xFFFFFFFFC0000000
+			rcx = _rotl64(rcx, 0x10);               //rol rcx, 0x10
+			rcx ^= r11;             //xor rcx, r11
+			rcx = ~rcx;             //not rcx
+			rax *= readMemory<uintptr_t>(rcx + 0x5);              //imul rax, [rcx+0x05]
+			rcx = 0x1202F95890F87C8;                //mov rcx, 0x1202F95890F87C8
+			rax -= rcx;             //sub rax, rcx
+			return rax;
 		}
-		case 2: {
-			R15 = imageBase + 0x466367AE;
-			R10 = readMemory<uint64_t>(imageBase + 0x742012B);
-			RCX = imageBase;
-			RDX = RBX;
-			RCX = RCX * 0xFE;
-			RDX ^= R15;
-			RCX -= RDX;
-			RAX += RCX;
-			RCX = 0x0;
-			RCX = _rotl64(RCX, 0x10);
-			RCX ^= R10;
-			RCX = ~RCX;
-			RAX *= readMemory<uint64_t>(RCX + 0xD);
-			RCX = 0x24C22309981B21D;
-			RAX ^= RCX;
-			RCX = RAX;
-			RCX >>= 0x13;
-			RAX ^= RCX;
-			RCX = RAX;
-			RCX >>= 0x26;
-			RAX ^= RCX;
-			RCX = 0x3AECE62ADE788733;
-			RAX *= RCX;
-			RCX = 0x6003E2FCB3FA732E;
-			RAX += RCX;
-			return RAX;
+		case 2:
+		{
+			r10 = readMemory<uintptr_t>(imageBase + 0x71D912F);              //mov r10, [0x0000000004E9011C]
+			rcx = rdi * 0xFFFFFFFFFFFFFFFE;                 //imul rcx, rdi, 0xFFFFFFFFFFFFFFFE
+			rax += rcx;             //add rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x22;           //shr rcx, 0x22
+			rax ^= rcx;             //xor rax, rcx
+			rax += rdi;             //add rax, rdi
+			rdx = 0;                //and rdx, 0xFFFFFFFFC0000000
+			rcx = 0x432859FC2C7367E7;               //mov rcx, 0x432859FC2C7367E7
+			rax *= rcx;             //imul rax, rcx
+			rdx = _rotl64(rdx, 0x10);               //rol rdx, 0x10
+			rcx = rax;              //mov rcx, rax
+			rdx ^= r10;             //xor rdx, r10
+			rcx >>= 0x1B;           //shr rcx, 0x1B
+			rdx = ~rdx;             //not rdx
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x36;           //shr rcx, 0x36
+			rcx ^= rax;             //xor rcx, rax
+			rax = readMemory<uintptr_t>(rdx + 0x5);               //mov rax, [rdx+0x05]
+			rax *= rcx;             //imul rax, rcx
+			rcx = 0x1CABBB23FD8D639B;               //mov rcx, 0x1CABBB23FD8D639B
+			rax *= rcx;             //imul rax, rcx
+			return rax;
 		}
-		case 3: {
-			uint64_t RBP_NEG_0x80 = imageBase;
-			R10 = readMemory<uint64_t>(imageBase + 0x742012B);
-			R15 = imageBase + 0x6167;
-			RCX = imageBase + 0x269F;
-			RBP_NEG_0x80 = RCX; // mov [rbp-80h],rcx
-			RDX = imageBase + 0x685485D0;
-			RCX = RBX;
-			RCX *= RDX;
-			RAX ^= RCX;
-			RCX = 0x0;
-			RCX = _rotl64(RCX, 0x10);
-			RCX ^= R10;
-			RCX = ~RCX;
-			RAX *= readMemory<uint64_t>(RCX + 0xD);
-			RCX = 0xDD0C704114FE69B1;
-			RAX *= RCX;
-			RCX = 0xA958A2FC4193469E;
-			RCX -= RBX;
-			RAX += RCX;
-			RCX = RBX;
-			RCX *= R15;
-			RAX -= RCX;
-			RCX = RAX;
-			RCX >>= 0xE;
-			RAX ^= RCX;
-			RCX = RAX;
-			RCX >>= 0x1C;
-			RAX ^= RCX;
-			RCX = RAX;
-			RCX >>= 0x38;
-			RAX ^= RCX;
-			RCX = RBX;
-			RCX *= RBP_NEG_0x80; // imul rcx,[rbp-80h]
-			RAX += RCX;
-			return RAX;
+		case 3:
+		{
+			rbx = imageBase;           //lea rbx, [0xFFFFFFFFFDCB6C79]
+			r15 = imageBase + 0x3483EDA1;              //lea r15, [0x00000000324F5A02]
+			r10 = readMemory<uintptr_t>(imageBase + 0x71D912F);              //mov r10, [0x0000000004E8FD42]
+			r11 = 0xE95C245BB2EE5516;               //mov r11, 0xE95C245BB2EE5516
+			rcx = 0;                //and rcx, 0xFFFFFFFFC0000000
+			rcx = _rotl64(rcx, 0x10);               //rol rcx, 0x10
+			rcx ^= r10;             //xor rcx, r10
+			rcx = ~rcx;             //not rcx
+			rcx = readMemory<uintptr_t>(rcx + 0x5);               //mov rcx, [rcx+0x05]
+			rcx *= rax;             //imul rcx, rax
+			rax = r15;              //mov rax, r15
+			rcx += rdi;             //add rcx, rdi
+			rax = ~rax;             //not rax
+			rax += r11;             //add rax, r11
+			rax += rcx;             //add rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x14;           //shr rcx, 0x14
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x28;           //shr rcx, 0x28
+			rax ^= rcx;             //xor rax, rcx
+			rax -= rdi;             //sub rax, rdi
+			rcx = 0x3555A17B83EFB3C7;               //mov rcx, 0x3555A17B83EFB3C7
+			rax *= rcx;             //imul rax, rcx
+			rcx = 0x160C6CDD5F954A38;               //mov rcx, 0x160C6CDD5F954A38
+			rax -= rdi;             //sub rax, rdi
+			rax -= rbx;             //sub rax, rbx
+			rax -= 0x2DF62A23;              //sub rax, 0x2DF62A23
+			rax ^= rcx;             //xor rax, rcx
+			return rax;
 		}
-		case 4: {
-			R14 = imageBase + 0x1CF07BBC;
-			R9 = readMemory<uint64_t>(imageBase + 0x742012B);
-			RCX = imageBase;
-			RAX -= RCX;
-			RCX = 0xADC81E50588F17C9;
-			RAX *= RCX;
-			RCX = 0x5290A93DF73A2214;
-			RAX ^= RCX;
-			RCX = RBX;
-			RCX = ~RCX;
-			RCX *= R14;
-			RAX ^= RCX;
-			RCX = 0x0;
-			RCX = _rotl64(RCX, 0x10);
-			RCX ^= R9;
-			RCX = ~RCX;
-			RAX *= readMemory<uint64_t>(RCX + 0xD);
-			RCX = RAX;
-			RCX >>= 0x9;
-			RAX ^= RCX;
-			RCX = RAX;
-			RCX >>= 0x12;
-			RAX ^= RCX;
-			RCX = RAX;
-			RCX >>= 0x24;
-			RAX ^= RCX;
-			RAX += RBX;
-			RCX = 0xC8C2CB328E220AC9;
-			RAX ^= RCX;
-			return RAX;
+		case 4:
+		{
+			r15 = imageBase + 0xC7B6;          //lea r15, [0xFFFFFFFFFDCC3039]
+			r10 = readMemory<uintptr_t>(imageBase + 0x71D912F);              //mov r10, [0x0000000004E8F931]
+			rdx = 0;                //and rdx, 0xFFFFFFFFC0000000
+			rdx = _rotl64(rdx, 0x10);               //rol rdx, 0x10
+			rdx ^= r10;             //xor rdx, r10
+			rcx = rdi + rax * 1;            //lea rcx, [rdi+rax*1]
+			rdx = ~rdx;             //not rdx
+			rax = readMemory<uintptr_t>(rdx + 0x5);               //mov rax, [rdx+0x05]
+			rax *= rcx;             //imul rax, rcx
+			rcx = 0x78D66A1CE27478D3;               //mov rcx, 0x78D66A1CE27478D3
+			rax *= rcx;             //imul rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0xE;            //shr rcx, 0x0E
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x1C;           //shr rcx, 0x1C
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x38;           //shr rcx, 0x38
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x1F;           //shr rcx, 0x1F
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x3E;           //shr rcx, 0x3E
+			rax ^= rcx;             //xor rax, rcx
+			rcx = imageBase + 0x6741;          //lea rcx, [0xFFFFFFFFFDCBCDEE]
+			rcx = ~rcx;             //not rcx
+			rcx += rax;             //add rcx, rax
+			rax = rdi + 0x1;                //lea rax, [rdi+0x01]
+			rax += rcx;             //add rax, rcx
+			rax ^= rdi;             //xor rax, rdi
+			rax ^= r15;             //xor rax, r15
+			rcx = 0x24BCCA0B53388AEA;               //mov rcx, 0x24BCCA0B53388AEA
+			rax ^= rcx;             //xor rax, rcx
+			return rax;
 		}
-		case 5: {
-			R9 = readMemory<uint64_t>(imageBase + 0x742012B);
-			RCX = 0x0;
-			RCX = _rotl64(RCX, 0x10);
-			RCX ^= R9;
-			RCX = ~RCX;
-			RAX *= readMemory<uint64_t>(RCX + 0xD);
-			RCX = RAX;
-			RCX >>= 0x8;
-			RAX ^= RCX;
-			RCX = RAX;
-			RCX >>= 0x10;
-			RAX ^= RCX;
-			RCX = RAX;
-			RCX >>= 0x20;
-			RAX ^= RCX;
-			RCX = imageBase;
-			RAX ^= RCX;
-			RCX = 0x29B50F59172BD330;
-			RAX ^= RCX;
-			RCX = 0x561637634FE96C25;
-			RAX *= RCX;
-			RCX = imageBase;
-			RAX += RCX;
-			RCX = RAX;
-			RCX >>= 0x16;
-			RAX ^= RCX;
-			RCX = RAX;
-			RCX >>= 0x2C;
-			RAX ^= RCX;
-			RCX = RAX;
-			RCX >>= 0xE;
-			RAX ^= RCX;
-			RCX = RAX;
-			RCX >>= 0x1C;
-			RAX ^= RCX;
-			RCX = RAX;
-			RCX >>= 0x38;
-			RAX ^= RCX;
-			return RAX;
+		case 5:
+		{
+			rbx = imageBase;           //lea rbx, [0xFFFFFFFFFDCB62E5]
+			rdx = imageBase + 0x8569;          //lea rdx, [0xFFFFFFFFFDCBE836]
+			r15 = imageBase + 0xAA0B;          //lea r15, [0xFFFFFFFFFDCC0CCC]
+			r10 = readMemory<uintptr_t>(imageBase + 0x71D912F);              //mov r10, [0x0000000004E8F39B]
+			rcx = rdx;              //mov rcx, rdx
+			rcx = ~rcx;             //not rcx
+			rcx ^= rdi;             //xor rcx, rdi
+			rax -= rcx;             //sub rax, rcx
+			rcx = 0x9B31E206C1CDD5C3;               //mov rcx, 0x9B31E206C1CDD5C3
+			rax *= rcx;             //imul rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0xC;            //shr rcx, 0x0C
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x18;           //shr rcx, 0x18
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x30;           //shr rcx, 0x30
+			rax ^= rcx;             //xor rax, rcx
+			rcx = 0;                //and rcx, 0xFFFFFFFFC0000000
+			rcx = _rotl64(rcx, 0x10);               //rol rcx, 0x10
+			rcx ^= r10;             //xor rcx, r10
+			rcx = ~rcx;             //not rcx
+			rax *= readMemory<uintptr_t>(rcx + 0x5);              //imul rax, [rcx+0x05]
+			rcx = 0xF51E2A85F29A70B;                //mov rcx, 0xF51E2A85F29A70B
+			rax -= rcx;             //sub rax, rcx
+			rcx = 0x8989152276BB82D6;               //mov rcx, 0x8989152276BB82D6
+			rax ^= rcx;             //xor rax, rcx
+			rax -= rbx;             //sub rax, rbx
+			rax += 0xFFFFFFFFFFFF37F0;              //add rax, 0xFFFFFFFFFFFF37F0
+			rax += rdi;             //add rax, rdi
+			rax ^= rdi;             //xor rax, rdi
+			rax ^= r15;             //xor rax, r15
+			return rax;
 		}
-		case 6: {
-			uint64_t RSP_0x50 = imageBase;
-			RCX = 0x76C44C879E7C4119;
-			RSP_0x50 = RCX; // mov [rsp+50h],rcx
-			R9 = readMemory<uint64_t>(imageBase + 0x742012B);
-			RCX = RAX;
-			RCX >>= 0x1A;
-			RAX ^= RCX;
-			RCX = RAX;
-			RCX >>= 0x34;
-			RAX ^= RCX;
-			RCX = RAX;
-			RCX >>= 0x26;
-			RCX ^= RAX;
-			RAX = 0xA174066EB8AE22D0;
-			RCX ^= RAX;
-			RAX = imageBase;
-			RCX -= RAX;
-			RAX = RBX - 0x3C2DA278;
-			RAX += RCX;
-			RCX = 0x0;
-			RCX = _rotl64(RCX, 0x10);
-			RCX ^= R9;
-			RCX = ~RCX;
-			RCX = readMemory<uint64_t>(RCX + 0xD);
-			RCX *= RSP_0x50; // imul rcx,[rsp+50h]
-			RAX *= RCX;
-			RCX = RAX;
-			RCX >>= 0x10;
-			RAX ^= RCX;
-			RCX = RAX;
-			RCX >>= 0x20;
-			RAX ^= RCX;
-			RAX -= RBX;
-			return RAX;
+		case 6:
+		{
+			rbx = imageBase;           //lea rbx, [0xFFFFFFFFFDCB5D91]
+			r9 = readMemory<uintptr_t>(imageBase + 0x71D912F);               //mov r9, [0x0000000004E8EE69]
+			rcx = 0;                //and rcx, 0xFFFFFFFFC0000000
+			rcx = _rotl64(rcx, 0x10);               //rol rcx, 0x10
+			rcx ^= r9;              //xor rcx, r9
+			rcx = ~rcx;             //not rcx
+			rax *= readMemory<uintptr_t>(rcx + 0x5);              //imul rax, [rcx+0x05]
+			rcx = rbx + 0x2db6eaaf;                 //lea rcx, [rbx+0x2DB6EAAF]
+			rcx += rdi;             //add rcx, rdi
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x5;            //shr rcx, 0x05
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0xA;            //shr rcx, 0x0A
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x14;           //shr rcx, 0x14
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x28;           //shr rcx, 0x28
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x1A;           //shr rcx, 0x1A
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x34;           //shr rcx, 0x34
+			rcx ^= rdi;             //xor rcx, rdi
+			rax ^= rcx;             //xor rax, rcx
+			rcx = 0x53575B3471D30C52;               //mov rcx, 0x53575B3471D30C52
+			rax ^= rcx;             //xor rax, rcx
+			rcx = 0x83CC6E096B7D5731;               //mov rcx, 0x83CC6E096B7D5731
+			rax *= rcx;             //imul rax, rcx
+			rcx = 0x2D268BD6FF3B4A65;               //mov rcx, 0x2D268BD6FF3B4A65
+			rax ^= rcx;             //xor rax, rcx
+			return rax;
 		}
-		case 7: {
-			uint64_t RSP_0x48 = imageBase;
-			RCX = 0xCA63CC0460D05F03;
-			RSP_0x48 = RCX; // mov [rsp+48h],rcx
-			R15 = imageBase + 0x1C92;
-			R10 = readMemory<uint64_t>(imageBase + 0x742012B);
-			RDX = R15;
-			RDX = ~RDX;
-			RCX = 0xBA475E161600935;
-			RDX ^= RBX;
-			RCX -= RDX;
-			RAX += RCX;
-			RCX = RAX;
-			RCX >>= 0xE;
-			RAX ^= RCX;
-			RCX = RAX;
-			RCX >>= 0x1C;
-			RAX ^= RCX;
-			RCX = RAX;
-			RCX >>= 0x38;
-			RAX ^= RCX;
-			RCX = RAX;
-			RCX >>= 0xD;
-			RAX ^= RCX;
-			RCX = RAX;
-			RDX = imageBase + 0x5062;
-			RCX >>= 0x1A;
-			RDX = ~RDX;
-			RAX ^= RCX;
-			RDX += RBX;
-			RCX = RAX;
-			RCX >>= 0x34;
-			RDX ^= RCX;
-			RAX ^= RDX;
-			RCX = 0x2D5F072877E25500;
-			RAX += RCX;
-			RCX = 0x0;
-			RCX = _rotl64(RCX, 0x10);
-			RCX ^= R10;
-			RCX = ~RCX;
-			RCX = readMemory<uint64_t>(RCX + 0xD);
-			RCX *= RSP_0x48; // imul rcx,[rsp+48h]
-			RAX *= RCX;
-			return RAX;
+		case 7:
+		{
+			r10 = readMemory<uintptr_t>(imageBase + 0x71D912F);              //mov r10, [0x0000000004E8EA31]
+			rbx = imageBase;           //lea rbx, [0xFFFFFFFFFDCB58FB]
+			rcx = 0;                //and rcx, 0xFFFFFFFFC0000000
+			rcx = _rotl64(rcx, 0x10);               //rol rcx, 0x10
+			rcx ^= r10;             //xor rcx, r10
+			rcx = ~rcx;             //not rcx
+			rax *= readMemory<uintptr_t>(rcx + 0x5);              //imul rax, [rcx+0x05]
+			rcx = 0x1FE961BC0D596901;               //mov rcx, 0x1FE961BC0D596901
+			rax += rcx;             //add rax, rcx
+			rax ^= rbx;             //xor rax, rbx
+			rcx = 0xEABC3B3886A0E103;               //mov rcx, 0xEABC3B3886A0E103
+			rax *= rcx;             //imul rax, rcx
+			rax += rbx;             //add rax, rbx
+			rdx = rdi;              //mov rdx, rdi
+			rdx = ~rdx;             //not rdx
+			rcx = imageBase + 0x7525;          //lea rcx, [0xFFFFFFFFFDCBCB48]
+			rdx += rcx;             //add rdx, rcx
+			rcx = rax;              //mov rcx, rax
+			rax = 0x37B2F642B57F479;                //mov rax, 0x37B2F642B57F479
+			rcx *= rax;             //imul rcx, rax
+			rax = rdx;              //mov rax, rdx
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x1E;           //shr rcx, 0x1E
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x3C;           //shr rcx, 0x3C
+			rax ^= rcx;             //xor rax, rcx
+			return rax;
 		}
-		case 8: {
-			R9 = readMemory<uint64_t>(imageBase + 0x742012B);
-			RCX = imageBase;
-			RCX += 0x6AA30B3E;
-			RCX += RBX;
-			RAX ^= RCX;
-			RCX = 0x95A5FE1D3FAAFAB;
-			RAX ^= RCX;
-			RCX = 0x0;
-			RCX = _rotl64(RCX, 0x10);
-			RCX ^= R9;
-			RCX = ~RCX;
-			RAX *= readMemory<uint64_t>(RCX + 0xD);
-			RAX += RBX;
-			RCX = RAX;
-			RCX >>= 0x9;
-			RAX ^= RCX;
-			RCX = RAX;
-			RCX >>= 0x12;
-			RAX ^= RCX;
-			RCX = RAX;
-			RCX >>= 0x24;
-			RAX ^= RCX;
-			RCX = 0x53A4C6E054132C7D;
-			RAX *= RCX;
-			RCX = imageBase;
-			RAX = RAX + RCX * 2;
-			RAX -= RBX;
-			RAX += 0x729D6B9B;
-			return RAX;
+		case 8:
+		{
+			rbx = imageBase;           //lea rbx, [0xFFFFFFFFFDCB5488]
+			r11 = imageBase + 0x54BDDC6C;              //lea r11, [0x00000000528930DC]
+			r9 = readMemory<uintptr_t>(imageBase + 0x71D912F);               //mov r9, [0x0000000004E8E547]
+			rax -= rbx;             //sub rax, rbx
+			rax += 0xFFFFFFFFB0267D85;              //add rax, 0xFFFFFFFFB0267D85
+			rax += rdi;             //add rax, rdi
+			rcx = 0xDD7BD2E06188E77F;               //mov rcx, 0xDD7BD2E06188E77F
+			rax ^= rcx;             //xor rax, rcx
+			rcx = 0x76E83A4EECA680A9;               //mov rcx, 0x76E83A4EECA680A9
+			rax *= rcx;             //imul rax, rcx
+			rcx = 0x6F616717865D112B;               //mov rcx, 0x6F616717865D112B
+			rax += rcx;             //add rax, rcx
+			rcx = r11;              //mov rcx, r11
+			rcx = ~rcx;             //not rcx
+			rcx ^= rdi;             //xor rcx, rdi
+			rax -= rcx;             //sub rax, rcx
+			rcx = 0;                //and rcx, 0xFFFFFFFFC0000000
+			rcx = _rotl64(rcx, 0x10);               //rol rcx, 0x10
+			rcx ^= r9;              //xor rcx, r9
+			rcx = ~rcx;             //not rcx
+			rax *= readMemory<uintptr_t>(rcx + 0x5);              //imul rax, [rcx+0x05]
+			rax ^= rdi;             //xor rax, rdi
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x20;           //shr rcx, 0x20
+			rax ^= rcx;             //xor rax, rcx
+			return rax;
 		}
-		case 9: {
-			R9 = readMemory<uint64_t>(imageBase + 0x742012B);
-			RCX = imageBase;
-			RAX -= RCX;
-			RCX = RAX;
-			RCX >>= 0x21;
-			RAX ^= RCX;
-			RCX = 0x0;
-			RCX = _rotl64(RCX, 0x10);
-			RCX ^= R9;
-			RCX = ~RCX;
-			RCX = readMemory<uint64_t>(RCX + 0xD);
-			RAX *= RCX;
-			RAX -= RBX;
-			RCX = imageBase;
-			RAX -= RCX;
-			RCX = 0xF2CDB9332D549107;
-			RAX *= RCX;
-			RCX = 0x8A3D0815B0D64F83;
-			RAX *= RCX;
-			RCX = 0x8B99D8B4A3996DEE;
-			RAX ^= RCX;
-			return RAX;
+		case 9:
+		{
+			r10 = readMemory<uintptr_t>(imageBase + 0x71D912F);              //mov r10, [0x0000000004E8E072]
+			rbx = imageBase + 0x285FB43A;              //lea rbx, [0x00000000262B0365]
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0xF;            //shr rcx, 0x0F
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x1E;           //shr rcx, 0x1E
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x3C;           //shr rcx, 0x3C
+			rax ^= rcx;             //xor rax, rcx
+			uintptr_t RSP_0x78;
+			RSP_0x78 = 0x4BBFA56727DC4AB9;          //mov rcx, 0x4BBFA56727DC4AB9 : RSP+0x78
+			rax *= RSP_0x78;                //imul rax, [rsp+0x78]
+			rcx = rbx;              //mov rcx, rbx
+			rcx = ~rcx;             //not rcx
+			rcx += rdi;             //add rcx, rdi
+			rcx ^= rax;             //xor rcx, rax
+			rdx = 0;                //and rdx, 0xFFFFFFFFC0000000
+			rdx = _rotl64(rdx, 0x10);               //rol rdx, 0x10
+			rdx ^= r10;             //xor rdx, r10
+			rdx = ~rdx;             //not rdx
+			rax = readMemory<uintptr_t>(rdx + 0x5);               //mov rax, [rdx+0x05]
+			rax *= rcx;             //imul rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x1B;           //shr rcx, 0x1B
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x36;           //shr rcx, 0x36
+			rax ^= rcx;             //xor rax, rcx
+			rcx = 0x6EB4862326CD9433;               //mov rcx, 0x6EB4862326CD9433
+			rax -= rcx;             //sub rax, rcx
+			rcx = 0x2A7CA7719C633418;               //mov rcx, 0x2A7CA7719C633418
+			rax ^= rcx;             //xor rax, rcx
+			rax += rdi;             //add rax, rdi
+			return rax;
 		}
-		case 10: {
-			uint64_t RBP_NEG_0x78 = imageBase;
-			uint64_t RSP_0x48 = imageBase;
-			RCX = imageBase + 0x3082;
-			RSP_0x48 = RCX; // mov [rsp+48h],rcx
-			RCX = 0x540AAB046719B811;
-			RBP_NEG_0x78 = RCX; // mov [rbp-78h],rcx
-			R10 = readMemory<uint64_t>(imageBase + 0x742012B);
-			RCX = RBX;
-			RCX = ~RCX;
-			RCX *= RSP_0x48; // imul rcx,[rsp+48h]
-			RAX += RCX;
-			RAX += RBX;
-			RCX = 0xDF4DAFD552784CE5;
-			RCX -= RBX;
-			RAX += RCX;
-			RCX = 0x3F80DE5F719A5953;
-			RAX *= RCX;
-			RCX = RAX;
-			RCX >>= 0x1D;
-			RAX ^= RCX;
-			RCX = RAX;
-			RCX >>= 0x3A;
-			RAX ^= RCX;
-			RCX = 0x0;
-			RCX = _rotl64(RCX, 0x10);
-			RCX ^= R10;
-			RCX = ~RCX;
-			RCX = readMemory<uint64_t>(RCX + 0xD);
-			RCX *= RBP_NEG_0x78; // imul rcx,[rbp-78h]
-			RAX *= RCX;
-			return RAX;
+		case 10:
+		{
+			r9 = readMemory<uintptr_t>(imageBase + 0x71D912F);               //mov r9, [0x0000000004E8DAC4]
+			rcx = 0xEBB12D2C79FC5652;               //mov rcx, 0xEBB12D2C79FC5652
+			rax ^= rcx;             //xor rax, rcx
+			rcx = 0x9E6258824936A3C6;               //mov rcx, 0x9E6258824936A3C6
+			rax ^= rcx;             //xor rax, rcx
+			rcx = 0;                //and rcx, 0xFFFFFFFFC0000000
+			rcx = _rotl64(rcx, 0x10);               //rol rcx, 0x10
+			rcx ^= r9;              //xor rcx, r9
+			rcx = ~rcx;             //not rcx
+			rax *= readMemory<uintptr_t>(rcx + 0x5);              //imul rax, [rcx+0x05]
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x1D;           //shr rcx, 0x1D
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x3A;           //shr rcx, 0x3A
+			rax ^= rcx;             //xor rax, rcx
+			rcx = 0x3D6B11E766286AA3;               //mov rcx, 0x3D6B11E766286AA3
+			rax *= rcx;             //imul rax, rcx
+			rax -= rdi;             //sub rax, rdi
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x7;            //shr rcx, 0x07
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0xE;            //shr rcx, 0x0E
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x1C;           //shr rcx, 0x1C
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x38;           //shr rcx, 0x38
+			rax ^= rcx;             //xor rax, rcx
+			rax -= rdi;             //sub rax, rdi
+			return rax;
 		}
-		case 11: {
-			R11 = imageBase + 0xEC3D;
-			R9 = readMemory<uint64_t>(imageBase + 0x742012B);
-			RAX += RBX;
-			RCX = RBX + 1;
-			RCX *= R11;
-			RCX += RBX;
-			RAX += RCX;
-			RCX = 0x0;
-			RCX = _rotl64(RCX, 0x10);
-			RCX ^= R9;
-			RCX = ~RCX;
-			RAX *= readMemory<uint64_t>(RCX + 0xD);
-			RCX = 0x564163D4144DA674;
-			RAX += RCX;
-			RCX = 0x7DF6C4B8AC4AA83B;
-			RAX *= RCX;
-			RCX = 0x5F9915E2A23897DC;
-			RAX -= RCX;
-			RCX = RAX;
-			RCX >>= 0x10;
-			RAX ^= RCX;
-			RCX = RAX;
-			RCX >>= 0x20;
-			RAX ^= RCX;
-			return RAX;
+		case 11:
+		{
+			r10 = readMemory<uintptr_t>(imageBase + 0x71D912F);              //mov r10, [0x0000000004E8D5E1]
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x24;           //shr rcx, 0x24
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x17;           //shr rcx, 0x17
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rdx = 0;                //and rdx, 0xFFFFFFFFC0000000
+			rcx >>= 0x2E;           //shr rcx, 0x2E
+			rcx ^= rax;             //xor rcx, rax
+			rdx = _rotl64(rdx, 0x10);               //rol rdx, 0x10
+			rdx ^= r10;             //xor rdx, r10
+			rdx = ~rdx;             //not rdx
+			rax = readMemory<uintptr_t>(rdx + 0x5);               //mov rax, [rdx+0x05]
+			rax *= rcx;             //imul rax, rcx
+			rcx = 0x5D5C607174CFC222;               //mov rcx, 0x5D5C607174CFC222
+			rax -= rcx;             //sub rax, rcx
+			rax -= rdi;             //sub rax, rdi
+			rcx = 0x1ACECF0113784AB7;               //mov rcx, 0x1ACECF0113784AB7
+			rax *= rcx;             //imul rax, rcx
+			rax += rdi;             //add rax, rdi
+			rcx = 0x7BD4F3E5AB768887;               //mov rcx, 0x7BD4F3E5AB768887
+			rax *= rcx;             //imul rax, rcx
+			return rax;
 		}
-		case 12: {
-			R9 = readMemory<uint64_t>(imageBase + 0x742012B);
-			RCX = 0x0;
-			RCX = _rotl64(RCX, 0x10);
-			RCX ^= R9;
-			RCX = ~RCX;
-			RAX *= readMemory<uint64_t>(RCX + 0xD);
-			RCX = RAX;
-			RCX >>= 0x11;
-			RAX ^= RCX;
-			RCX = RAX;
-			RCX >>= 0x22;
-			RAX ^= RCX;
-			RCX = RAX;
-			RCX >>= 0xE;
-			RAX ^= RCX;
-			RCX = RAX;
-			RCX >>= 0x1C;
-			RAX ^= RCX;
-			RCX = RAX;
-			RCX >>= 0x38;
-			RAX ^= RCX;
-			RCX = imageBase;
-			RAX += RCX;
-			RCX = RAX;
-			RCX >>= 0x21;
-			RAX ^= RCX;
-			RCX = imageBase;
-			RAX -= RCX;
-			RAX += 0xFFFFFFFF9DB2C357;
-			RAX += RBX;
-			RCX = 0x9863F38C7BF440B7;
-			RAX *= RCX;
-			RCX = 0x14E0C67082A7D53F;
-			RAX *= RCX;
-			return RAX;
+		case 12:
+		{
+			rbx = imageBase;           //lea rbx, [0xFFFFFFFFFDCB3FA2]
+			r15 = imageBase + 0x6171;          //lea r15, [0xFFFFFFFFFDCBA0FB]
+			r10 = readMemory<uintptr_t>(imageBase + 0x71D912F);              //mov r10, [0x0000000004E8D084]
+			rcx = rdi;              //mov rcx, rdi
+			rcx ^= r15;             //xor rcx, r15
+			rax += rcx;             //add rax, rcx
+			rax ^= rbx;             //xor rax, rbx
+			rdx = 0;                //and rdx, 0xFFFFFFFFC0000000
+			rcx = rax;              //mov rcx, rax
+			rdx = _rotl64(rdx, 0x10);               //rol rdx, 0x10
+			rdx ^= r10;             //xor rdx, r10
+			rax = 0x673E272C0CA883CD;               //mov rax, 0x673E272C0CA883CD
+			rcx ^= rax;             //xor rcx, rax
+			rdx = ~rdx;             //not rdx
+			rax = readMemory<uintptr_t>(rdx + 0x5);               //mov rax, [rdx+0x05]
+			rax *= rcx;             //imul rax, rcx
+			rcx = rdi;              //mov rcx, rdi
+			rcx = ~rcx;             //not rcx
+			rax += rcx;             //add rax, rcx
+			rax -= rbx;             //sub rax, rbx
+			rax -= 0x191C62F6;              //sub rax, 0x191C62F6
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x27;           //shr rcx, 0x27
+			rax ^= rcx;             //xor rax, rcx
+			rcx = 0xE12F42EFE3D58BCB;               //mov rcx, 0xE12F42EFE3D58BCB
+			rax *= rcx;             //imul rax, rcx
+			rcx = 0x285DF5F4C95F3162;               //mov rcx, 0x285DF5F4C95F3162
+			rax ^= rcx;             //xor rax, rcx
+			return rax;
 		}
-		case 13: {
-			R14 = imageBase + 0x7339;
-			R10 = readMemory<uint64_t>(imageBase + 0x742012B);
-			RCX = RAX;
-			RCX >>= 0x24;
-			RAX ^= RCX;
-			RCX = 0x0;
-			RCX = _rotl64(RCX, 0x10);
-			RCX ^= R10;
-			RCX = ~RCX;
-			RAX *= readMemory<uint64_t>(RCX + 0xD);
-			RCX = imageBase;
-			RCX += 0x59CF17C4;
-			RCX += RBX;
-			RAX += RCX;
-			RCX = 0x99F0869ACD587455;
-			RAX ^= RCX;
-			RCX = 0x9BD39BDBB5698FC7;
-			RAX *= RCX;
-			RCX = RAX;
-			RCX >>= 0xA;
-			RAX ^= RCX;
-			RCX = RAX;
-			RCX >>= 0x14;
-			RAX ^= RCX;
-			RDX = RAX;
-			RDX >>= 0x28;
-			RDX ^= RAX;
-			RAX = RBX;
-			RAX = ~RAX;
-			RAX += RDX;
-			RAX += R14;
-			return RAX;
+		case 13:
+		{
+			rbx = imageBase;           //lea rbx, [0xFFFFFFFFFDCB3B5A]
+			r9 = readMemory<uintptr_t>(imageBase + 0x71D912F);               //mov r9, [0x0000000004E8CC04]
+			rcx = 0;                //and rcx, 0xFFFFFFFFC0000000
+			rcx = _rotl64(rcx, 0x10);               //rol rcx, 0x10
+			rcx ^= r9;              //xor rcx, r9
+			rcx = ~rcx;             //not rcx
+			rcx = readMemory<uintptr_t>(rcx + 0x5);               //mov rcx, [rcx+0x05]
+			uintptr_t RSP_0x78;
+			RSP_0x78 = 0x5910987B2E4C2169;          //mov rcx, 0x5910987B2E4C2169 : RSP+0x78
+			rcx *= RSP_0x78;                //imul rcx, [rsp+0x78]
+			rax *= rcx;             //imul rax, rcx
+			rcx = 0xE2E24EFA6B663414;               //mov rcx, 0xE2E24EFA6B663414
+			rax ^= rcx;             //xor rax, rcx
+			rax -= rdi;             //sub rax, rdi
+			rcx = imageBase + 0x61F;           //lea rcx, [0xFFFFFFFFFDCB3E10]
+			rax += rcx;             //add rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x27;           //shr rcx, 0x27
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x1;            //shr rcx, 0x01
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x2;            //shr rcx, 0x02
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x4;            //shr rcx, 0x04
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x8;            //shr rcx, 0x08
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x10;           //shr rcx, 0x10
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x20;           //shr rcx, 0x20
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rbx + 0x14cab09b;                 //lea rcx, [rbx+0x14CAB09B]
+			rcx += rdi;             //add rcx, rdi
+			rax -= rbx;             //sub rax, rbx
+			rax ^= rcx;             //xor rax, rcx
+			return rax;
 		}
-		case 14: {
-			uint64_t RBP_NEG_0x78 = imageBase;
-			R14 = imageBase + 0x649C;
-			RCX = 0xC48ED9BEE4C4A129;
-			R15 = imageBase + 0x54D54795;
-			RBP_NEG_0x78 = RCX; // mov [rbp-78h],rcx
-			R10 = readMemory<uint64_t>(imageBase + 0x742012B);
-			RCX = 0x0;
-			RCX = _rotl64(RCX, 0x10);
-			RCX ^= R10;
-			RCX = ~RCX;
-			RCX = readMemory<uint64_t>(RCX + 0xD);
-			RCX *= RBP_NEG_0x78; // imul rcx,[rbp-78h]
-			RAX *= RCX;
-			RCX = RBX;
-			RCX ^= R15;
-			RAX += RCX;
-			RAX ^= RBX;
-			RAX -= RBX;
-			RCX = 0x8B9FE6D1F0711D73;
-			RAX *= RCX;
-			RCX = RAX;
-			RCX >>= 0x27;
-			RAX ^= RCX;
-			RCX = RBX;
-			RCX = ~RCX;
-			RCX *= R14;
-			RAX ^= RCX;
-			return RAX;
+		case 14:
+		{
+			r9 = readMemory<uintptr_t>(imageBase + 0x71D912F);               //mov r9, [0x0000000004E8C800]
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0xF;            //shr rcx, 0x0F
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x1E;           //shr rcx, 0x1E
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x3C;           //shr rcx, 0x3C
+			rax ^= rcx;             //xor rax, rcx
+			rax ^= rdi;             //xor rax, rdi
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x1;            //shr rcx, 0x01
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x2;            //shr rcx, 0x02
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x4;            //shr rcx, 0x04
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x8;            //shr rcx, 0x08
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x10;           //shr rcx, 0x10
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x20;           //shr rcx, 0x20
+			rax ^= rcx;             //xor rax, rcx
+			rcx = 0x8ADDB5A6833CD70C;               //mov rcx, 0x8ADDB5A6833CD70C
+			rax += rcx;             //add rax, rcx
+			rcx = 0x71785D8AD6471764;               //mov rcx, 0x71785D8AD6471764
+			rax ^= rcx;             //xor rax, rcx
+			rcx = 0;                //and rcx, 0xFFFFFFFFC0000000
+			rcx = _rotl64(rcx, 0x10);               //rol rcx, 0x10
+			rcx ^= r9;              //xor rcx, r9
+			rcx = ~rcx;             //not rcx
+			rcx = readMemory<uintptr_t>(rcx + 0x5);               //mov rcx, [rcx+0x05]
+			uintptr_t RSP_0x70;
+			RSP_0x70 = 0xC2A87682DDC9E25D;          //mov rcx, 0xC2A87682DDC9E25D : RSP+0x70
+			rcx *= RSP_0x70;                //imul rcx, [rsp+0x70]
+			rax *= rcx;             //imul rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x21;           //shr rcx, 0x21
+			rax ^= rcx;             //xor rax, rcx
+			return rax;
 		}
-		case 15: {
-			R10 = readMemory<uint64_t>(imageBase + 0x742012B);
-			R15 = imageBase + 0x6C4F;
-			RCX = RAX;
-			RCX >>= 0x20;
-			RAX ^= RCX;
-			RCX = 0xF2DE823B148DE081;
-			RAX *= RCX;
-			RCX = RBX;
-			RCX ^= RAX;
-			RDX = 0x0;
-			RDX = _rotl64(RDX, 0x10);
-			RCX ^= R15;
-			RDX ^= R10;
-			RDX = ~RDX;
-			RAX = readMemory<uint64_t>(RDX + 0xD);
-			RAX *= RCX;
-			RCX = 0x50DC4E1E2C3449F;
-			RAX *= RCX;
-			RAX -= RBX;
-			RAX ^= RBX;
-			RCX = 0x7023B028DF1306AD;
-			RAX *= RCX;
-			return RAX;
+		case 15:
+		{
+			rbx = imageBase;           //lea rbx, [0xFFFFFFFFFDCB3204]
+			r13 = 0x3C85E73829FCC7AD;               //mov r13, 0x3C85E73829FCC7AD
+			r10 = readMemory<uintptr_t>(imageBase + 0x71D912F);              //mov r10, [0x0000000004E8C2C9]
+			rax *= r13;             //imul rax, r13
+			rcx = 0xE37E90332B6845B6;               //mov rcx, 0xE37E90332B6845B6
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x24;           //shr rcx, 0x24
+			rax ^= rcx;             //xor rax, rcx
+			rax += rbx;             //add rax, rbx
+			rax ^= rdi;             //xor rax, rdi
+			rax += rbx;             //add rax, rbx
+			rcx = rax;              //mov rcx, rax
+			rdx = 0;                //and rdx, 0xFFFFFFFFC0000000
+			rcx >>= 0x28;           //shr rcx, 0x28
+			rcx ^= rax;             //xor rcx, rax
+			rdx = _rotl64(rdx, 0x10);               //rol rdx, 0x10
+			rdx ^= r10;             //xor rdx, r10
+			rdx = ~rdx;             //not rdx
+			rax = readMemory<uintptr_t>(rdx + 0x5);               //mov rax, [rdx+0x05]
+			rax *= rcx;             //imul rax, rcx
+			return rax;
 		}
 		}
 	}
 
 	extern "C" auto decrypt_bone_base(uint64_t imageBase, uint64_t peb) -> uint64_t
 	{
-		uint64_t RAX = imageBase, RBX = imageBase, RCX = imageBase, RDX = imageBase, R8 = imageBase, RDI = imageBase, RSI = imageBase, R9 = imageBase, R10 = imageBase, R11 = imageBase, R12 = imageBase, R13 = imageBase, R14 = imageBase, R15 = imageBase, RBP = 0, RSP = 0;
-
-		R8 = readMemory<uint64_t>(imageBase + 0x15E00828);
-		if (R8 == 0) {
-			return 0;
+		uint64_t rax = imageBase, rbx = imageBase, rcx = imageBase, rdx = imageBase, rdi = imageBase, rsi = imageBase, r8 = imageBase, r9 = imageBase, r10 = imageBase, r11 = imageBase, r12 = imageBase, r13 = imageBase, r14 = imageBase, r15 = imageBase;
+		rdx = readMemory<uintptr_t>(imageBase + 0x15E18A18);
+		if (!rdx)
+			return rdx;
+		r8 = ~peb;               //mov r8, gs:[rax]
+		rax = r8;               //mov rax, r8
+		rax = _rotl64(rax, 0x26);               //rol rax, 0x26
+		rax &= 0xF;
+		switch (rax) {
+		case 0:
+		{
+			r10 = readMemory<uintptr_t>(imageBase + 0x71D924F);              //mov r10, [0x0000000004B6109C]
+			r14 = imageBase + 0x676D94A3;              //lea r14, [0x00000000650612DD]
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x3;            //shr rax, 0x03
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x6;            //shr rax, 0x06
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0xC;            //shr rax, 0x0C
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x18;           //shr rax, 0x18
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x30;           //shr rax, 0x30
+			rdx ^= rax;             //xor rdx, rax
+			rax = 0xD635FD6F5740DF17;               //mov rax, 0xD635FD6F5740DF17
+			rdx *= rax;             //imul rdx, rax
+			rax = r8;               //mov rax, r8
+			rax *= r14;             //imul rax, r14
+			rdx += rax;             //add rdx, rax
+			rax = 0;                //and rax, 0xFFFFFFFFC0000000
+			rax = _rotl64(rax, 0x10);               //rol rax, 0x10
+			rax ^= r10;             //xor rax, r10
+			rax = _byteswap_uint64(rax);            //bswap rax
+			rdx *= readMemory<uintptr_t>(rax + 0xb);              //imul rdx, [rax+0x0B]
+			rax = imageBase + 0x3496E896;              //lea rax, [0x00000000322F641C]
+			r13 = 0x891801D00A4665B;                //mov r13, 0x891801D00A4665B
+			rax = ~rax;             //not rax
+			rax -= r8;              //sub rax, r8
+			rax += r13;             //add rax, r13
+			rdx += rax;             //add rdx, rax
+			rax = imageBase;           //lea rax, [0xFFFFFFFFFD987D29]
+			rdx ^= rax;             //xor rdx, rax
+			rax = 0x3059E19BF5C898E5;               //mov rax, 0x3059E19BF5C898E5
+			rdx *= rax;             //imul rdx, rax
+			return rdx;
 		}
-		RBX = peb; // mov rbx,gs:[rax]
-		// test r8,r8
-		// je 00007FF793640CCEh
-		RAX = RBX;
-		RAX <<= 0x2B;
-		RAX = _byteswap_uint64(RAX);
-		RAX &= 0xF;
-		// cmp rax,0Eh
-		// ja 00007FF79364089Ah
-		switch (RAX) {
-		case 0: {
-			R11 = imageBase + 0x1964A9EF;
-			RCX = readMemory<uint64_t>(imageBase + 0x7420216);
-			RAX = 0xE65E6BAF9C1CF9EE;
-			R8 ^= RAX;
-			RAX = R8;
-			RAX >>= 0xF;
-			R8 ^= RAX;
-			RAX = R8;
-			RAX >>= 0x1E;
-			R8 ^= RAX;
-			RAX = R8;
-			RAX >>= 0x3C;
-			R8 ^= RAX;
-			RAX = 0x544E72501F255A6B;
-			R8 *= RAX;
-			RAX = imageBase;
-			R8 ^= RAX;
-			RAX = imageBase;
-			R8 += RAX;
-			RAX = 0x1629A73EA68D757B;
-			R8 += RAX;
-			RAX = 0x0;
-			RAX = _rotl64(RAX, 0x10);
-			RAX ^= RCX;
-			RAX = ~RAX;
-			RAX = readMemory<uint64_t>(RAX + 0x19);
-			RAX *= R8;
-			R8 = R11;
-			RAX += RBX;
-			R8 = ~R8;
-			R8 += RAX;
-			return R8;
+		case 1:
+		{
+			//failed to translate: pop rdx
+			r12 = imageBase + 0x74050ED8;              //lea r12, [0x00000000719D87A4]
+			rbx = readMemory<uintptr_t>(imageBase + 0x71D924F);              //mov rbx, [0x0000000004B60AB3]
+			rax = r12;              //mov rax, r12
+			rax -= r8;              //sub rax, r8
+			rdx += rax;             //add rdx, rax
+			rdx -= r8;              //sub rdx, r8
+			rdx ^= r8;              //xor rdx, r8
+			rax = 0x5BB3382495788FD9;               //mov rax, 0x5BB3382495788FD9
+			rdx *= rax;             //imul rdx, rax
+			rcx = 0;                //and rcx, 0xFFFFFFFFC0000000
+			rax = 0x5B9DDF9B7BC38403;               //mov rax, 0x5B9DDF9B7BC38403
+			rcx = _rotl64(rcx, 0x10);               //rol rcx, 0x10
+			rax += rdx;             //add rax, rdx
+			rcx ^= rbx;             //xor rcx, rbx
+			rcx = _byteswap_uint64(rcx);            //bswap rcx
+			rdx = readMemory<uintptr_t>(rcx + 0xb);               //mov rdx, [rcx+0x0B]
+			rdx *= rax;             //imul rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x20;           //shr rax, 0x20
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x11;           //shr rax, 0x11
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x22;           //shr rax, 0x22
+			rdx ^= rax;             //xor rdx, rax
+			return rdx;
 		}
-		case 1: {
-			R10 = readMemory<uint64_t>(imageBase + 0x7420216);
-			RAX = R8;
-			RAX >>= 0x9;
-			R8 ^= RAX;
-			RAX = R8;
-			RAX >>= 0x12;
-			R8 ^= RAX;
-			RCX = 0x0;
-			RCX = _rotl64(RCX, 0x10);
-			RAX = R8;
-			RAX >>= 0x24;
-			RCX ^= R10;
-			RAX ^= R8;
-			RCX = ~RCX;
-			R8 = readMemory<uint64_t>(RCX + 0x19);
-			RCX = imageBase + 0x4A304FBB;
-			R8 *= RAX;
-			RAX = RBX;
-			RAX = ~RAX;
-			RAX += RCX;
-			R8 ^= RAX;
-			RAX = imageBase;
-			R8 ^= RAX;
-			RAX = 0x5389C799EE48F8D0;
-			R8 ^= RAX;
-			RAX = 0x7AD8D1482BD2EF1D;
-			R8 *= RAX;
-			RAX = imageBase + 0x45FA1C03;
-			R8 -= RBX;
-			RAX = ~RAX;
-			R8 += RAX;
-			RAX = imageBase;
-			R8 -= RAX;
-			return R8;
+		case 2:
+		{
+			rbx = readMemory<uintptr_t>(imageBase + 0x71D924F);              //mov rbx, [0x0000000004B605A6]
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x12;           //shr rax, 0x12
+			rdx ^= rax;             //xor rdx, rax
+			rcx = 0;                //and rcx, 0xFFFFFFFFC0000000
+			rcx = _rotl64(rcx, 0x10);               //rol rcx, 0x10
+			rax = rdx;              //mov rax, rdx
+			rcx ^= rbx;             //xor rcx, rbx
+			rax >>= 0x24;           //shr rax, 0x24
+			rax ^= rdx;             //xor rax, rdx
+			rcx = _byteswap_uint64(rcx);            //bswap rcx
+			rdx = readMemory<uintptr_t>(rcx + 0xb);               //mov rdx, [rcx+0x0B]
+			rdx *= rax;             //imul rdx, rax
+			rcx = r8;               //mov rcx, r8
+			rcx = ~rcx;             //not rcx
+			rax = imageBase + 0x8D63;          //lea rax, [0xFFFFFFFFFD98FD2E]
+			rdx += rax;             //add rdx, rax
+			rdx += rcx;             //add rdx, rcx
+			rax = 0xFF36F9B289267D23;               //mov rax, 0xFF36F9B289267D23
+			rdx *= rax;             //imul rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x26;           //shr rax, 0x26
+			rdx ^= rax;             //xor rdx, rax
+			rdx ^= r8;              //xor rdx, r8
+			rax = 0x1FC63BF66339890F;               //mov rax, 0x1FC63BF66339890F
+			rdx *= rax;             //imul rdx, rax
+			return rdx;
 		}
-		case 2: {
-			uint64_t RBP_NEG_0x38 = imageBase;
-			uint64_t RSP_0x60 = imageBase;
-			// push rbx
-			// pushfq
-			// pop rbx
-			// popfq
-			// pop rbx
-			RAX = imageBase + 0x75DD805E;
-			RBP_NEG_0x38 = RAX; // mov [rbp-38h],rax
-			RAX = imageBase + 0x84BA;
-			RSP_0x60 = RAX; // mov [rsp+60h],rax
-			R10 = readMemory<uint64_t>(imageBase + 0x7420216);
-			RAX = RBX;
-			RAX *= RBP_NEG_0x38; // imul rax,[rbp-38h]
-			R8 += RAX;
-			RAX = RBX;
-			RAX *= RSP_0x60; // imul rax,[rsp+60h]
-			R8 += RAX;
-			RAX = RBX;
-			RAX = ~RAX;
-			R8 ^= RAX;
-			RAX = imageBase + 0x4063;
-			R8 ^= RAX;
-			RCX = 0x0;
-			RAX = R8;
-			RCX = _rotl64(RCX, 0x10);
-			R8 = 0xB8A0811CFC60168E;
-			RAX ^= R8;
-			RCX ^= R10;
-			RCX = ~RCX;
-			R8 = readMemory<uint64_t>(RCX + 0x19);
-			R8 *= RAX;
-			RAX = 0x3CEF03F81E1AEBCF;
-			R8 *= RAX;
-			RAX = 0x6C597BE0239E08F2;
-			R8 += RAX;
-			RAX = R8;
-			RAX >>= 0x18;
-			R8 ^= RAX;
-			RAX = R8;
-			RAX >>= 0x30;
-			R8 ^= RAX;
-			return R8;
+		case 3:
+		{
+			//failed to translate: pop rdx
+			rbx = readMemory<uintptr_t>(imageBase + 0x71D924F);              //mov rbx, [0x0000000004B6014B]
+			rdx += r8;              //add rdx, r8
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0xF;            //shr rax, 0x0F
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x1E;           //shr rax, 0x1E
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x3C;           //shr rax, 0x3C
+			rdx ^= rax;             //xor rdx, rax
+			rax = 0x3437489FC93631C1;               //mov rax, 0x3437489FC93631C1
+			rdx += rax;             //add rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x5;            //shr rax, 0x05
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0xA;            //shr rax, 0x0A
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x14;           //shr rax, 0x14
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x28;           //shr rax, 0x28
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x3;            //shr rax, 0x03
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x6;            //shr rax, 0x06
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0xC;            //shr rax, 0x0C
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x18;           //shr rax, 0x18
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x30;           //shr rax, 0x30
+			rdx ^= rax;             //xor rdx, rax
+			rdx -= r8;              //sub rdx, r8
+			rcx = 0;                //and rcx, 0xFFFFFFFFC0000000
+			rcx = _rotl64(rcx, 0x10);               //rol rcx, 0x10
+			rcx ^= rbx;             //xor rcx, rbx
+			rax = imageBase;           //lea rax, [0xFFFFFFFFFD986BCF]
+			rdx -= rax;             //sub rdx, rax
+			rax = 0xFDF3D74B7A69C45B;               //mov rax, 0xFDF3D74B7A69C45B
+			rax *= rdx;             //imul rax, rdx
+			rdx = 0x52547ABD86BE0CB4;               //mov rdx, 0x52547ABD86BE0CB4
+			rax += rdx;             //add rax, rdx
+			rcx = _byteswap_uint64(rcx);            //bswap rcx
+			rdx = readMemory<uintptr_t>(rcx + 0xb);               //mov rdx, [rcx+0x0B]
+			rdx *= rax;             //imul rdx, rax
+			return rdx;
 		}
-		case 3: {
-			R10 = readMemory<uint64_t>(imageBase + 0x7420216);
-			RAX = 0xF93AD4ADE7DED26B;
-			R8 *= RAX;
-			RAX = imageBase + 0x5651841B;
-			RAX = ~RAX;
-			RAX++;
-			RAX += RBX;
-			R8 ^= RAX;
-			RAX = imageBase;
-			R8 ^= RAX;
-			RAX = imageBase + 0x9EB5;
-			RAX = ~RAX;
-			RAX *= RBX;
-			R8 += RAX;
-			RAX = imageBase;
-			R8 -= RAX;
-			RAX = R8;
-			RAX >>= 0x1F;
-			R8 ^= RAX;
-			RAX = R8;
-			RAX >>= 0x3E;
-			R8 ^= RAX;
-			RAX = R8;
-			RAX >>= 0x11;
-			R8 ^= RAX;
-			RAX = R8;
-			RAX >>= 0x22;
-			R8 ^= RAX;
-			RAX = 0x0;
-			RAX = _rotl64(RAX, 0x10);
-			RAX ^= R10;
-			RAX = ~RAX;
-			R8 *= readMemory<uint64_t>(RAX + 0x19);
-			return R8;
+		case 4:
+		{
+			rbx = readMemory<uintptr_t>(imageBase + 0x71D924F);              //mov rbx, [0x0000000004B5FB42]
+			rax = r8;               //mov rax, r8
+			rax = imageBase;           //sub rax, [rbp+0x48] -- didn't find trace -> use base
+			rax -= 0x4929CCC0;              //sub rax, 0x4929CCC0
+			rdx ^= rax;             //xor rdx, rax
+			rax = r8;               //mov rax, r8
+			rax = ~rax;             //not rax
+			uintptr_t RSP_0x48;
+			RSP_0x48 = imageBase + 0x6D8B;             //lea rax, [0xFFFFFFFFFD98D6D9] : RSP+0x48
+			rax += RSP_0x48;                //add rax, [rsp+0x48]
+			rdx ^= rax;             //xor rdx, rax
+			rax = 0x46B53CB403B92895;               //mov rax, 0x46B53CB403B92895
+			rdx += rax;             //add rdx, rax
+			rax = 0xCCE222429417FA02;               //mov rax, 0xCCE222429417FA02
+			rdx ^= rax;             //xor rdx, rax
+			rax = imageBase;           //lea rax, [0xFFFFFFFFFD9866AB]
+			rdx -= rax;             //sub rdx, rax
+			rax = 0;                //and rax, 0xFFFFFFFFC0000000
+			rax = _rotl64(rax, 0x10);               //rol rax, 0x10
+			rax ^= rbx;             //xor rax, rbx
+			rax = _byteswap_uint64(rax);            //bswap rax
+			rax = readMemory<uintptr_t>(rax + 0xb);               //mov rax, [rax+0x0B]
+			uintptr_t RSP_0x78;
+			RSP_0x78 = 0xA6572F476EA14F7B;          //mov rax, 0xA6572F476EA14F7B : RSP+0x78
+			rax *= RSP_0x78;                //imul rax, [rsp+0x78]
+			rdx *= rax;             //imul rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0xF;            //shr rax, 0x0F
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x1E;           //shr rax, 0x1E
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x3C;           //shr rax, 0x3C
+			rdx ^= rax;             //xor rdx, rax
+			return rdx;
 		}
-		case 4: {
-			uint64_t RBP_NEG_0x60 = imageBase;
-			RAX = 0x9492EF85F5F7F013;
-			RBP_NEG_0x60 = RAX; // mov [rbp-60h],rax
-			R9 = readMemory<uint64_t>(imageBase + 0x7420216);
-			RAX = R8;
-			RAX >>= 0xA;
-			R8 ^= RAX;
-			RAX = R8;
-			RAX >>= 0x14;
-			R8 ^= RAX;
-			RAX = R8;
-			RAX >>= 0x28;
-			R8 ^= RAX;
-			RAX = 0x2475CFAEDE7F6DD0;
-			R8 -= RAX;
-			RAX = 0xD114CD7665FC2E4C;
-			R8 ^= RAX;
-			RAX = imageBase;
-			R8 -= RAX;
-			RAX = imageBase + 0xA2E1;
-			RAX = ~RAX;
-			RAX ^= RBX;
-			R8 -= RAX;
-			RAX = imageBase;
-			R8 ^= RAX;
-			RAX = 0x0;
-			RAX = _rotl64(RAX, 0x10);
-			RAX ^= R9;
-			RAX = ~RAX;
-			RAX = readMemory<uint64_t>(RAX + 0x19);
-			RAX *= RBP_NEG_0x60; // imul rax,[rbp-60h]
-			R8 *= RAX;
-			return R8;
+		case 5:
+		{
+			rbx = readMemory<uintptr_t>(imageBase + 0x71D924F);              //mov rbx, [0x0000000004B5F6B0]
+			r15 = imageBase + 0xC902;          //lea r15, [0xFFFFFFFFFD992D50]
+			rax = r8;               //mov rax, r8
+			rax *= r15;             //imul rax, r15
+			rdx -= rax;             //sub rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x12;           //shr rax, 0x12
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x24;           //shr rax, 0x24
+			rdx ^= rax;             //xor rdx, rax
+			rax = 0;                //and rax, 0xFFFFFFFFC0000000
+			rax = _rotl64(rax, 0x10);               //rol rax, 0x10
+			rax ^= rbx;             //xor rax, rbx
+			rax = _byteswap_uint64(rax);            //bswap rax
+			rdx *= readMemory<uintptr_t>(rax + 0xb);              //imul rdx, [rax+0x0B]
+			rax = 0x7887CB49CAD27C83;               //mov rax, 0x7887CB49CAD27C83
+			rdx *= rax;             //imul rdx, rax
+			rax = imageBase;           //lea rax, [0xFFFFFFFFFD985FC8]
+			rax += 0x5DBA;          //add rax, 0x5DBA
+			rax += r8;              //add rax, r8
+			rdx += rax;             //add rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0xC;            //shr rax, 0x0C
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x18;           //shr rax, 0x18
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x30;           //shr rax, 0x30
+			rdx ^= rax;             //xor rdx, rax
+			rax = imageBase + 0xD9F3;          //lea rax, [0xFFFFFFFFFD9938E9]
+			rdx -= r8;              //sub rdx, r8
+			rdx += rax;             //add rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x8;            //shr rax, 0x08
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x10;           //shr rax, 0x10
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x20;           //shr rax, 0x20
+			rdx ^= rax;             //xor rdx, rax
+			return rdx;
 		}
-		case 5: {
-			// push rbx
-			// pushfq
-			// pop rbx
-			// popfq
-			// pop rbx
-			R11 = readMemory<uint64_t>(imageBase + 0x7420216);
-			R8 = R8 + RBX * 2;
-			R8 += 0xFFFFFFFF938F81BB;
-			RAX = 0x0;
-			RAX = _rotl64(RAX, 0x10);
-			RAX ^= R11;
-			RAX = ~RAX;
-			R8 *= readMemory<uint64_t>(RAX + 0x19);
-			RAX = imageBase;
-			R8 -= RAX;
-			RAX = imageBase;
-			RAX += 0xED8E;
-			RAX += RBX;
-			R8 ^= RAX;
-			RAX = R8;
-			RAX >>= 0x16;
-			R8 ^= RAX;
-			RAX = R8;
-			RAX >>= 0x2C;
-			R8 ^= RAX;
-			RAX = 0x9D3E9E6D1D6DA82B;
-			R8 *= RAX;
-			RAX = R8;
-			RAX >>= 0x6;
-			R8 ^= RAX;
-			RAX = R8;
-			RAX >>= 0xC;
-			R8 ^= RAX;
-			RAX = R8;
-			RAX >>= 0x18;
-			R8 ^= RAX;
-			RAX = R8;
-			RAX >>= 0x30;
-			R8 ^= RAX;
-			return R8;
+		case 6:
+		{
+			rbx = readMemory<uintptr_t>(imageBase + 0x71D924F);              //mov rbx, [0x0000000004B5F099]
+			r12 = imageBase + 0x56AD1EF7;              //lea r12, [0x0000000054457D2E]
+			rcx = 0;                //and rcx, 0xFFFFFFFFC0000000
+			rax = rdx;              //mov rax, rdx
+			rcx = _rotl64(rcx, 0x10);               //rol rcx, 0x10
+			rax >>= 0x26;           //shr rax, 0x26
+			rcx ^= rbx;             //xor rcx, rbx
+			rax ^= rdx;             //xor rax, rdx
+			rcx = _byteswap_uint64(rcx);            //bswap rcx
+			rdx = readMemory<uintptr_t>(rcx + 0xb);               //mov rdx, [rcx+0x0B]
+			rdx *= rax;             //imul rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x14;           //shr rax, 0x14
+			rdx ^= rax;             //xor rdx, rax
+			rcx = rdx;              //mov rcx, rdx
+			rcx >>= 0x28;           //shr rcx, 0x28
+			rax = 0x73E3C1626886AD89;               //mov rax, 0x73E3C1626886AD89
+			rcx ^= rdx;             //xor rcx, rdx
+			rdx = r8;               //mov rdx, r8
+			rdx *= r12;             //imul rdx, r12
+			rdx += rcx;             //add rdx, rcx
+			rdx *= rax;             //imul rdx, rax
+			rdx -= r8;              //sub rdx, r8
+			rax = imageBase;           //lea rax, [0xFFFFFFFFFD985CD4]
+			rdx ^= rax;             //xor rdx, rax
+			rax = 0x5BE12EB58C328E79;               //mov rax, 0x5BE12EB58C328E79
+			rdx += rax;             //add rdx, rax
+			return rdx;
 		}
-		case 6: {
-			R10 = readMemory<uint64_t>(imageBase + 0x7420216);
-			RAX = imageBase;
-			R8 -= RAX;
-			R8 += 0xFFFFFFFFFFFF8104;
-			R8 += RBX;
-			RAX = 0x4907E05B52C3E160;
-			R8 -= RAX;
-			RAX = imageBase;
-			RAX += 0xDD7B;
-			RAX += RBX;
-			R8 += RAX;
-			RAX = imageBase;
-			RAX += 0x245B;
-			RAX += RBX;
-			R8 ^= RAX;
-			RAX = 0xB0E7E4F7BB271F8F;
-			R8 *= RAX;
-			RAX = R8;
-			RAX >>= 0x20;
-			R8 ^= RAX;
-			RAX = 0x0;
-			RAX = _rotl64(RAX, 0x10);
-			RAX ^= R10;
-			RAX = ~RAX;
-			R8 *= readMemory<uint64_t>(RAX + 0x19);
-			return R8;
+		case 7:
+		{
+			rbx = readMemory<uintptr_t>(imageBase + 0x71D924F);              //mov rbx, [0x0000000004B5EBB1]
+			rcx = r8 + 0xffffffff946a7cce;          //lea rcx, [r8-0x6B958332]
+			rax = 0;                //and rax, 0xFFFFFFFFC0000000
+			rax = _rotl64(rax, 0x10);               //rol rax, 0x10
+			rax ^= rbx;             //xor rax, rbx
+			rax = _byteswap_uint64(rax);            //bswap rax
+			rdx *= readMemory<uintptr_t>(rax + 0xb);              //imul rdx, [rax+0x0B]
+			rax = imageBase;           //lea rax, [0xFFFFFFFFFD985735]
+			rdx ^= rax;             //xor rdx, rax
+			rdx -= rax;             //sub rdx, rax
+			rcx += rdx;             //add rcx, rdx
+			rax = rcx;              //mov rax, rcx
+			rax >>= 0xC;            //shr rax, 0x0C
+			rcx ^= rax;             //xor rcx, rax
+			rax = rcx;              //mov rax, rcx
+			rax >>= 0x18;           //shr rax, 0x18
+			rcx ^= rax;             //xor rcx, rax
+			rdx = rcx;              //mov rdx, rcx
+			rdx >>= 0x30;           //shr rdx, 0x30
+			rax = 0xA2777C64321A6CF;                //mov rax, 0xA2777C64321A6CF
+			rdx ^= rcx;             //xor rdx, rcx
+			rdx *= rax;             //imul rdx, rax
+			rax = 0x3D998F50D02DE848;               //mov rax, 0x3D998F50D02DE848
+			rdx -= rax;             //sub rdx, rax
+			rdx ^= r8;              //xor rdx, r8
+			rax = 0x44777CC2F2CDCF18;               //mov rax, 0x44777CC2F2CDCF18
+			rdx ^= rax;             //xor rdx, rax
+			return rdx;
 		}
-		case 7: {
-			R9 = readMemory<uint64_t>(imageBase + 0x7420216);
-			RAX = 0x5F374DCA8F3D13C9;
-			R8 *= RAX;
-			RAX = 0x0;
-			RAX = _rotl64(RAX, 0x10);
-			RAX ^= R9;
-			RAX = ~RAX;
-			R8 *= readMemory<uint64_t>(RAX + 0x19);
-			RAX = imageBase + 0x5C95149D;
-			RAX = ~RAX;
-			RAX += RBX;
-			R8 += RAX;
-			RAX = R8;
-			RAX >>= 0x1A;
-			R8 ^= RAX;
-			RAX = R8;
-			RAX >>= 0x34;
-			R8 ^= RAX;
-			RAX = 0x75370FCB0114A0E4;
-			R8 ^= RAX;
-			RAX = imageBase;
-			R8 -= RAX;
-			RAX = 0x6E0D44EBF8285199;
-			R8 *= RAX;
-			RAX = imageBase;
-			R8 += RAX;
-			return R8;
+		case 8:
+		{
+			rbx = readMemory<uintptr_t>(imageBase + 0x71D924F);              //mov rbx, [0x0000000004B5E82C]
+			r12 = imageBase + 0xC270;          //lea r12, [0xFFFFFFFFFD99183A]
+			rcx = r8;               //mov rcx, r8
+			rax = r12;              //mov rax, r12
+			rax = ~rax;             //not rax
+			rcx = ~rcx;             //not rcx
+			rcx += rax;             //add rcx, rax
+			rdx ^= rcx;             //xor rdx, rcx
+			rax = 0;                //and rax, 0xFFFFFFFFC0000000
+			rax = _rotl64(rax, 0x10);               //rol rax, 0x10
+			rax ^= rbx;             //xor rax, rbx
+			rax = _byteswap_uint64(rax);            //bswap rax
+			rax = readMemory<uintptr_t>(rax + 0xb);               //mov rax, [rax+0x0B]
+			rdx *= rax;             //imul rdx, rax
+			rax = 0x9F3A04B73F91D7BF;               //mov rax, 0x9F3A04B73F91D7BF
+			rdx *= rax;             //imul rdx, rax
+			rax = 0x4B4AF50AA7AE5554;               //mov rax, 0x4B4AF50AA7AE5554
+			rdx += rax;             //add rdx, rax
+			rax = 0x28274EB8C143F7E5;               //mov rax, 0x28274EB8C143F7E5
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x15;           //shr rax, 0x15
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x2A;           //shr rax, 0x2A
+			rdx ^= rax;             //xor rdx, rax
+			rax = r8;               //mov rax, r8
+			rax = imageBase;           //sub rax, [rbp+0x48] -- didn't find trace -> use base
+			rax += 0xFFFFFFFFFFFF0C01;              //add rax, 0xFFFFFFFFFFFF0C01
+			rdx += rax;             //add rdx, rax
+			rax = imageBase + 0x6F41;          //lea rax, [0xFFFFFFFFFD98BF75]
+			rax = ~rax;             //not rax
+			rax++;
+			rax += r8;              //add rax, r8
+			rdx += rax;             //add rdx, rax
+			return rdx;
 		}
-		case 8: {
-			uint64_t RBP_NEG_0x68 = imageBase;
-			uint64_t RSP_0x70 = imageBase;
-			// push rax
-			// pushfq
-			// pop rax
-			// popfq
-			// pop rax
-			RAX = imageBase + 0x8AB7;
-			RSP_0x70 = RAX; // mov [rsp+70h],rax
-			RAX = imageBase + 0x6601953E;
-			RBP_NEG_0x68 = RAX; // mov [rbp-68h],rax
-			R10 = readMemory<uint64_t>(imageBase + 0x7420216);
-			RAX = R8;
-			RAX >>= 0xB;
-			R8 ^= RAX;
-			RAX = R8;
-			RAX >>= 0x16;
-			R8 ^= RAX;
-			RAX = R8;
-			RAX >>= 0x2C;
-			R8 ^= RAX;
-			RAX = RBX;
-			RAX *= RSP_0x70; // imul rax,[rsp+70h]
-			RAX += R8;
-			RCX = 0x0;
-			RCX = _rotl64(RCX, 0x10);
-			RCX ^= R10;
-			RCX = ~RCX;
-			R8 = readMemory<uint64_t>(RCX + 0x19);
-			R8 *= RAX;
-			R8 -= RBX;
-			RAX = RBX;
-			RAX = ~RAX;
-			RAX ^= RBP_NEG_0x68; // xor rax,[rbp-68h]
-			R8 += RAX;
-			RAX = 0xCDB430531A7EF0B9;
-			R8 ^= RAX;
-			RAX = 0xD76994438B37B4BB;
-			R8 *= RAX;
-			RAX = 0x2B07A4699A8F5064;
-			R8 += RAX;
-			return R8;
+		case 9:
+		{
+			r10 = readMemory<uintptr_t>(imageBase + 0x71D924F);              //mov r10, [0x0000000004B5E1C8]
+			rax = 0;                //and rax, 0xFFFFFFFFC0000000
+			rax = _rotl64(rax, 0x10);               //rol rax, 0x10
+			rax ^= r10;             //xor rax, r10
+			rax = _byteswap_uint64(rax);            //bswap rax
+			rdx *= readMemory<uintptr_t>(rax + 0xb);              //imul rdx, [rax+0x0B]
+			rdx += r8;              //add rdx, r8
+			rax = imageBase;           //lea rax, [0xFFFFFFFFFD984DD1]
+			rax += 0x11B6;          //add rax, 0x11B6
+			rax += r8;              //add rax, r8
+			rdx ^= rax;             //xor rdx, rax
+			rax = imageBase;           //lea rax, [0xFFFFFFFFFD984DBE]
+			rdx -= rax;             //sub rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x5;            //shr rax, 0x05
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0xA;            //shr rax, 0x0A
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x14;           //shr rax, 0x14
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x28;           //shr rax, 0x28
+			rdx ^= rax;             //xor rdx, rax
+			rax = 0x3E29187B34B94B2B;               //mov rax, 0x3E29187B34B94B2B
+			rdx *= rax;             //imul rdx, rax
+			rax = 0x2FF261694EB43A81;               //mov rax, 0x2FF261694EB43A81
+			rdx += rax;             //add rdx, rax
+			rax = 0x431D1D596FDAE99B;               //mov rax, 0x431D1D596FDAE99B
+			rdx *= rax;             //imul rdx, rax
+			return rdx;
 		}
-		case 9: {
-			R10 = readMemory<uint64_t>(imageBase + 0x7420216);
-			RCX = RBX;
-			RCX = ~RCX;
-			RAX = imageBase + 0xF121;
-			RAX = ~RAX;
-			RCX *= RAX;
-			R8 ^= RCX;
-			RAX = R8;
-			RAX >>= 0x17;
-			R8 ^= RAX;
-			RAX = R8;
-			RAX >>= 0x2E;
-			R8 ^= RAX;
-			RAX = 0x45D142D1F96799A9;
-			R8 *= RAX;
-			RAX = 0x40B326AB9F64C016;
-			R8 += RAX;
-			RCX = 0x0;
-			RCX = _rotl64(RCX, 0x10);
-			RCX ^= R10;
-			RAX = imageBase;
-			RAX += 0x365FF8D4;
-			RCX = ~RCX;
-			RAX += RBX;
-			RAX ^= R8;
-			R8 = readMemory<uint64_t>(RCX + 0x19);
-			R8 *= RAX;
-			RAX = R8;
-			RAX >>= 0x1;
-			R8 ^= RAX;
-			RAX = R8;
-			RAX >>= 0x2;
-			R8 ^= RAX;
-			RAX = R8;
-			RAX >>= 0x4;
-			R8 ^= RAX;
-			RAX = R8;
-			RAX >>= 0x8;
-			R8 ^= RAX;
-			RAX = R8;
-			RAX >>= 0x10;
-			R8 ^= RAX;
-			RAX = R8;
-			RAX >>= 0x20;
-			R8 ^= RAX;
-			RAX = 0xA4867805F8F141E0;
-			R8 ^= RAX;
-			return R8;
+		case 10:
+		{
+			r14 = imageBase + 0x1DD8;          //lea r14, [0xFFFFFFFFFD986885]
+			r15 = imageBase + 0x53356CF1;              //lea r15, [0x0000000050CDB792]
+			r10 = readMemory<uintptr_t>(imageBase + 0x71D924F);              //mov r10, [0x0000000004B5DC7D]
+			rax = r8;               //mov rax, r8
+			rax = ~rax;             //not rax
+			rax ^= r14;             //xor rax, r14
+			rdx -= rax;             //sub rdx, rax
+			rax = 0;                //and rax, 0xFFFFFFFFC0000000
+			rax = _rotl64(rax, 0x10);               //rol rax, 0x10
+			rax ^= r10;             //xor rax, r10
+			rax = _byteswap_uint64(rax);            //bswap rax
+			rdx *= readMemory<uintptr_t>(rax + 0xb);              //imul rdx, [rax+0x0B]
+			rax = 0x9251D28D0725F547;               //mov rax, 0x9251D28D0725F547
+			rdx *= rax;             //imul rdx, rax
+			rax = r8;               //mov rax, r8
+			rax = ~rax;             //not rax
+			rdx ^= rax;             //xor rdx, rax
+			rdx ^= r15;             //xor rdx, r15
+			rax = 0xB570D6A46CA6BDA;                //mov rax, 0xB570D6A46CA6BDA
+			rdx -= rax;             //sub rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x11;           //shr rax, 0x11
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x22;           //shr rax, 0x22
+			rdx ^= rax;             //xor rdx, rax
+			rax = 0xF541FBA8EA6DB70D;               //mov rax, 0xF541FBA8EA6DB70D
+			rdx *= rax;             //imul rdx, rax
+			rax = imageBase;           //lea rax, [0xFFFFFFFFFD9846C7]
+			rdx -= rax;             //sub rdx, rax
+			return rdx;
 		}
-		case 10: {
-			R10 = readMemory<uint64_t>(imageBase + 0x7420216);
-			RCX = 0x0;
-			RAX = RBX + R8;
-			RCX = _rotl64(RCX, 0x10);
-			R8 = imageBase + 0x6725635F;
-			RAX += R8;
-			RCX ^= R10;
-			RCX = ~RCX;
-			R8 = readMemory<uint64_t>(RCX + 0x19);
-			R8 *= RAX;
-			RAX = 0x391FA0E090F7D6F9;
-			R8 *= RAX;
-			RAX = R8;
-			RAX >>= 0xC;
-			R8 ^= RAX;
-			RAX = R8;
-			RAX >>= 0x18;
-			R8 ^= RAX;
-			RAX = imageBase;
-			RCX = RAX * 2 + 0x10B490FB;
-			RAX = R8;
-			RAX >>= 0x30;
-			R8 ^= RAX;
-			RCX *= RBX;
-			R8 += RCX;
-			RAX = 0xC4B7AA591510D7EB;
-			R8 *= RAX;
-			RAX = 0x3F5B7E02642C0C27;
-			R8 ^= RAX;
-			return R8;
+		case 11:
+		{
+			rbx = readMemory<uintptr_t>(imageBase + 0x71D924F);              //mov rbx, [0x0000000004B5D728]
+			r12 = imageBase + 0x7A87E289;              //lea r12, [0x0000000078202743]
+			rax = r8;               //mov rax, r8
+			rax = ~rax;             //not rax
+			uintptr_t RSP_0x48;
+			RSP_0x48 = imageBase + 0x4D63C65D;                 //lea rax, [0x000000004AFC0B2F] : RSP+0x48
+			rax += RSP_0x48;                //add rax, [rsp+0x48]
+			rdx ^= rax;             //xor rdx, rax
+			rax = 0;                //and rax, 0xFFFFFFFFC0000000
+			rax = _rotl64(rax, 0x10);               //rol rax, 0x10
+			rax ^= rbx;             //xor rax, rbx
+			rax = _byteswap_uint64(rax);            //bswap rax
+			rdx *= readMemory<uintptr_t>(rax + 0xb);              //imul rdx, [rax+0x0B]
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x1F;           //shr rax, 0x1F
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x3E;           //shr rax, 0x3E
+			rdx ^= rax;             //xor rdx, rax
+			rax = 0x4386482E23BD7BAB;               //mov rax, 0x4386482E23BD7BAB
+			rdx *= rax;             //imul rdx, rax
+			rax = r8;               //mov rax, r8
+			rax = ~rax;             //not rax
+			rax += r12;             //add rax, r12
+			rdx ^= rax;             //xor rdx, rax
+			rax = imageBase;           //lea rax, [0xFFFFFFFFFD984165]
+			rax += 0x5D6A5202;              //add rax, 0x5D6A5202
+			rax += r8;              //add rax, r8
+			rdx += rax;             //add rdx, rax
+			rax = 0x5D0357B59D909B8;                //mov rax, 0x5D0357B59D909B8
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x25;           //shr rax, 0x25
+			rdx ^= rax;             //xor rdx, rax
+			return rdx;
 		}
-		case 11: {
-			R10 = readMemory<uint64_t>(imageBase + 0x7420216);
-			RCX = 0x0;
-			RCX = _rotl64(RCX, 0x10);
-			RCX ^= R10;
-			RAX = imageBase;
-			RAX += R8;
-			RCX = ~RCX;
-			R8 = readMemory<uint64_t>(RCX + 0x19);
-			R8 *= RAX;
-			RCX = imageBase + 0xFE80;
-			R8 ^= RBX;
-			RAX = 0xAD9B540D05C9A603;
-			R8 *= RAX;
-			RAX = 0x31E0824A0A52C7AF;
-			R8 += RAX;
-			R11 = 0x82F93DB709A0AC9;
-			RAX = RBX;
-			RAX = ~RAX;
-			RAX ^= RCX;
-			RAX += R11;
-			R8 += RAX;
-			RAX = R8;
-			RAX >>= 0x10;
-			R8 ^= RAX;
-			RAX = R8;
-			RAX >>= 0x20;
-			R8 ^= RAX;
-			return R8;
+		case 12:
+		{
+			//failed to translate: pop rdx
+			rbx = readMemory<uintptr_t>(imageBase + 0x71D924F);              //mov rbx, [0x0000000004B5D15B]
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x14;           //shr rax, 0x14
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x28;           //shr rax, 0x28
+			rdx ^= rax;             //xor rdx, rax
+			rax = r8;               //mov rax, r8
+			rax = imageBase;           //sub rax, [rbp+0x48] -- didn't find trace -> use base
+			rax += 0xFFFFFFFFB8A79E69;              //add rax, 0xFFFFFFFFB8A79E69
+			rdx += rax;             //add rdx, rax
+			rax = 0;                //and rax, 0xFFFFFFFFC0000000
+			rax = _rotl64(rax, 0x10);               //rol rax, 0x10
+			rax ^= rbx;             //xor rax, rbx
+			rax = _byteswap_uint64(rax);            //bswap rax
+			rdx *= readMemory<uintptr_t>(rax + 0xb);              //imul rdx, [rax+0x0B]
+			rdx -= r8;              //sub rdx, r8
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x27;           //shr rax, 0x27
+			rdx ^= rax;             //xor rdx, rax
+			rdx += r8;              //add rdx, r8
+			rax = 0xDC42F705062C7C2B;               //mov rax, 0xDC42F705062C7C2B
+			rdx *= rax;             //imul rdx, rax
+			rax = 0x22D95990904EF823;               //mov rax, 0x22D95990904EF823
+			rdx += rax;             //add rdx, rax
+			return rdx;
 		}
-		case 12: {
-			R10 = readMemory<uint64_t>(imageBase + 0x7420216);
-			RAX = 0x57BAA633092881A5;
-			R8 *= RAX;
-			RAX = 0xE44D2AD9E560B4A;
-			R8 += RAX;
-			R8 += RBX;
-			RAX = 0x0;
-			RAX = _rotl64(RAX, 0x10);
-			RAX ^= R10;
-			RAX = ~RAX;
-			R8 *= readMemory<uint64_t>(RAX + 0x19);
-			RAX = imageBase;
-			RAX += 0x10D0;
-			RAX += RBX;
-			R8 ^= RAX;
-			RAX = 0xE0E83D1511BE7AC7;
-			R8 *= RAX;
-			RAX = R8;
-			RAX >>= 0x28;
-			R8 ^= RAX;
-			RAX = R8;
-			RAX >>= 0x24;
-			R8 ^= RAX;
-			return R8;
+		case 13:
+		{
+			rbx = readMemory<uintptr_t>(imageBase + 0x71D924F);              //mov rbx, [0x0000000004B5CCD7]
+			r15 = imageBase + 0x4C7B;          //lea r15, [0xFFFFFFFFFD9886F0]
+			rax = 0x8083BF913D676785;               //mov rax, 0x8083BF913D676785
+			rdx *= rax;             //imul rdx, rax
+			rax = r15;              //mov rax, r15
+			rax = ~rax;             //not rax
+			rax *= r8;              //imul rax, r8
+			rdx += rax;             //add rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x1C;           //shr rax, 0x1C
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x38;           //shr rax, 0x38
+			rdx ^= rax;             //xor rdx, rax
+			rdx -= r8;              //sub rdx, r8
+			rax = imageBase;           //lea rax, [0xFFFFFFFFFD98398C]
+			rdx -= rax;             //sub rdx, rax
+			rax = 0xA2C3AADF199E32E1;               //mov rax, 0xA2C3AADF199E32E1
+			rdx *= rax;             //imul rdx, rax
+			rax = 0x23580E1270B613C4;               //mov rax, 0x23580E1270B613C4
+			rdx += rax;             //add rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0xF;            //shr rax, 0x0F
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x1E;           //shr rax, 0x1E
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x3C;           //shr rax, 0x3C
+			rdx ^= rax;             //xor rdx, rax
+			rax = 0;                //and rax, 0xFFFFFFFFC0000000
+			rax = _rotl64(rax, 0x10);               //rol rax, 0x10
+			rax ^= rbx;             //xor rax, rbx
+			rax = _byteswap_uint64(rax);            //bswap rax
+			rdx *= readMemory<uintptr_t>(rax + 0xb);              //imul rdx, [rax+0x0B]
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x1F;           //shr rax, 0x1F
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x3E;           //shr rax, 0x3E
+			rdx ^= rax;             //xor rdx, rax
+			return rdx;
 		}
-		case 13: {
-			R10 = readMemory<uint64_t>(imageBase + 0x7420216);
-			RAX = 0x859F70F5004FE0C9;
-			R8 *= RAX;
-			RAX = R8;
-			RAX >>= 0x17;
-			R8 ^= RAX;
-			RCX = 0x0;
-			RCX = _rotl64(RCX, 0x10);
-			RAX = R8;
-			RCX ^= R10;
-			RAX >>= 0x2E;
-			RCX = ~RCX;
-			RAX ^= R8;
-			R8 = readMemory<uint64_t>(RCX + 0x19);
-			R8 *= RAX;
-			RAX = imageBase + 0x314CB44B;
-			R8 += RAX;
-			RAX = R8;
-			RAX >>= 0x14;
-			R8 ^= RAX;
-			RAX = R8;
-			RAX >>= 0x28;
-			R8 ^= RAX;
-			RAX = 0x707648592D402A3A;
-			R8 += RAX;
-			return R8;
+		case 14:
+		{
+			r9 = readMemory<uintptr_t>(imageBase + 0x71D924F);               //mov r9, [0x0000000004B5C707]
+			rax = imageBase;           //lea rax, [0xFFFFFFFFFD9831F3]
+			rdx ^= rax;             //xor rdx, rax
+			rax = 0;                //and rax, 0xFFFFFFFFC0000000
+			rax = _rotl64(rax, 0x10);               //rol rax, 0x10
+			rax ^= r9;              //xor rax, r9
+			rax = _byteswap_uint64(rax);            //bswap rax
+			rdx *= readMemory<uintptr_t>(rax + 0xb);              //imul rdx, [rax+0x0B]
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x14;           //shr rax, 0x14
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x28;           //shr rax, 0x28
+			rdx ^= rax;             //xor rdx, rax
+			rax = 0x44A70ED11D0E61A3;               //mov rax, 0x44A70ED11D0E61A3
+			rdx -= rax;             //sub rdx, rax
+			rax = 0x212713CA8BC0FC71;               //mov rax, 0x212713CA8BC0FC71
+			rdx *= rax;             //imul rdx, rax
+			rax = 0x7B0A0E68889C8F78;               //mov rax, 0x7B0A0E68889C8F78
+			rdx += rax;             //add rdx, rax
+			return rdx;
 		}
-		case 14: {
-			uint64_t RBP_NEG_0x38 = imageBase;
-			uint64_t RSP_0x60 = imageBase;
-			// pushfq
-			// push rbx
-			// pop rbx
-			// pop rbx
-			// popfq
-			R10 = readMemory<uint64_t>(imageBase + 0x7420216);
-			RAX = imageBase + 0x31C944AA;
-			RSP_0x60 = RAX; // mov [rsp+60h],rax
-			RAX = imageBase;
-			RAX += 0x7587A163;
-			RAX += RBX;
-			R8 ^= RAX;
-			RAX = RBX;
-			RAX *= RSP_0x60; // imul rax,[rsp+60h]
-			R8 -= RAX;
-			RAX = 0x9C86D8FDDD758499;
-			R8 *= RAX;
-			RCX = 0x0;
-			RAX = RBX;
-			RAX = ~RAX;
-			RCX = _rotl64(RCX, 0x10);
-			RAX -= RBP_NEG_0x38; // sub rax,[rbp-38h]
-			RCX ^= R10;
-			RAX += 0xFFFFFFFF83DAA192;
-			RCX = ~RCX;
-			RAX += R8;
-			R8 = readMemory<uint64_t>(RCX + 0x19);
-			R8 *= RAX;
-			RAX = R8;
-			RAX >>= 0x11;
-			R8 ^= RAX;
-			RAX = R8;
-			RAX >>= 0x22;
-			R8 ^= RAX;
-			RAX = imageBase + 0xC085;
-			RCX = RBX;
-			R8 += RAX;
-			RCX = ~RCX;
-			R8 += RCX;
-			return R8;
-		}
-		case 15: {
-			R10 = readMemory<uint64_t>(imageBase + 0x7420216);
-			RSI = 0xDEB658F4F12A709;
-			RAX = imageBase;
-			R8 -= RAX;
-			RAX = R8;
-			RAX >>= 0x10;
-			R8 ^= RAX;
-			RAX = R8;
-			RAX >>= 0x20;
-			R8 ^= RAX;
-			RAX = R8;
-			RAX >>= 0x13;
-			R8 ^= RAX;
-			RAX = R8;
-			RAX >>= 0x26;
-			R8 ^= RAX;
-			R8 += RSI;
-			RAX = 0x0;
-			RAX = _rotl64(RAX, 0x10);
-			RAX ^= R10;
-			RAX = ~RAX;
-			RCX = readMemory<uint64_t>(RAX + 0x19);
-			RAX = 0x985761100FB39415;
-			R8 *= RAX;
-			RAX = 0x6C8740822E9A28DE;
-			R8 -= RAX;
-			R8 *= RCX;
-			RAX = imageBase;
-			R8 -= RAX;
-			return R8;
+		case 15:
+		{
+			rbx = readMemory<uintptr_t>(imageBase + 0x71D924F);              //mov rbx, [0x0000000004B5C324]
+			rax = imageBase;           //lea rax, [0xFFFFFFFFFD982FE4]
+			rdx += rax;             //add rdx, rax
+			rdx ^= r8;              //xor rdx, r8
+			rax = 0;                //and rax, 0xFFFFFFFFC0000000
+			rax = _rotl64(rax, 0x10);               //rol rax, 0x10
+			rax ^= rbx;             //xor rax, rbx
+			rax = _byteswap_uint64(rax);            //bswap rax
+			rax = readMemory<uintptr_t>(rax + 0xb);               //mov rax, [rax+0x0B]
+			uintptr_t RSP_0x48;
+			RSP_0x48 = 0x76F87EA0A47CB0AD;          //mov rax, 0x76F87EA0A47CB0AD : RSP+0x48
+			rax *= RSP_0x48;                //imul rax, [rsp+0x48]
+			rdx *= rax;             //imul rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x11;           //shr rax, 0x11
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x22;           //shr rax, 0x22
+			rdx ^= rax;             //xor rdx, rax
+			rax = 0x660C3C0933677E41;               //mov rax, 0x660C3C0933677E41
+			rdx += rax;             //add rdx, rax
+			rax = imageBase;           //lea rax, [0xFFFFFFFFFD982DDC]
+			rdx ^= rax;             //xor rdx, rax
+			rax = 0xF87C74347306E12C;               //mov rax, 0xF87C74347306E12C
+			rdx ^= rax;             //xor rdx, rax
+			return rdx;
 		}
 		}
 	}
 
 	extern "C" auto get_bone_index(uint32_t index, uint64_t imageBase) -> uint64_t
 	{
-		uint64_t RAX = imageBase, RBX = imageBase, RCX = imageBase, RDX = imageBase, R8 = imageBase, RDI = imageBase, RSI = imageBase, R9 = imageBase, R10 = imageBase, R11 = imageBase, R12 = imageBase, R13 = imageBase, R14 = imageBase, R15 = imageBase, RBP = 0, RSP = 0;
-
-		RBX = index;
-		RCX = RBX * 0x13C8;
-		RAX = 0xF4CB515E7513FDBB;
-		R11 = imageBase;
-		RAX = _umul128(RAX, RCX, &RDX);
-		R10 = 0xCAEFE5D7135F4681;
-		RDX >>= 0xD;
-		RAX = RDX * 0x2177;
-		RCX -= RAX;
-		RAX = 0x377AEF2669DE1559;
-		R8 = RCX * 0x2177;
-		RAX = _umul128(RAX, R8, &RDX);
-		RDX >>= 0xB;
-		RAX = RDX * 0x24EA;
-		R8 -= RAX;
-		RAX = 0xA41A41A41A41A41B;
-		RAX = _umul128(RAX, R8, &RDX);
-		RAX = R8;
-		RAX -= RDX;
-		RAX >>= 0x1;
-		RAX += RDX;
-		RAX >>= 0x5;
-		RCX = RAX * 0x27;
-		RAX = 0xBD69104707661AA3;
-		RAX = _umul128(RAX, R8, &RDX);
-		RDX >>= 0x8;
-		RCX += RDX;
-		RAX = RCX * 0x2B4;
-		RCX = R8 * 0x2B6;
-		RCX -= RAX;
-		RAX = readMemory<uint16_t>(RCX + R11 + 0x742EC10);
-		R8 = RAX * 0x13C8;
-		RAX = R10;
-		RAX = _umul128(RAX, R8, &RDX);
-		RAX = R10;
-		RDX >>= 0xC;
-		RCX = RDX * 0x142F;
-		R8 -= RCX;
-		R9 = R8 * 0x20AF;
-		RAX = _umul128(RAX, R9, &RDX);
-		RDX >>= 0xC;
-		RAX = RDX * 0x142F;
-		R9 -= RAX;
-		RAX = 0xAAAAAAAAAAAAAAAB;
-		RAX = _umul128(RAX, R9, &RDX);
-		RAX = 0x41BBB2F80A4553F7;
-		RDX >>= 0x2;
-		RCX = RDX + RDX * 2;
-		RAX = _umul128(RAX, R9, &RDX);
-		RDX >>= 0x8;
-		RAX = RDX + RCX * 2;
-		RCX = RAX * 0x7CA;
-		RAX = R9 * 0x7CC;
-		RAX -= RCX;
-		R15 = readMemory<uint16_t>(RAX + R11 + 0x7435580);
-		return R15;
+		uint64_t rax = imageBase, rbx = imageBase, rcx = imageBase, rdx = imageBase, rdi = imageBase, rsi = imageBase, r8 = imageBase, r9 = imageBase, r10 = imageBase, r11 = imageBase, r12 = imageBase, r13 = imageBase, r14 = imageBase, r15 = imageBase;
+		rbx = index;
+		rcx = rbx * 0x13C8;
+		rax = 0x1DB46762E3D52EF7;               //mov rax, 0x1DB46762E3D52EF7
+		rbx = imageBase;           //lea rbx, [0xFFFFFFFFFDCCACA0]
+		rax = _umul128(rax, rcx, (uintptr_t*)&rdx);             //mul rcx
+		r10 = 0x86C2D6724C0021B1;               //mov r10, 0x86C2D6724C0021B1
+		rdx >>= 0xA;            //shr rdx, 0x0A
+		rax = rdx * 0x2279;             //imul rax, rdx, 0x2279
+		rcx -= rax;             //sub rcx, rax
+		rax = 0x342C53A914269ED;                //mov rax, 0x342C53A914269ED
+		r8 = rcx * 0x2279;              //imul r8, rcx, 0x2279
+		rax = _umul128(rax, r8, (uintptr_t*)&rdx);              //mul r8
+		rdx >>= 0x7;            //shr rdx, 0x07
+		rax = rdx * 0x2741;             //imul rax, rdx, 0x2741
+		r8 -= rax;              //sub r8, rax
+		rax = 0x5197F7D73404147;                //mov rax, 0x5197F7D73404147
+		rax = _umul128(rax, r8, (uintptr_t*)&rdx);              //mul r8
+		rax = r8;               //mov rax, r8
+		rax -= rdx;             //sub rax, rdx
+		rax >>= 0x1;            //shr rax, 0x01
+		rax += rdx;             //add rax, rdx
+		rax >>= 0x8;            //shr rax, 0x08
+		rcx = rax * 0x1F6;              //imul rcx, rax, 0x1F6
+		rax = 0x47AE147AE147AE15;               //mov rax, 0x47AE147AE147AE15
+		rax = _umul128(rax, r8, (uintptr_t*)&rdx);              //mul r8
+		rax = r8;               //mov rax, r8
+		rax -= rdx;             //sub rax, rdx
+		rax >>= 0x1;            //shr rax, 0x01
+		rax += rdx;             //add rax, rdx
+		rax >>= 0x4;            //shr rax, 0x04
+		rcx += rax;             //add rcx, rax
+		rax = rcx * 0x32;               //imul rax, rcx, 0x32
+		rcx = r8 * 0x34;                //imul rcx, r8, 0x34
+		rcx -= rax;             //sub rcx, rax
+		rax = readMemory<uint16_t>(rcx + rbx * 1 + 0x71EC670);                //movzx eax, word ptr [rcx+rbx*1+0x71EC670]
+		r8 = rax * 0x13C8;              //imul r8, rax, 0x13C8
+		rax = r10;              //mov rax, r10
+		rax = _umul128(rax, r8, (uintptr_t*)&rdx);              //mul r8
+		rax = r10;              //mov rax, r10
+		rdx >>= 0xC;            //shr rdx, 0x0C
+		rcx = rdx * 0x1E65;             //imul rcx, rdx, 0x1E65
+		r8 -= rcx;              //sub r8, rcx
+		r9 = r8 * 0x2742;               //imul r9, r8, 0x2742
+		rax = _umul128(rax, r9, (uintptr_t*)&rdx);              //mul r9
+		rdx >>= 0xC;            //shr rdx, 0x0C
+		rax = rdx * 0x1E65;             //imul rax, rdx, 0x1E65
+		r9 -= rax;              //sub r9, rax
+		rax = 0x90FDBC090FDBC091;               //mov rax, 0x90FDBC090FDBC091
+		rax = _umul128(rax, r9, (uintptr_t*)&rdx);              //mul r9
+		rax = 0x29E4129E4129E413;               //mov rax, 0x29E4129E4129E413
+		rdx >>= 0x7;            //shr rdx, 0x07
+		rcx = rdx * 0xE2;               //imul rcx, rdx, 0xE2
+		rax = _umul128(rax, r9, (uintptr_t*)&rdx);              //mul r9
+		rax = r9;               //mov rax, r9
+		rax -= rdx;             //sub rax, rdx
+		rax >>= 0x1;            //shr rax, 0x01
+		rax += rdx;             //add rax, rdx
+		rax >>= 0x5;            //shr rax, 0x05
+		rcx += rax;             //add rcx, rax
+		rax = rcx * 0x6E;               //imul rax, rcx, 0x6E
+		rcx = r9 * 0x70;                //imul rcx, r9, 0x70
+		rcx -= rax;             //sub rcx, rax
+		rsi = readMemory<uint16_t>(rcx + rbx * 1 + 0x71F2880);                //movsx esi, word ptr [rcx+rbx*1+0x71F2880]
+		return rsi;
 	}
 }
 
