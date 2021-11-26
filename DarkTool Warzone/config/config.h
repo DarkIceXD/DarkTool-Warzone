@@ -73,7 +73,8 @@ struct config {
 			JSON_SERIALIZE(color, base, visible, downed)
 		}
 		box{ { 1, 0, 0, 1 }, { 0, 1, 0, 1 }, { 0, 1, 1, 1 } }, skeleton{ { 1, 0, 0, 0.5f }, { 0, 1, 0, 0.5f }, { 0, 1, 1, 0.5f } };
-		JSON_SERIALIZE(esp, bind, max_distance, box, skeleton)
+		int show_nearest_players{ 200 };
+		JSON_SERIALIZE(esp, bind, max_distance, box, skeleton, show_nearest_players)
 	} esp;
 	struct aimbot {
 		keybind bind{};

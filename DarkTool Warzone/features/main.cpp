@@ -120,7 +120,8 @@ void data::collect()
 		if (!p.is_valid())
 			continue;
 
-		if (p.get_team() == local_team)
+		player_data.team = p.get_team();
+		if (player_data.team == local_team)
 			continue;
 
 		const auto origin = p.get_origin();
@@ -149,4 +150,13 @@ void data::collect()
 
 	features::esp::collect();
 	features::aimbot::collect();
+	sorted_players = data::players;
+	std::sort(sorted_players.begin(), sorted_players.end(), [](const auto& a, const auto& b) {
+		if (a.valid)
+			if (b.valid)
+				return a.distance < b.distance;
+			else
+				return true;
+		return false;
+		});
 }

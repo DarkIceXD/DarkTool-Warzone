@@ -62,6 +62,7 @@ void overlay::menu()
 				ImGui::ColorEdit4("Skeleton Color", &cfg->esp.skeleton.base.r, ImGuiColorEditFlags_Float | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_AlphaPreview);
 				ImGui::ColorEdit4("Skeleton Color Visible", &cfg->esp.skeleton.visible.r, ImGuiColorEditFlags_Float | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_AlphaPreview);
 				ImGui::ColorEdit4("Skeleton Color Downed", &cfg->esp.skeleton.downed.r, ImGuiColorEditFlags_Float | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_AlphaPreview);
+				ImGui::SliderInt("Show Nearest Players", &cfg->esp.show_nearest_players, 0, 1000);
 				ImGui::EndTabItem();
 			}
 			if (ImGui::BeginTabItem("Aimbot"))
@@ -88,6 +89,6 @@ void overlay::menu()
 			ImGui::EndTabBar();
 		}
 		ImGui::PopItemWidth();
-		ImGui::End();
 	}
+	ImGui::End();
 }

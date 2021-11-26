@@ -8,6 +8,7 @@ namespace data {
 		vector3 origin;
 		player::stance stance;
 		int distance;
+		int team;
 		float health;
 		char name[0x24];
 		bool visible;
@@ -124,6 +125,7 @@ namespace data {
 	};
 
 	inline std::array<player_data, 150> players;
+	inline std::array<player_data, 150> sorted_players;
 	inline local_player_data local_player;
 	void collect();
 }

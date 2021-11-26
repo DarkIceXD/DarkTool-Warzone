@@ -34,9 +34,8 @@ void features::aimbot::draw(ImDrawList* d, const ref_def& refdef, const vector3&
 	const vector2 middle(refdef.width / 2, refdef.height / 2);
 	auto smallest_fov = FLT_MAX;
 	vector2 best_hitbox;
-	for (int i = 0; i < data::players.size(); i++)
+	for (const auto& player : data::players)
 	{
-		const auto& player = data::players[i];
 		if (!player.aimbot_valid)
 			continue;
 
