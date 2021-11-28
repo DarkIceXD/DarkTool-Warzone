@@ -4,11 +4,11 @@
 
 namespace features {
 	namespace esp {
-		void draw(ImDrawList* d, const ref_def& refdef, const vector3& camera_pos);
-		void collect();
+		void draw(const data::game& data, ImDrawList* d, const ref_def& refdef, const camera& camera);
+		void update(data::game& data);
 	}
 	namespace aimbot {
-		void draw(ImDrawList* d, const ref_def& refdef, const vector3& camera_pos);
-		void collect();
+		void draw(const data::game& data, ImDrawList* d, const ref_def& refdef, const camera& camera);
+		void update(data::game& data);
 	}
 }

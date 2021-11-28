@@ -6,7 +6,7 @@ public:
 	float x, y;
 	constexpr vector2(const float _x, const float _y) noexcept : x(_x), y(_y) { }
 	constexpr vector2() noexcept : vector2(0, 0) { }
-	constexpr vector2(const vector3 vec) noexcept : vector2(vec.x, vec.y) { }
+	explicit constexpr vector2(const vector3 vec) noexcept : vector2(vec.x, vec.y) { }
 	constexpr vector2& operator+=(const vector2& obj) noexcept
 	{
 		this->x += obj.x;

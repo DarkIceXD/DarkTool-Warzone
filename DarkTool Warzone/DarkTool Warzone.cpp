@@ -1,11 +1,14 @@
 ﻿#include "driver/driver.h"
 #include "game/globals.h"
 #include "overlay/overlay.hpp"
-#include "game/data.h"
 #include "config/config.h"
 #include "utilities/xorstr.h"
 #include <iostream>
 #include <thread>
+#include <mutex>
+
+static std::mutex mtx;
+static data::game game_data;
 
 void overlay_execute()
 {
@@ -22,12 +25,13 @@ void overlay_execute()
 			TranslateMessage(&message);
 			DispatchMessageW(&message);
 		}
-
-		if (overlay::begin()) {
-			overlay::present();
-			overlay::end();
+		{
+			std::lock_guard lock(mtx);
+			if (overlay::begin()) {
+				overlay::present(game_data);
+				overlay::end();
+			}
 		}
-
 		if (GetAsyncKeyState(VK_END) & 1)
 			break;
 
@@ -43,7 +47,12 @@ void collect_data()
 	std::cout << "peb: " << std::hex << globals::peb << '\n';
 	while (true)
 	{
-		data::collect();
+		static auto new_data = game_data;
+		data::update(new_data);
+		{
+			std::lock_guard lock(mtx);
+			game_data = new_data;
+		}
 		std::this_thread::sleep_for(std::chrono::milliseconds(40));
 	}
 }

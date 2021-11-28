@@ -24,7 +24,7 @@ void aim_at(const vector2& screen, const bool absolute)
 	SendInput(1, &input, sizeof(input));
 }
 
-void features::aimbot::draw(ImDrawList* d, const ref_def& refdef, const vector3& camera_pos)
+void features::aimbot::draw(const data::game& data, ImDrawList* d, const ref_def& refdef, const camera& camera)
 {
 	cfg->aimbot.bind.run();
 	if (!cfg->aimbot.bind.enabled)
@@ -34,13 +34,13 @@ void features::aimbot::draw(ImDrawList* d, const ref_def& refdef, const vector3&
 	const vector2 middle(refdef.width / 2, refdef.height / 2);
 	auto smallest_fov = FLT_MAX;
 	vector2 best_hitbox;
-	for (const auto& player : data::players)
+	for (const auto& player : data.players)
 	{
 		if (!player.aimbot_valid)
 			continue;
 
 		vector2 hitbox;
-		if (!math::world_to_screen(player.get_bone(((cfg->aimbot.hitbox == 0) ? player::bone::chest : player::bone::head)), camera_pos, refdef, hitbox))
+		if (!math::world_to_screen(player.get_bone(((cfg->aimbot.hitbox == 0) ? player::bone::chest : player::bone::head)), camera.position, refdef, hitbox))
 			continue;
 
 		const auto fov = math::pixels_to_fov((hitbox - middle).length(), tan_half_fov, middle.x);
@@ -68,12 +68,12 @@ void features::aimbot::draw(ImDrawList* d, const ref_def& refdef, const vector3&
 	aim_at(dx, false);
 }
 
-void features::aimbot::collect()
+void features::aimbot::update(data::game& data)
 {
 	if (!cfg->aimbot.bind.enabled)
 		return;
 
-	for (auto& player : data::players)
+	for (auto& player : data.players)
 	{
 		if (!player.valid)
 			continue;

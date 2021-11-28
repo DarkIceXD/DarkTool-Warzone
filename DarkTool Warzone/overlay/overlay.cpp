@@ -1,10 +1,10 @@
 #include "overlay.hpp"
 #include "../imgui/imgui_impl_dx9.h"
 #include "../imgui/imgui_impl_win32.h"
+#include "../imgui/implot.h"
 #include <d3d9.h>
 #pragma comment( lib, "d3d9.lib" )
 #include <dwmapi.h>
-#include "../game/globals.h"
 #pragma comment( lib, "dwmapi.lib" )
 
 struct window_rect_data_t : public RECT
@@ -91,7 +91,7 @@ bool overlay::create_overlay(const uint32_t pid) {
 	window_class_ex.hIconSm = nullptr;
 
 	ImGui::CreateContext();
-
+	ImPlot::CreateContext();
 	if (!RegisterClassEx(&window_class_ex))
 		return false;
 
@@ -208,7 +208,7 @@ bool overlay::begin() {
 	return true;
 }
 
-void overlay::present()
+void overlay::present(const data::game& data)
 {
 	static bool show_menu = false;
 	if (GetAsyncKeyState(VK_INSERT) & 1) {
@@ -221,7 +221,7 @@ void overlay::present()
 	if (show_menu)
 		menu();
 
-	draw(ImGui::GetForegroundDrawList());
+	draw(data, ImGui::GetForegroundDrawList());
 }
 
 void overlay::end() {

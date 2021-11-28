@@ -120,12 +120,13 @@ namespace data {
 			}
 		}
 	};
-	struct local_player_data {
+	struct local_player {
+		vector3 origin;
+	};
+	struct game {
+		std::array<player_data, 150> players;
+		local_player local_player;
 		bool valid;
 	};
-
-	inline std::array<player_data, 150> players;
-	inline std::array<player_data, 150> sorted_players;
-	inline local_player_data local_player;
-	void collect();
+	void update(game& data);
 }

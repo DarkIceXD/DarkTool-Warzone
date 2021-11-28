@@ -10,9 +10,9 @@
 
 static uintptr_t camera_base = 0;
 
-void overlay::draw(ImDrawList* d)
+void overlay::draw(const data::game& data, ImDrawList* d)
 {
-	if (!data::local_player.valid)
+	if (!data.valid)
 		return;
 
 	if (!utils::is_valid_ptr(camera_base))
@@ -27,14 +27,17 @@ void overlay::draw(ImDrawList* d)
 
 	const auto refdef = driver::read<ref_def>(ref_def_ptr);
 	const auto camera = math::get_camera_struct(camera_base);
-	features::esp::draw(d, refdef, camera.position);
-	features::aimbot::draw(d, refdef, camera.position);
+	features::esp::draw(data, d, refdef, camera);
+	features::aimbot::draw(data, d, refdef, camera);
 }
 
-void data::collect()
+void data::update(data::game& data)
 {
 	if (!cfg->esp.bind.enabled && !cfg->aimbot.bind.enabled)
+	{
+		data.valid = false;
 		return;
+	}
 
 	static auto full_refresh = true;
 	static uint64_t client_info = 0;
@@ -52,42 +55,42 @@ void data::collect()
 		client_info = client_info_new;
 		if (!utils::is_valid_ptr(client_info))
 		{
-			data::local_player.valid = false;
+			data.valid = false;
 			return;
 		}
 
 		client_base = decryption::decrypt_client_base(client_info, globals::base, globals::peb);
 		if (!utils::is_valid_ptr(client_base))
 		{
-			data::local_player.valid = false;
+			data.valid = false;
 			return;
 		}
 
 		bone_base = decryption::decrypt_bone_base(globals::base, globals::peb);
 		if (!utils::is_valid_ptr(bone_base))
 		{
-			data::local_player.valid = false;
+			data.valid = false;
 			return;
 		}
 
 		visible_base = decryption::get_visible_base(globals::base, offsets::visible, offsets::distribute);
 		if (!utils::is_valid_ptr(visible_base))
 		{
-			data::local_player.valid = false;
+			data.valid = false;
 			return;
 		}
 
 		name_base = player::get_name_array_base(globals::base);
 		if (!utils::is_valid_ptr(name_base))
 		{
-			data::local_player.valid = false;
+			data.valid = false;
 			return;
 		}
 
 		camera_base = math::get_camera_base(globals::base);
 		if (!utils::is_valid_ptr(camera_base))
 		{
-			data::local_player.valid = false;
+			data.valid = false;
 			return;
 		}
 		full_refresh = false;
@@ -96,7 +99,7 @@ void data::collect()
 	const auto local_index = player::get_local_index(client_info);
 	if (!local_index)
 	{
-		data::local_player.valid = false;
+		data.valid = false;
 		return;
 	}
 
@@ -104,15 +107,16 @@ void data::collect()
 	const auto local_origin_opt = local_player.get_origin();
 	if (!local_origin_opt)
 	{
-		data::local_player.valid = false;
+		data.valid = false;
 		return;
 	}
-	const auto local_origin = *local_origin_opt;
+
+	data.local_player.origin = *local_origin_opt;
 	const auto local_team = local_player.get_team();
 	const auto bone_base_pos = player::get_bone_base_pos(client_info);
-	for (int i = 0; i < data::players.size(); i++)
+	for (int i = 0; i < data.players.size(); i++)
 	{
-		auto& player_data = data::players[i];
+		auto& player_data = data.players[i];
 		player_data.valid = false;
 		player_data.esp_valid = false;
 		player_data.aimbot_valid = false;
@@ -139,19 +143,17 @@ void data::collect()
 			player_data.bones[j] = bone_base_pos + bones[static_cast<size_t>(player_data::index_to_bone(j))];
 
 		player_data.stance = p.get_stance();
-		player_data.distance = static_cast<int>(math::units_to_m((player_data.origin - local_origin).length()));
+		player_data.distance = static_cast<int>(math::units_to_m((player_data.origin - data.local_player.origin).length()));
 		const auto name = p.get_name_struct(name_base);
 		player_data.health = name.health / 127.f;
 		strcpy_s(player_data.name, name.name);
 		player_data.visible = p.is_visible(visible_base);
 		player_data.valid = true;
 	}
-	data::local_player.valid = true;
 
-	features::esp::collect();
-	features::aimbot::collect();
-	sorted_players = data::players;
-	std::sort(sorted_players.begin(), sorted_players.end(), [](const auto& a, const auto& b) {
+	features::esp::update(data);
+	features::aimbot::update(data);
+	std::sort(data.players.begin(), data.players.end(), [](const auto& a, const auto& b) {
 		if (a.valid)
 			if (b.valid)
 				return a.distance < b.distance;
@@ -159,4 +161,5 @@ void data::collect()
 				return true;
 		return false;
 		});
+	data.valid = true;
 }

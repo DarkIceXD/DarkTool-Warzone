@@ -2,8 +2,9 @@
 #include "../driver/driver.h"
 #include "../config/config.h"
 #include "../math/math.hpp"
+#include "../imgui/implot.h"
 
-void features::esp::draw(ImDrawList* d, const ref_def& refdef, const vector3& camera_pos)
+void features::esp::draw(const data::game& data, ImDrawList* d, const ref_def& refdef, const camera& camera)
 {
 	cfg->esp.bind.run();
 	if (!cfg->esp.bind.enabled)
@@ -15,13 +16,13 @@ void features::esp::draw(ImDrawList* d, const ref_def& refdef, const vector3& ca
 	const auto skeleton_base_color = cfg->esp.skeleton.base.to_u32();
 	const auto skeleton_visible_color = cfg->esp.skeleton.visible.to_u32();
 	const auto skeleton_downed_color = cfg->esp.skeleton.downed.to_u32();
-	for (const auto& player : data::players)
+	for (const auto& player : data.players)
 	{
 		if (!player.esp_valid)
 			continue;
 
 		vector2 min, max;
-		if (!player::get_bounding_box_fallback(min, max, player.origin, player.stance, camera_pos, refdef))
+		if (!player::get_bounding_box_fallback(min, max, player.origin, player.stance, camera.position, refdef))
 			continue;
 
 		const auto box_color = player.stance == player::stance::downed ? box_downed_color : (player.visible ? box_visible_color : box_base_color);
@@ -45,8 +46,8 @@ void features::esp::draw(ImDrawList* d, const ref_def& refdef, const vector3& ca
 			for (const auto& bone_connection : player::bone_connections)
 			{
 				vector2 a, b;
-				if (!math::world_to_screen(player.get_bone(bone_connection.first), camera_pos, refdef, a) ||
-					!math::world_to_screen(player.get_bone(bone_connection.second), camera_pos, refdef, b))
+				if (!math::world_to_screen(player.get_bone(bone_connection.first), camera.position, refdef, a) ||
+					!math::world_to_screen(player.get_bone(bone_connection.second), camera.position, refdef, b))
 					continue;
 
 				d->AddLine(a, b, skeleton_color);
@@ -54,58 +55,90 @@ void features::esp::draw(ImDrawList* d, const ref_def& refdef, const vector3& ca
 	}
 	if (cfg->esp.show_nearest_players)
 	{
-		static int corner = 0;
 		ImGuiIO& io = ImGui::GetIO();
 		ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav;
-		if (corner != -1)
+		if (cfg->esp.overlay_corner != -1)
 		{
 			const ImGuiViewport* viewport = ImGui::GetMainViewport();
 			ImVec2 work_pos = viewport->WorkPos;
 			ImVec2 work_size = viewport->WorkSize;
 			ImVec2 window_pos, window_pos_pivot;
 			constexpr auto padding = 10;
-			window_pos.x = (corner & 1) ? (work_pos.x + work_size.x - padding) : (work_pos.x + padding);
-			window_pos.y = (corner & 2) ? (work_pos.y + work_size.y - padding) : (work_pos.y + padding);
-			window_pos_pivot.x = (corner & 1) ? 1.0f : 0.0f;
-			window_pos_pivot.y = (corner & 2) ? 1.0f : 0.0f;
+			window_pos.x = (cfg->esp.overlay_corner & 1) ? (work_pos.x + work_size.x - padding) : (work_pos.x + padding);
+			window_pos.y = (cfg->esp.overlay_corner & 2) ? (work_pos.y + work_size.y - padding) : (work_pos.y + padding);
+			window_pos_pivot.x = (cfg->esp.overlay_corner & 1) ? 1.0f : 0.0f;
+			window_pos_pivot.y = (cfg->esp.overlay_corner & 2) ? 1.0f : 0.0f;
 			ImGui::SetNextWindowPos(window_pos, ImGuiCond_Always, window_pos_pivot);
 			window_flags |= ImGuiWindowFlags_NoMove;
 		}
 		ImGui::SetNextWindowBgAlpha(0.35f);
 		if (ImGui::Begin("Nearest Enemies", nullptr, window_flags))
 		{
-			if (ImGui::BeginTable("enemies", 3, ImGuiTableFlags_SizingStretchSame))
+			if (cfg->esp.show_nearest_players_type == 0)
 			{
-				ImGui::TableSetupColumn("Distance");
-				ImGui::TableSetupColumn("Name");
-				ImGui::TableSetupColumn("Team");
-				ImGui::TableHeadersRow();
-				for (const auto& player : data::sorted_players)
+				if (ImGui::BeginTable("enemies", 3, ImGuiTableFlags_SizingStretchSame))
 				{
-					if (!player.valid)
-						break;
+					ImGui::TableSetupColumn("Distance");
+					ImGui::TableSetupColumn("Name");
+					ImGui::TableSetupColumn("Team");
+					ImGui::TableHeadersRow();
+					for (const auto& player : data.players)
+					{
+						if (!player.valid)
+							break;
 
-					if (player.distance > cfg->esp.show_nearest_players)
-						break;
+						if (player.distance > cfg->esp.show_nearest_players)
+							break;
 
-					ImGui::TableNextRow();
-					ImGui::TableNextColumn();
-					ImGui::Text("%d", player.distance);
-					ImGui::TableNextColumn();
-					ImGui::Text(player.name);
-					ImGui::TableNextColumn();
-					ImGui::Text("%d", player.team);
-					ImGui::TableNextColumn();
+						ImGui::TableNextRow();
+						ImGui::TableNextColumn();
+						ImGui::Text("%d", player.distance);
+						ImGui::TableNextColumn();
+						ImGui::Text(player.name);
+						ImGui::TableNextColumn();
+						ImGui::Text("%d", player.team);
+						ImGui::TableNextColumn();
+					}
+					ImGui::EndTable();
 				}
-				ImGui::EndTable();
+			}
+			else
+			{
+				ImPlot::SetNextPlotLimitsY(-cfg->esp.show_nearest_players, cfg->esp.show_nearest_players, ImGuiCond_Always);
+				ImPlot::SetNextPlotLimitsX(-cfg->esp.show_nearest_players, cfg->esp.show_nearest_players, ImGuiCond_Always);
+				if (ImPlot::BeginPlot("##Radar", nullptr, nullptr, { 0, 0 }, ImPlotFlags_NoTitle | ImPlotFlags_NoMenus | ImPlotFlags_NoBoxSelect | ImPlotFlags_NoMousePos, ImPlotAxisFlags_NoTickMarks, ImPlotAxisFlags_NoTickMarks)) {
+					const auto angle = math::deg2rad * camera.angles.y;
+					const auto s = sin(angle);
+					const auto c = cos(angle);
+					std::array<float, 150> xs;
+					std::array<float, 150> ys;
+					int size = 0;
+					for (const auto& player : data.players)
+					{
+						if (!player.valid)
+							break;
+
+						if (player.distance > cfg->esp.show_nearest_players)
+							break;
+
+						const auto point = vector2(player.origin) - vector2(data.local_player.origin);
+						const auto x = point.y;
+						const auto y = point.x;
+						xs[size] = -math::units_to_m(x * c - y * s);
+						ys[size] = math::units_to_m(x * s + y * c);
+						size++;
+					}
+					ImPlot::PlotScatter("Enemies", xs.data(), ys.data(), size);
+					ImPlot::EndPlot();
+				}
 			}
 			if (ImGui::BeginPopupContextWindow())
 			{
-				if (ImGui::MenuItem("Custom", NULL, corner == -1)) corner = -1;
-				if (ImGui::MenuItem("Top-left", NULL, corner == 0)) corner = 0;
-				if (ImGui::MenuItem("Top-right", NULL, corner == 1)) corner = 1;
-				if (ImGui::MenuItem("Bottom-left", NULL, corner == 2)) corner = 2;
-				if (ImGui::MenuItem("Bottom-right", NULL, corner == 3)) corner = 3;
+				if (ImGui::MenuItem("Custom", NULL, cfg->esp.overlay_corner == -1)) cfg->esp.overlay_corner = -1;
+				if (ImGui::MenuItem("Top-left", NULL, cfg->esp.overlay_corner == 0)) cfg->esp.overlay_corner = 0;
+				if (ImGui::MenuItem("Top-right", NULL, cfg->esp.overlay_corner == 1)) cfg->esp.overlay_corner = 1;
+				if (ImGui::MenuItem("Bottom-left", NULL, cfg->esp.overlay_corner == 2)) cfg->esp.overlay_corner = 2;
+				if (ImGui::MenuItem("Bottom-right", NULL, cfg->esp.overlay_corner == 3)) cfg->esp.overlay_corner = 3;
 				ImGui::EndPopup();
 			}
 		}
@@ -113,12 +146,12 @@ void features::esp::draw(ImDrawList* d, const ref_def& refdef, const vector3& ca
 	}
 }
 
-void features::esp::collect()
+void features::esp::update(data::game& data)
 {
 	if (!cfg->esp.bind.enabled)
 		return;
 
-	for (auto& player : data::players)
+	for (auto& player : data.players)
 	{
 		if (!player.valid)
 			continue;
