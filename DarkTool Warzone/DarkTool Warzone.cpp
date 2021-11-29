@@ -47,11 +47,9 @@ void collect_data()
 	std::cout << "peb: " << std::hex << globals::peb << '\n';
 	while (true)
 	{
-		static auto new_data = game_data;
-		data::update(new_data);
 		{
 			std::lock_guard lock(mtx);
-			game_data = new_data;
+			data::update(game_data);
 		}
 		std::this_thread::sleep_for(std::chrono::milliseconds(40));
 	}

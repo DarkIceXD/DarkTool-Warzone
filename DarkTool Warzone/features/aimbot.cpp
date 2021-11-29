@@ -24,7 +24,7 @@ void aim_at(const vector2& screen, const bool absolute)
 	SendInput(1, &input, sizeof(input));
 }
 
-void features::aimbot::draw(const data::game& data, ImDrawList* d, const ref_def& refdef, const camera& camera)
+void features::aimbot(const data::game& data, ImDrawList* d, const ref_def& refdef, const camera& camera)
 {
 	cfg->aimbot.bind.run();
 	if (!cfg->aimbot.bind.enabled)
@@ -36,7 +36,19 @@ void features::aimbot::draw(const data::game& data, ImDrawList* d, const ref_def
 	vector2 best_hitbox;
 	for (const auto& player : data.players)
 	{
-		if (!player.aimbot_valid)
+		if (!player.valid)
+			break;
+
+		if (cfg->aimbot.max_distance && player.distance > cfg->aimbot.max_distance)
+			break;
+
+		if (player.team == data.local_player.team)
+			continue;
+
+		if (cfg->aimbot.visibility_check && !player.visible)
+			continue;
+
+		if (!cfg->aimbot.aim_at_downed_players && player.stance == player::stance::downed)
 			continue;
 
 		vector2 hitbox;
@@ -66,27 +78,4 @@ void features::aimbot::draw(const data::game& data, ImDrawList* d, const ref_def
 	if (fov > 2)
 		dx /= cfg->aimbot.smoothness;
 	aim_at(dx, false);
-}
-
-void features::aimbot::update(data::game& data)
-{
-	if (!cfg->aimbot.bind.enabled)
-		return;
-
-	for (auto& player : data.players)
-	{
-		if (!player.valid)
-			continue;
-
-		if (cfg->aimbot.visibility_check && !player.visible)
-			continue;
-
-		if (cfg->aimbot.max_distance && player.distance > cfg->aimbot.max_distance)
-			continue;
-
-		if (!cfg->aimbot.aim_at_downed_players && player.stance == player::stance::downed)
-			continue;
-
-		player.aimbot_valid = true;
-	}
 }

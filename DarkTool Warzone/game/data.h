@@ -5,7 +5,7 @@
 namespace data {
 	struct player_data {
 		std::array<vector3, 21> bones;
-		vector3 origin;
+		vector3 origin, delta;
 		player::stance stance;
 		int distance;
 		int team;
@@ -13,8 +13,6 @@ namespace data {
 		char name[0x24];
 		bool visible;
 		bool valid;
-		bool esp_valid;
-		bool aimbot_valid;
 		static constexpr size_t bone_to_index(const player::bone bone) noexcept
 		{
 			switch (bone)
@@ -121,7 +119,7 @@ namespace data {
 		}
 	};
 	struct local_player {
-		vector3 origin;
+		int team;
 	};
 	struct game {
 		std::array<player_data, 150> players;

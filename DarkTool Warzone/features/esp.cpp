@@ -4,7 +4,7 @@
 #include "../math/math.hpp"
 #include "../imgui/implot.h"
 
-void features::esp::draw(const data::game& data, ImDrawList* d, const ref_def& refdef, const camera& camera)
+void features::esp(const data::game& data, ImDrawList* d, const ref_def& refdef, const camera& camera)
 {
 	cfg->esp.bind.run();
 	if (!cfg->esp.bind.enabled)
@@ -18,7 +18,13 @@ void features::esp::draw(const data::game& data, ImDrawList* d, const ref_def& r
 	const auto skeleton_downed_color = cfg->esp.skeleton.downed.to_u32();
 	for (const auto& player : data.players)
 	{
-		if (!player.esp_valid)
+		if (!player.valid)
+			break;
+
+		if (cfg->esp.max_distance && player.distance > cfg->esp.max_distance)
+			break;
+
+		if (player.team == data.local_player.team)
 			continue;
 
 		vector2 min, max;
@@ -90,6 +96,9 @@ void features::esp::draw(const data::game& data, ImDrawList* d, const ref_def& r
 						if (player.distance > cfg->esp.show_nearest_players)
 							break;
 
+						if (player.team == data.local_player.team)
+							continue;
+
 						ImGui::TableNextRow();
 						ImGui::TableNextColumn();
 						ImGui::Text("%d", player.distance);
@@ -111,7 +120,7 @@ void features::esp::draw(const data::game& data, ImDrawList* d, const ref_def& r
 					const auto s = sin(angle);
 					const auto c = cos(angle);
 					std::array<float, 150> xs;
-					std::array<float, 150> ys;
+					std::array<float, xs.size()> ys;
 					int size = 0;
 					for (const auto& player : data.players)
 					{
@@ -121,9 +130,30 @@ void features::esp::draw(const data::game& data, ImDrawList* d, const ref_def& r
 						if (player.distance > cfg->esp.show_nearest_players)
 							break;
 
-						const auto point = vector2(player.origin) - vector2(data.local_player.origin);
-						const auto x = point.y;
-						const auto y = point.x;
+						if (player.team != data.local_player.team)
+							continue;
+
+						const auto x = player.delta.y;
+						const auto y = player.delta.x;
+						xs[size] = -math::units_to_m(x * c - y * s);
+						ys[size] = math::units_to_m(x * s + y * c);
+						size++;
+					}
+					ImPlot::PlotScatter("Team", xs.data(), ys.data(), size);
+					size = 0;
+					for (const auto& player : data.players)
+					{
+						if (!player.valid)
+							break;
+
+						if (player.distance > cfg->esp.show_nearest_players)
+							break;
+
+						if (player.team == data.local_player.team)
+							continue;
+
+						const auto x = player.delta.y;
+						const auto y = player.delta.x;
 						xs[size] = -math::units_to_m(x * c - y * s);
 						ys[size] = math::units_to_m(x * s + y * c);
 						size++;
@@ -143,22 +173,5 @@ void features::esp::draw(const data::game& data, ImDrawList* d, const ref_def& r
 			}
 		}
 		ImGui::End();
-	}
-}
-
-void features::esp::update(data::game& data)
-{
-	if (!cfg->esp.bind.enabled)
-		return;
-
-	for (auto& player : data.players)
-	{
-		if (!player.valid)
-			continue;
-
-		if (cfg->esp.max_distance && player.distance > cfg->esp.max_distance)
-			continue;
-
-		player.esp_valid = true;
 	}
 }
