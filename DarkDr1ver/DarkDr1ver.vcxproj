@@ -170,6 +170,9 @@
       <EntryPointSymbol>DriverEntry</EntryPointSymbol>
       <AdditionalDependencies>Netio.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <DriverSign>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
+    </DriverSign>
   </ItemDefinitionGroup>
   <ItemGroup>
     <Inf Include="DarkDr1ver.inf" />

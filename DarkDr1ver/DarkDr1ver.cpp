@@ -9,22 +9,6 @@ HANDLE section_handle;
 PVOID section = NULL;
 PACL dacl;
 
-PVOID read_shared_memory()
-{
-	if (section_handle)
-		return section;
-
-	if (section)
-		ZwUnmapViewOfSection(NtCurrentProcess(), section);
-
-	SIZE_T size = sizeof(packet);//1024 * 10;
-	NTSTATUS status = ZwMapViewOfSection(section_handle, NtCurrentProcess(), &section, 0, size, NULL, &size, ViewShare, 0, PAGE_READWRITE | PAGE_NOCACHE);
-	if (status != STATUS_SUCCESS)
-		ZwClose(section_handle);
-
-	return section;
-}
-
 NTSTATUS create_shared_memory()
 {
 	NTSTATUS status = STATUS_SUCCESS;
@@ -151,14 +135,12 @@ VOID loop(PVOID StartContext)
 	}
 
 	ZwSetEvent(finished, NULL);
+	packet* data = (packet*)section;
 	while (true)
 	{
 		ZwWaitForSingleObject(start, TRUE, NULL);
-		packet* data = (packet*)section;
-		packet out;
-		out.type = packet::type::completed;
-		out.data.completed.result = driver::handle_packet(*data);
-		*data = out;
+		data->data.completed.result = driver::handle_packet(*data);
+		data->type = packet::type::completed;
 		ZwSetEvent(finished, NULL);
 	}
 }

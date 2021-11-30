@@ -4,25 +4,16 @@
 
 [Version]
 Signature="$WINDOWS NT$"
-Class=Sample ; TODO: edit Class
-ClassGuid={78A1C341-4539-11d3-B88D-00C04FAD5171} ; TODO: edit ClassGuid
+Class=System ; TODO: specify appropriate Class
+ClassGuid={4d36e97d-e325-11ce-bfc1-08002be10318} ; TODO: specify appropriate ClassGuid
 Provider=%ManufacturerName%
 CatalogFile=DarkDr1ver.cat
 DriverVer= ; TODO: set DriverVer in stampinf property pages
-PnpLockDown=1
+PnpLockdown=1
 
 [DestinationDirs]
 DefaultDestDir = 12
 DarkDr1ver_Device_CoInstaller_CopyFiles = 11
-
-; ================= Class section =====================
-
-[ClassInstall32]
-Addreg=SampleClassReg
-
-[SampleClassReg]
-HKR,,,0,%ClassName%
-HKR,,Icon,,-5
 
 [SourceDisksNames]
 1 = %DiskName%,,,""
@@ -81,7 +72,6 @@ KmdfLibraryVersion = $KMDFVERSION$
 [Strings]
 SPSVCINST_ASSOCSERVICE= 0x00000002
 ManufacturerName="<Your manufacturer name>" ;TODO: Replace with your manufacturer name
-ClassName="Samples" ; TODO: edit ClassName
 DiskName = "DarkDr1ver Installation Disk"
 DarkDr1ver.DeviceDesc = "DarkDr1ver Device"
 DarkDr1ver.SVCDESC = "DarkDr1ver Service"
