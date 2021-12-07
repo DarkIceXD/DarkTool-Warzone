@@ -190,7 +190,6 @@ bool overlay::create_overlay(const uint32_t pid)
 	}
 	directx9::IDirect3D9->Release();
 
-
 	{ // Load ImGui theme
 		auto& style = ImGui::GetStyle();
 		style.Colors[ImGuiCol_Text] = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);

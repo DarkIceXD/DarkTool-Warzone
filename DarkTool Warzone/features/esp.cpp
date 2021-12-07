@@ -65,9 +65,9 @@ void features::esp(const data::game& data, ImDrawList* d, const ref_def& refdef,
 		ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav;
 		if (cfg->esp.overlay_corner != -1)
 		{
-			const ImGuiViewport* viewport = ImGui::GetMainViewport();
-			ImVec2 work_pos = viewport->WorkPos;
-			ImVec2 work_size = viewport->WorkSize;
+			const auto viewport = ImGui::GetMainViewport();
+			const auto& work_pos = viewport->WorkPos;
+			const auto& work_size = viewport->WorkSize;
 			ImVec2 window_pos, window_pos_pivot;
 			constexpr auto padding = 10;
 			window_pos.x = (cfg->esp.overlay_corner & 1) ? (work_pos.x + work_size.x - padding) : (work_pos.x + padding);
