@@ -7,15 +7,55 @@
 #include <dwmapi.h>
 #pragma comment( lib, "dwmapi.lib" )
 
-struct window_rect_data_t : public RECT
+constexpr auto title = L"Hammer & Chisel Inc.";
+
+struct window_rect : public RECT
 {
 	constexpr int width() const { return right - left; }
 	constexpr int height() const { return bottom - top; }
 };
 
-static HWND target_window;
-static window_rect_data_t target_window_size;
-static IDirect3DDevice9* direct_device;
+namespace directx9 {
+	inline IDirect3D9Ex* IDirect3D9 = NULL;
+	inline IDirect3DDevice9Ex* device = NULL;
+	inline D3DPRESENT_PARAMETERS params = { NULL };
+}
+
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+LRESULT CALLBACK WinProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
+{
+	if (ImGui_ImplWin32_WndProcHandler(hWnd, Message, wParam, lParam))
+		return true;
+
+	switch (Message) {
+	case WM_DESTROY:
+		if (directx9::device != NULL) {
+			directx9::device->EndScene();
+			directx9::device->Release();
+		}
+		if (directx9::IDirect3D9 != NULL) {
+			directx9::IDirect3D9->Release();
+		}
+		PostQuitMessage(0);
+		exit(4);
+		break;
+	case WM_SIZE:
+		if (directx9::device != NULL && wParam != SIZE_MINIMIZED) {
+			ImGui_ImplDX9_InvalidateDeviceObjects();
+			directx9::params.BackBufferWidth = LOWORD(lParam);
+			directx9::params.BackBufferHeight = HIWORD(lParam);
+			HRESULT hr = directx9::device->Reset(&directx9::params);
+			if (hr == D3DERR_INVALIDCALL)
+				IM_ASSERT(0);
+			ImGui_ImplDX9_CreateDeviceObjects();
+		}
+		break;
+	default:
+		return DefWindowProc(hWnd, Message, wParam, lParam);
+		break;
+	}
+	return 0;
+}
 
 LRESULT CALLBACK mouse_manager(int nCode, WPARAM wParam, LPARAM lParam) {
 	MOUSEHOOKSTRUCT* pMouseStruct = (MOUSEHOOKSTRUCT*)lParam;
@@ -42,107 +82,114 @@ LRESULT CALLBACK mouse_manager(int nCode, WPARAM wParam, LPARAM lParam) {
 	return CallNextHookEx(nullptr, nCode, wParam, lParam);
 }
 
-extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-LRESULT WINAPI WndProc(HWND window, UINT message, WPARAM wparam, LPARAM lparam) {
-	ImGuiIO& io = ImGui::GetIO();
-	switch (message)
-	{
-	case WM_MOUSEMOVE:
-		io.MousePos.x = (signed short)(lparam);
-		io.MousePos.y = (signed short)(lparam >> 16);
-		break;
-	}
-
-	if (ImGui_ImplWin32_WndProcHandler(window, message, wparam, lparam))
-		return true;
-
-	if (message == WM_DESTROY)
-		ExitProcess(EXIT_SUCCESS);
-
-	return DefWindowProcW(window, message, wparam, lparam);
-}
-
 BOOL CALLBACK EnumWindowsProcMy(HWND hwnd, LPARAM lParam)
 {
 	DWORD lpdwProcessId;
 	GetWindowThreadProcessId(hwnd, &lpdwProcessId);
 	if (lpdwProcessId == lParam)
 	{
-		target_window = hwnd;
+		target::hwnd = hwnd;
 		return FALSE;
 	}
 	return TRUE;
 }
 
-bool overlay::create_overlay(const uint32_t pid) {
-	constexpr auto tite = L"Hammer & Chisel Inc.";
-	WNDCLASSEX window_class_ex;
-	window_class_ex.cbSize = sizeof(WNDCLASSEX);
-	window_class_ex.style = CS_HREDRAW | CS_VREDRAW;
-	window_class_ex.lpfnWndProc = WndProc;
-	window_class_ex.cbClsExtra = 0;
-	window_class_ex.cbWndExtra = 0;
-	window_class_ex.hInstance = nullptr;
-	window_class_ex.hIcon = nullptr;
-	window_class_ex.hCursor = LoadCursor(nullptr, IDC_ARROW);
-	window_class_ex.hbrBackground = HBRUSH(RGB(0, 0, 0));
-	window_class_ex.lpszMenuName = L"";
-	window_class_ex.lpszClassName = tite;
-	window_class_ex.hIconSm = nullptr;
-
-	ImGui::CreateContext();
-	ImPlot::CreateContext();
-	if (!RegisterClassEx(&window_class_ex))
-		return false;
-
+bool overlay::create_overlay(const uint32_t pid)
+{
+	WNDCLASSEX window_class = {
+		sizeof(WNDCLASSEX), 0, WinProc, 0, 0, nullptr, LoadIcon(nullptr, IDI_APPLICATION), LoadCursor(nullptr, IDC_ARROW), nullptr, nullptr, title, LoadIcon(nullptr, IDI_APPLICATION)
+	};
+	RegisterClassEx(&window_class);
+	overlay_window::hInstance = window_class.hInstance;
 	do {
 		EnumWindows(EnumWindowsProcMy, pid);
 		Sleep(1000);
-	} while (!target_window);
+	} while (!target::hwnd);
 
-	if (!GetWindowRect(target_window, &target_window_size))
+	window_rect rect;
+	if (!GetWindowRect(target::hwnd, &rect))
+	{
+		UnregisterClass(title, overlay_window::hInstance);
 		return false;
-
-	overlay_window = CreateWindowEx(WS_EX_TOPMOST | WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_NOACTIVATE, tite, L"", WS_POPUP | WS_VISIBLE,
-		target_window_size.left, target_window_size.top, target_window_size.width(), target_window_size.height(), nullptr, nullptr, nullptr, nullptr);
-
-	if (!overlay_window)
+	}
+	overlay_window::hwnd = CreateWindowEx(NULL, title, title, WS_POPUP | WS_VISIBLE, rect.left, rect.top, rect.width(), rect.height(), nullptr, nullptr, nullptr, nullptr);
+	SetWindowLong(overlay_window::hwnd, GWL_EXSTYLE, WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_NOACTIVATE);
+	MARGINS margin = { -1 };
+	if (!SUCCEEDED(DwmExtendFrameIntoClientArea(overlay_window::hwnd, &margin)))
+	{
+		DestroyWindow(overlay_window::hwnd);
+		UnregisterClass(title, overlay_window::hInstance);
 		return false;
+	}
 
-	MARGINS margins = { target_window_size.left, target_window_size.top, target_window_size.width(), target_window_size.height() };
-	DwmExtendFrameIntoClientArea(overlay_window, &margins);
-
-	if (!SetLayeredWindowAttributes(overlay_window, RGB(0, 0, 0), 255, LWA_ALPHA))
+	if (!SetWindowDisplayAffinity(overlay_window::hwnd, WDA_EXCLUDEFROMCAPTURE))
+	{
+		DestroyWindow(overlay_window::hwnd);
+		UnregisterClass(title, overlay_window::hInstance);
 		return false;
+	}
 
-	if (!SetWindowDisplayAffinity(overlay_window, WDA_EXCLUDEFROMCAPTURE))
+	if (!ShowWindow(overlay_window::hwnd, SW_SHOW))
+	{
+		DestroyWindow(overlay_window::hwnd);
+		UnregisterClass(title, overlay_window::hInstance);
 		return false;
+	}
 
-	if (!ShowWindow(overlay_window, SW_SHOW))
+	if (FAILED(Direct3DCreate9Ex(D3D_SDK_VERSION, &directx9::IDirect3D9)))
+	{
+		DestroyWindow(overlay_window::hwnd);
+		UnregisterClass(title, overlay_window::hInstance);
 		return false;
+	}
 
-	const auto direct = Direct3DCreate9(D3D_SDK_VERSION);
-	if (!direct)
+	D3DPRESENT_PARAMETERS Params = { 0 };
+	Params.Windowed = TRUE;
+	Params.SwapEffect = D3DSWAPEFFECT_DISCARD;
+	Params.hDeviceWindow = overlay_window::hwnd;
+	Params.MultiSampleQuality = D3DMULTISAMPLE_NONE;
+	Params.BackBufferFormat = D3DFMT_A8R8G8B8;
+	Params.BackBufferWidth = rect.width();
+	Params.BackBufferHeight = rect.height();
+	Params.PresentationInterval = D3DPRESENT_INTERVAL_ONE;
+	Params.EnableAutoDepthStencil = TRUE;
+	Params.AutoDepthStencilFormat = D3DFMT_D16;
+	Params.PresentationInterval = D3DPRESENT_INTERVAL_ONE;
+	Params.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
+	if (FAILED(directx9::IDirect3D9->CreateDeviceEx(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, overlay_window::hwnd, D3DCREATE_HARDWARE_VERTEXPROCESSING, &Params, 0, &directx9::device))) {
+		directx9::IDirect3D9->Release();
+		DestroyWindow(overlay_window::hwnd);
+		UnregisterClass(title, overlay_window::hInstance);
 		return false;
+	}
 
-	D3DPRESENT_PARAMETERS parameters = { };
-	parameters.Windowed = true;
-	parameters.SwapEffect = D3DSWAPEFFECT_DISCARD;
-	parameters.BackBufferFormat = D3DFMT_A8R8G8B8;
-	parameters.BackBufferWidth = target_window_size.width();
-	parameters.BackBufferHeight = target_window_size.height();
-	parameters.hDeviceWindow = overlay_window;
-	parameters.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
-
-	const auto result = direct->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, overlay_window, D3DCREATE_HARDWARE_VERTEXPROCESSING, &parameters, &direct_device);
-	if (FAILED(result))
+	ImGui::CreateContext();
+	ImPlot::CreateContext();
+	if (!ImGui_ImplWin32_Init(overlay_window::hwnd))
+	{
+		ImGui::DestroyContext();
+		ImPlot::DestroyContext();
+		directx9::device->EndScene();
+		directx9::device->Release();
+		directx9::IDirect3D9->Release();
+		DestroyWindow(overlay_window::hwnd);
+		UnregisterClass(title, overlay_window::hInstance);
 		return false;
-
-	if (!ImGui_ImplWin32_Init(overlay_window))
+	}
+	if (!ImGui_ImplDX9_Init(directx9::device))
+	{
+		ImGui_ImplWin32_Shutdown();
+		ImGui::DestroyContext();
+		ImPlot::DestroyContext();
+		directx9::device->EndScene();
+		directx9::device->Release();
+		directx9::IDirect3D9->Release();
+		DestroyWindow(overlay_window::hwnd);
+		UnregisterClass(title, overlay_window::hInstance);
 		return false;
+	}
+	directx9::IDirect3D9->Release();
 
-	if (!ImGui_ImplDX9_Init(direct_device))
-		return false;
 
 	{ // Load ImGui theme
 		auto& style = ImGui::GetStyle();
@@ -185,52 +232,56 @@ bool overlay::create_overlay(const uint32_t pid) {
 	}
 
 	SetWindowsHookEx(WH_MOUSE, mouse_manager, 0, GetCurrentThreadId());
-
 	return true;
 }
 
-bool overlay::begin() {
-	direct_device->Clear(0, nullptr, D3DCLEAR_TARGET, D3DCOLOR_ARGB(0, 0, 0, 0), 1.f, 0);
-	direct_device->BeginScene();
-
-	/*if (target_window != GetForegroundWindow())
-	{
-		direct_device->EndScene();
-		direct_device->Present(nullptr, nullptr, nullptr, nullptr);
-
-		return false;
-	}*/
+void overlay::render(const data::game& data)
+{
+	static auto show_menu = false;
 
 	ImGui_ImplDX9_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
+	draw(data, ImGui::GetBackgroundDrawList());
 
-	return true;
-}
-
-void overlay::present(const data::game& data)
-{
-	static bool show_menu = false;
-	if (GetAsyncKeyState(VK_INSERT) & 1) {
+	if (GetAsyncKeyState(VK_INSERT) & 1)
+	{
 		show_menu = !show_menu;
-		const auto style = GetWindowLong(overlay_window, GWL_EXSTYLE);
-		const auto new_style = show_menu ? (style & ~WS_EX_LAYERED) : (style | WS_EX_LAYERED);
-		SetWindowLong(overlay_window, GWL_EXSTYLE, new_style);
+		const auto style = show_menu ? WS_EX_TRANSPARENT | WS_EX_NOACTIVATE : WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_NOACTIVATE;
+		SetWindowLong(overlay_window::hwnd, GWL_EXSTYLE, style);
 	}
-
 	if (show_menu)
 		menu();
 
-	draw(data, ImGui::GetForegroundDrawList());
+	ImGui::EndFrame();
+
+	directx9::device->Clear(0, NULL, D3DCLEAR_TARGET, D3DCOLOR_ARGB(0, 0, 0, 0), 1.0f, 0);
+	if (directx9::device->BeginScene() >= 0) {
+		ImGui::Render();
+		ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
+		directx9::device->EndScene();
+	}
+
+	const auto result = directx9::device->Present(NULL, NULL, NULL, NULL);
+	if (result == D3DERR_DEVICELOST && directx9::device->TestCooperativeLevel() == D3DERR_DEVICENOTRESET) {
+		ImGui_ImplDX9_InvalidateDeviceObjects();
+		directx9::device->Reset(&directx9::params);
+		ImGui_ImplDX9_CreateDeviceObjects();
+	}
 }
 
-void overlay::end() {
-	ImGui::EndFrame();
-	ImGui::Render();
-	ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
-
-	direct_device->EndScene();
-	direct_device->Present(nullptr, nullptr, nullptr, nullptr);
-
-	SetWindowPos(overlay_window, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+void overlay::destroy()
+{
+	ImGui_ImplDX9_Shutdown();
+	ImGui_ImplWin32_Shutdown();
+	ImGui::DestroyContext();
+	if (directx9::device != NULL) {
+		directx9::device->EndScene();
+		directx9::device->Release();
+	}
+	if (directx9::IDirect3D9 != NULL) {
+		directx9::IDirect3D9->Release();
+	}
+	DestroyWindow(overlay_window::hwnd);
+	UnregisterClass(title, overlay_window::hInstance);
 }

@@ -17,26 +17,27 @@ void overlay_execute()
 		std::cout << "Cannot create overlay.\n";
 		return;
 	}
-
 	MSG message;
-	do
-	{
-		if (PeekMessageW(&message, overlay::overlay_window, 0, 0, PM_REMOVE)) {
+	do {
+		if (PeekMessage(&message, overlay_window::hwnd, 0, 0, PM_REMOVE)) {
 			TranslateMessage(&message);
-			DispatchMessageW(&message);
+			DispatchMessage(&message);
+		}
+		HWND ForegroundWindow = GetForegroundWindow();
+		if (ForegroundWindow == target::hwnd) {
+			HWND TempProcessHwnd = GetWindow(ForegroundWindow, GW_HWNDPREV);
+			SetWindowPos(overlay_window::hwnd, TempProcessHwnd, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
 		}
 		{
 			std::lock_guard lock(mtx);
-			if (overlay::begin()) {
-				overlay::present(game_data);
-				overlay::end();
-			}
+			overlay::render(game_data);
 		}
 		if (GetAsyncKeyState(VK_END) & 1)
 			break;
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(10));
 	} while (message.message != WM_QUIT);
+	overlay::destroy();
 }
 
 void collect_data()

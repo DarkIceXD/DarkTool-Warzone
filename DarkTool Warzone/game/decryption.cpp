@@ -126,7 +126,7 @@ namespace decryption {
 		case 2:
 		{
 			r10 = readMemory<uintptr_t>(imageBase + 0x71D912F);              //mov r10, [0x0000000004E9011C]
-			rcx = rdi * 0xFFFFFFFFFFFFFFFE;                 //imul rcx, rdi, 0xFFFFFFFFFFFFFFFE
+			rcx = rdi * 0xFE;                 //imul rcx, rdi, 0xFFFFFFFFFFFFFFFE
 			rax += rcx;             //add rax, rcx
 			rcx = rax;              //mov rcx, rax
 			rcx >>= 0x22;           //shr rcx, 0x22

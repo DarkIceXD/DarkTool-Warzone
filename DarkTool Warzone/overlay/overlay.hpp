@@ -4,12 +4,19 @@
 #include <windows.h>
 #include <cstdint>
 
+namespace target {
+	inline HWND hwnd;
+}
+
+namespace overlay_window {
+	inline HINSTANCE hInstance;
+	inline HWND hwnd;
+}
+
 namespace overlay {
-	inline HWND overlay_window;
 	bool create_overlay(const uint32_t pid);
-	bool begin();
-	void present(const data::game& data);
+	void render(const data::game& data);
 	void draw(const data::game& data, ImDrawList* d);
 	void menu();
-	void end();
+	void destroy();
 }
