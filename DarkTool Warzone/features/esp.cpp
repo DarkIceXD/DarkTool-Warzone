@@ -48,16 +48,20 @@ void features::esp(const data::game& data, ImDrawList* d, const ref_def& refdef,
 		d->AddRect(hp_min, hp_max, IM_COL32_BLACK);
 
 		const auto skeleton_color = player.stance == player::stance::downed ? skeleton_downed_color : (player.visible ? skeleton_visible_color : skeleton_base_color);
-		if ((skeleton_color & 0xFF000000) && math::units_to_m((player.bones[0] - player.origin).length()) <= 2)
-			for (const auto& bone_connection : player::bone_connections)
-			{
-				vector2 a, b;
-				if (!math::world_to_screen(player.get_bone(bone_connection.first), camera.position, refdef, a) ||
-					!math::world_to_screen(player.get_bone(bone_connection.second), camera.position, refdef, b))
-					continue;
-
-				d->AddLine(a, b, skeleton_color);
-			}
+		if ((skeleton_color & 0xFF000000))
+		{
+			std::array<vector2, 21> screen;
+			auto valid = true;
+			for (size_t i = 0; i < player.bones.size(); i++)
+				if ((player.bones[i] - player.origin).length() > 150 || !math::world_to_screen(player.bones[i], camera.position, refdef, screen[i]))
+				{
+					valid = false;
+					break;
+				}
+			if (valid)
+				for (const auto& bone_connection : player::bone_connections)
+					d->AddLine(screen[data::player_data::bone_to_index(bone_connection.first)], screen[data::player_data::bone_to_index(bone_connection.second)], skeleton_color);
+		}
 	}
 	if (cfg->esp.show_nearest_players)
 	{

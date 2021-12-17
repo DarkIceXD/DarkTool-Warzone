@@ -63,7 +63,7 @@ namespace data {
 				return 0;
 			}
 		}
-		constexpr const vector3& get_bone(const player::bone bone) const noexcept
+		constexpr const auto& get_bone(const player::bone bone) const noexcept
 		{
 			return bones[bone_to_index(bone)];
 		}

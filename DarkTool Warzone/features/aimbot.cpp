@@ -52,9 +52,9 @@ void features::aimbot(const data::game& data, ImDrawList* d, const ref_def& refd
 			continue;
 
 		vector2 hitbox;
-		if (!math::world_to_screen(player.get_bone(((cfg->aimbot.hitbox == 0) ? player::bone::chest : player::bone::head)), camera.position, refdef, hitbox))
+		if (!math::world_to_screen(player.get_bone((cfg->aimbot.hitbox == 0) ? player::bone::chest : player::bone::head), camera.position, refdef, hitbox))
 			continue;
-
+		
 		const auto fov = math::pixels_to_fov((hitbox - middle).length(), tan_half_fov, middle.x);
 		if (fov < smallest_fov)
 		{

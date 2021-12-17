@@ -89,6 +89,7 @@ void data::update(data::game& data)
 	const auto local_origin = *local_origin_opt;
 	data.local_player.team = local_player.get_team();
 	const auto bone_base_pos = player::get_bone_base_pos(client_info);
+	const auto visible_list = driver::read<uint64_t>(visible_base);
 	for (int i = 0; i < data.players.size(); i++)
 	{
 		auto& player_data = data.players[i];
@@ -110,10 +111,6 @@ void data::update(data::game& data)
 		if (!bone_ptr)
 			continue;
 
-		const auto bones = player::get_all_bones(bone_ptr);
-		for (size_t j = 0; j < player_data.bones.size(); j++)
-			player_data.bones[j] = bone_base_pos + bones[static_cast<size_t>(player_data::index_to_bone(j))];
-
 		player_data.delta = player_data.origin - local_origin;
 		player_data.distance = static_cast<int>(math::units_to_m(player_data.delta.length()));
 		player_data.stance = p.get_stance();
@@ -121,7 +118,10 @@ void data::update(data::game& data)
 		const auto name = p.get_name_struct(name_base);
 		player_data.health = name.health / 127.f;
 		strcpy_s(player_data.name, name.name);
-		player_data.visible = p.is_visible(visible_base);
+		player_data.visible = p.is_visible(visible_list);
+		const auto bones = player::get_all_bones(bone_ptr);
+		for (size_t j = 0; j < player_data.bones.size(); j++)
+			player_data.bones[j] = bone_base_pos + bones[static_cast<size_t>(player_data::index_to_bone(j))];
 		player_data.valid = true;
 	}
 
