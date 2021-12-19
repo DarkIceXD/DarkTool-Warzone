@@ -36,13 +36,10 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 
 	switch (Message) {
 	case WM_DESTROY:
-		if (directx9::device != NULL) {
-			directx9::device->EndScene();
+		if (directx9::device)
 			directx9::device->Release();
-		}
-		if (directx9::direct3d9ex != NULL) {
+		if (directx9::direct3d9ex)
 			directx9::direct3d9ex->Release();
-		}
 		PostQuitMessage(0);
 		exit(4);
 		break;
