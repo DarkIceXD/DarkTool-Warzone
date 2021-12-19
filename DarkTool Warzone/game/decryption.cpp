@@ -9,32 +9,24 @@ namespace decryption {
 	extern "C" auto decrypt_client_info(uint64_t imageBase, uint64_t peb) -> uint64_t
 	{
 		uint64_t rax = imageBase, rbx = imageBase, rcx = imageBase, rdx = imageBase, rdi = imageBase, rsi = imageBase, r8 = imageBase, r9 = imageBase, r10 = imageBase, r11 = imageBase, r12 = imageBase, r13 = imageBase, r14 = imageBase, r15 = imageBase;
-		rbx = driver::read<uintptr_t>(imageBase + 0x1EB678B8);
+		rbx = driver::read<uintptr_t>(imageBase + 0x1F0D3938);
 		if (!rbx)
 			return rbx;
-		rdx = ~peb;              //mov rdx, gs:[rax]
-		r8 = imageBase;
-		rcx = rdx;              //mov rcx, rdx
-		rax = imageBase + 0x1740D79E;              //lea rax, [0x00000000151A30B0]
+		r8 = peb;               //mov r8, gs:[rax]
+		r9 = imageBase;    rdx = 0x22CBFA5C133D766B;               //mov rdx, 0x22CBFA5C133D766B
+		rax = rbx;              //mov rax, rbx
+		rcx = 0;                //and rcx, 0xFFFFFFFFC0000000
+		rax >>= 0x25;           //shr rax, 0x25
+		rbx ^= rax;             //xor rbx, rax
+		rcx = _rotl64(rcx, 0x10);               //rol rcx, 0x10
+		rcx ^= driver::read<uintptr_t>(imageBase + 0x78210EC);             //xor rcx, [0x0000000005045739]
+		rax = 0x2C925E0599A4412F;               //mov rax, 0x2C925E0599A4412F
+		rbx *= rdx;             //imul rbx, rdx
 		rcx = ~rcx;             //not rcx
-		rcx += rax;             //add rcx, rax
-		rcx ^= rbx;             //xor rcx, rbx
-		rcx -= rdx;             //sub rcx, rdx
-		rcx -= r8;              //sub rcx, r8
-		rcx -= 0xF13A;          //sub rcx, 0xF13A
-		rax = rcx;              //mov rax, rcx
-		rax >>= 0x13;           //shr rax, 0x13
-		rcx ^= rax;             //xor rcx, rax
-		rbx = rcx;              //mov rbx, rcx
-		rax = 0;                //and rax, 0xFFFFFFFFC0000000
-		rbx >>= 0x26;           //shr rbx, 0x26
-		rax = _rotl64(rax, 0x10);               //rol rax, 0x10
-		rbx ^= rcx;             //xor rbx, rcx
-		rax ^= driver::read<uintptr_t>(imageBase + 0x72AF124);             //xor rax, [0x00000000050449EA]
-		rax = _byteswap_uint64(rax);            //bswap rax
-		rbx *= driver::read<uintptr_t>(rax + 0x7);              //imul rbx, [rax+0x07]
-		rax = 0x7D037367013E30B7;               //mov rax, 0x7D037367013E30B7
-		rbx *= rax;             //imul rbx, rax
+		rbx += rax;             //add rbx, rax
+		rbx *= driver::read<uintptr_t>(rcx + 0x9);              //imul rbx, [rcx+0x09]
+		rbx -= r8;              //sub rbx, r8
+		rbx += r9;              //add rbx, r9
 		return rbx;
 	}
 
@@ -44,465 +36,32 @@ namespace decryption {
 		rax = driver::read<uintptr_t>(clientInfo + 0xa2c08);
 		if (!rax)
 			return rax;
-		r11 = ~peb;              //mov r11, gs:[rcx]
+		r11 = peb;              //mov r11, gs:[rcx]
 		rcx = r11;              //mov rcx, r11
-		rcx = _rotl64(rcx, 0x2D);               //rol rcx, 0x2D
+		rcx >>= 0xD;            //shr rcx, 0x0D
 		rcx &= 0xF;
 		switch (rcx) {
 		case 0:
 		{
-			r9 = driver::read<uintptr_t>(imageBase + 0x72AF157);               //mov r9, [0x000000000504491C]
-			rax += r11;             //add rax, r11
-			rax ^= r11;             //xor rax, r11
+			r10 = driver::read<uintptr_t>(imageBase + 0x782112E);              //mov r10, [0x00000000050456EE]
 			rcx = 0;                //and rcx, 0xFFFFFFFFC0000000
 			rcx = _rotl64(rcx, 0x10);               //rol rcx, 0x10
-			rcx ^= r9;              //xor rcx, r9
+			rcx ^= r10;             //xor rcx, r10
 			rcx = _byteswap_uint64(rcx);            //bswap rcx
-			rax *= driver::read<uintptr_t>(rcx + 0x15);             //imul rax, [rcx+0x15]
-			rcx = 0x5098DC4F4C0E1456;               //mov rcx, 0x5098DC4F4C0E1456
-			rax -= rcx;             //sub rax, rcx
-			rcx = rax;              //mov rcx, rax
-			rcx >>= 0x8;            //shr rcx, 0x08
-			rax ^= rcx;             //xor rax, rcx
-			rcx = rax;              //mov rcx, rax
-			rcx >>= 0x10;           //shr rcx, 0x10
-			rax ^= rcx;             //xor rax, rcx
-			rcx = rax;              //mov rcx, rax
-			rcx >>= 0x20;           //shr rcx, 0x20
-			rax ^= rcx;             //xor rax, rcx
-			rcx = rax;              //mov rcx, rax
-			rcx >>= 0x8;            //shr rcx, 0x08
-			rax ^= rcx;             //xor rax, rcx
-			rcx = rax;              //mov rcx, rax
-			rcx >>= 0x10;           //shr rcx, 0x10
-			rax ^= rcx;             //xor rax, rcx
-			rcx = rax;              //mov rcx, rax
-			rcx >>= 0x20;           //shr rcx, 0x20
-			rax ^= rcx;             //xor rax, rcx
-			rcx = 0x8889B521E2298BF;                //mov rcx, 0x8889B521E2298BF
-			rax *= rcx;             //imul rax, rcx
-			rcx = 0x9D4E09B4BA23203C;               //mov rcx, 0x9D4E09B4BA23203C
-			rax ^= rcx;             //xor rax, rcx
-			return rax;
-		}
-		case 1:
-		{
-			r10 = driver::read<uintptr_t>(imageBase + 0x72AF157);              //mov r10, [0x0000000005044454]
+			rax *= driver::read<uintptr_t>(rcx + 0x7);              //imul rax, [rcx+0x07]
 			rcx = rax;              //mov rcx, rax
 			rcx >>= 0x16;           //shr rcx, 0x16
 			rax ^= rcx;             //xor rax, rcx
 			rcx = rax;              //mov rcx, rax
 			rcx >>= 0x2C;           //shr rcx, 0x2C
 			rax ^= rcx;             //xor rax, rcx
-			rcx = rax;              //mov rcx, rax
-			rcx >>= 0x20;           //shr rcx, 0x20
-			rax ^= rcx;             //xor rax, rcx
-			rcx = 0xEA238BD6461ABAF7;               //mov rcx, 0xEA238BD6461ABAF7
+			rcx = 0x9E38BF624AD3140F;               //mov rcx, 0x9E38BF624AD3140F
 			rax *= rcx;             //imul rax, rcx
-			rcx = 0x1372427E917528C7;               //mov rcx, 0x1372427E917528C7
+			rcx = imageBase;           //lea rcx, [0xFFFFFFFFFD8240E2]
 			rax += rcx;             //add rax, rcx
 			rcx = rax;              //mov rcx, rax
-			rcx >>= 0x15;           //shr rcx, 0x15
+			rcx >>= 0x2;            //shr rcx, 0x02
 			rax ^= rcx;             //xor rax, rcx
-			rcx = rax;              //mov rcx, rax
-			rcx >>= 0x2A;           //shr rcx, 0x2A
-			rax ^= rcx;             //xor rax, rcx
-			rdx = 0;                //and rdx, 0xFFFFFFFFC0000000
-			rcx = imageBase + 0xC635;          //lea rcx, [0xFFFFFFFFFDDA16EE]
-			rdx = _rotl64(rdx, 0x10);               //rol rdx, 0x10
-			rcx = ~rcx;             //not rcx
-			rcx -= r11;             //sub rcx, r11
-			rdx ^= r10;             //xor rdx, r10
-			rax ^= rcx;             //xor rax, rcx
-			rcx = 0x7DBE77980F71921;                //mov rcx, 0x7DBE77980F71921
-			rdx = _byteswap_uint64(rdx);            //bswap rdx
-			rax *= driver::read<uintptr_t>(rdx + 0x15);             //imul rax, [rdx+0x15]
-			rax *= rcx;             //imul rax, rcx
-			return rax;
-		}
-		case 2:
-		{
-			rsi = imageBase + 0x78E8;          //lea rsi, [0xFFFFFFFFFDD9C6CE]
-			r9 = driver::read<uintptr_t>(imageBase + 0x72AF157);               //mov r9, [0x0000000005043EFC]
-			rcx = 0;                //and rcx, 0xFFFFFFFFC0000000
-			rcx = _rotl64(rcx, 0x10);               //rol rcx, 0x10
-			rcx ^= r9;              //xor rcx, r9
-			rcx = _byteswap_uint64(rcx);            //bswap rcx
-			rax *= driver::read<uintptr_t>(rcx + 0x15);             //imul rax, [rcx+0x15]
-			rcx = r11;              //mov rcx, r11
-			rcx *= rsi;             //imul rcx, rsi
-			rax -= rcx;             //sub rax, rcx
-			rax -= r11;             //sub rax, r11
-			rcx = rax;              //mov rcx, rax
-			rcx >>= 0x1F;           //shr rcx, 0x1F
-			rax ^= rcx;             //xor rax, rcx
-			rcx = rax;              //mov rcx, rax
-			rcx >>= 0x3E;           //shr rcx, 0x3E
-			rcx ^= r11;             //xor rcx, r11
-			rax ^= rcx;             //xor rax, rcx
-			rcx = 0x3BBFDD253C49C413;               //mov rcx, 0x3BBFDD253C49C413
-			rax *= rcx;             //imul rax, rcx
-			rcx = 0x1070A91C697B241F;               //mov rcx, 0x1070A91C697B241F
-			rax ^= rcx;             //xor rax, rcx
-			rcx = imageBase;           //lea rcx, [0xFFFFFFFFFDD94D27]
-			rax -= r11;             //sub rax, r11
-			rax -= rcx;             //sub rax, rcx
-			rax -= 0x6CFA0C83;              //sub rax, 0x6CFA0C83
-			return rax;
-		}
-		case 3:
-		{
-			r14 = imageBase + 0x1FD5;          //lea r14, [0xFFFFFFFFFDD969D0]
-			r15 = imageBase + 0xB6C4;          //lea r15, [0xFFFFFFFFFDDA00B3]
-			r10 = driver::read<uintptr_t>(imageBase + 0x72AF157);              //mov r10, [0x0000000005043AE7]
-			rcx = rax;              //mov rcx, rax
-			rcx >>= 0x8;            //shr rcx, 0x08
-			rax ^= rcx;             //xor rax, rcx
-			rcx = rax;              //mov rcx, rax
-			rcx >>= 0x10;           //shr rcx, 0x10
-			rax ^= rcx;             //xor rax, rcx
-			rcx = rax;              //mov rcx, rax
-			rcx >>= 0x20;           //shr rcx, 0x20
-			rax ^= rcx;             //xor rax, rcx
-			rcx = r11;              //mov rcx, r11
-			rcx = ~rcx;             //not rcx
-			rax ^= rcx;             //xor rax, rcx
-			rcx = 0x1896B4723B1B5F77;               //mov rcx, 0x1896B4723B1B5F77
-			rax ^= r15;             //xor rax, r15
-			rax *= rcx;             //imul rax, rcx
-			rcx = 0x345ABA373AA2B7F9;               //mov rcx, 0x345ABA373AA2B7F9
-			rcx += r11;             //add rcx, r11
-			rdx = 0;                //and rdx, 0xFFFFFFFFC0000000
-			rax += rcx;             //add rax, rcx
-			rdx = _rotl64(rdx, 0x10);               //rol rdx, 0x10
-			rdx ^= r10;             //xor rdx, r10
-			rdx = _byteswap_uint64(rdx);            //bswap rdx
-			rax *= driver::read<uintptr_t>(rdx + 0x15);             //imul rax, [rdx+0x15]
-			rcx = r11;              //mov rcx, r11
-			rcx *= r14;             //imul rcx, r14
-			rax ^= rcx;             //xor rax, rcx
-			rcx = 0x68FEF17A11FA23FD;               //mov rcx, 0x68FEF17A11FA23FD
-			rax *= rcx;             //imul rax, rcx
-			return rax;
-		}
-		case 4:
-		{
-			r10 = driver::read<uintptr_t>(imageBase + 0x72AF157);              //mov r10, [0x0000000005043674]
-			r15 = imageBase + 0x61141C60;              //lea r15, [0x000000005EED616A]
-			r14 = imageBase + 0x252B;          //lea r14, [0xFFFFFFFFFDD96A29]
-			rcx = rax;              //mov rcx, rax
-			rdx = r14;              //mov rdx, r14
-			rax = 0x19686DDAB1727027;               //mov rax, 0x19686DDAB1727027
-			rdx = ~rdx;             //not rdx
-			rcx *= rax;             //imul rcx, rax
-			rdx *= r11;             //imul rdx, r11
-			rax = rdx;              //mov rax, rdx
-			rax ^= rcx;             //xor rax, rcx
-			rdx = imageBase + 0x5519D26F;              //lea rdx, [0x0000000052F3171C]
-			rax ^= r11;             //xor rax, r11
-			rax ^= rdx;             //xor rax, rdx
-			rcx = 0x676B5507FDF05649;               //mov rcx, 0x676B5507FDF05649
-			rax *= rcx;             //imul rax, rcx
-			rcx = rax;              //mov rcx, rax
-			rcx >>= 0x21;           //shr rcx, 0x21
-			rax ^= rcx;             //xor rax, rcx
-			rdx = 0;                //and rdx, 0xFFFFFFFFC0000000
-			rcx = r15;              //mov rcx, r15
-			rdx = _rotl64(rdx, 0x10);               //rol rdx, 0x10
-			rcx = ~rcx;             //not rcx
-			rcx -= r11;             //sub rcx, r11
-			rdx ^= r10;             //xor rdx, r10
-			rax ^= rcx;             //xor rax, rcx
-			rdx = _byteswap_uint64(rdx);            //bswap rdx
-			rax *= driver::read<uintptr_t>(rdx + 0x15);             //imul rax, [rdx+0x15]
-			rcx = 0xADA74FF63D43964D;               //mov rcx, 0xADA74FF63D43964D
-			rax ^= rcx;             //xor rax, rcx
-			return rax;
-		}
-		case 5:
-		{
-			r9 = driver::read<uintptr_t>(imageBase + 0x72AF157);               //mov r9, [0x00000000050430F9]
-			rcx = imageBase;           //lea rcx, [0xFFFFFFFFFDD93E53]
-			rax += rcx;             //add rax, rcx
-			rcx = rax;              //mov rcx, rax
-			rcx >>= 0xF;            //shr rcx, 0x0F
-			rax ^= rcx;             //xor rax, rcx
-			rcx = rax;              //mov rcx, rax
-			rcx >>= 0x1E;           //shr rcx, 0x1E
-			rax ^= rcx;             //xor rax, rcx
-			rcx = rax;              //mov rcx, rax
-			rcx >>= 0x3C;           //shr rcx, 0x3C
-			rax ^= rcx;             //xor rax, rcx
-			rcx = 0x633A680B5F0FC20B;               //mov rcx, 0x633A680B5F0FC20B
-			rax *= rcx;             //imul rax, rcx
-			rcx = rax;              //mov rcx, rax
-			rcx >>= 0x5;            //shr rcx, 0x05
-			rax ^= rcx;             //xor rax, rcx
-			rcx = rax;              //mov rcx, rax
-			rcx >>= 0xA;            //shr rcx, 0x0A
-			rax ^= rcx;             //xor rax, rcx
-			rcx = rax;              //mov rcx, rax
-			rcx >>= 0x14;           //shr rcx, 0x14
-			rax ^= rcx;             //xor rax, rcx
-			rcx = rax;              //mov rcx, rax
-			rcx >>= 0x28;           //shr rcx, 0x28
-			rax ^= rcx;             //xor rax, rcx
-			rcx = 0x92C32D87B1D53631;               //mov rcx, 0x92C32D87B1D53631
-			rax *= rcx;             //imul rax, rcx
-			rcx = imageBase;           //lea rcx, [0xFFFFFFFFFDD93BF7]
-			rcx += 0x71140A4C;              //add rcx, 0x71140A4C
-			rcx += r11;             //add rcx, r11
-			rax ^= rcx;             //xor rax, rcx
-			rcx = 0x4981D2728760C3F7;               //mov rcx, 0x4981D2728760C3F7
-			rax *= rcx;             //imul rax, rcx
-			rcx = 0;                //and rcx, 0xFFFFFFFFC0000000
-			rcx = _rotl64(rcx, 0x10);               //rol rcx, 0x10
-			rcx ^= r9;              //xor rcx, r9
-			rcx = _byteswap_uint64(rcx);            //bswap rcx
-			rax *= driver::read<uintptr_t>(rcx + 0x15);             //imul rax, [rcx+0x15]
-			return rax;
-		}
-		case 6:
-		{
-			r15 = imageBase + 0x75C2ACB2;              //lea r15, [0x00000000739BE777]
-			r10 = driver::read<uintptr_t>(imageBase + 0x72AF157);              //mov r10, [0x0000000005042BAC]
-			rcx = 0x217245148E2C2CDF;               //mov rcx, 0x217245148E2C2CDF
-			rax *= rcx;             //imul rax, rcx
-			rax -= r11;             //sub rax, r11
-			rcx = rax;              //mov rcx, rax
-			rcx >>= 0x16;           //shr rcx, 0x16
-			rax ^= rcx;             //xor rax, rcx
-			rcx = rax;              //mov rcx, rax
-			rcx >>= 0x2C;           //shr rcx, 0x2C
-			rax ^= rcx;             //xor rax, rcx
-			rcx = 0xC703B3D0E6B048C3;               //mov rcx, 0xC703B3D0E6B048C3
-			rax *= rcx;             //imul rax, rcx
-			rax ^= r11;             //xor rax, r11
-			rax ^= r15;             //xor rax, r15
-			rdx = 0;                //and rdx, 0xFFFFFFFFC0000000
-			rcx = 0x3A293018A836304D;               //mov rcx, 0x3A293018A836304D
-			rdx = _rotl64(rdx, 0x10);               //rol rdx, 0x10
-			rax ^= rcx;             //xor rax, rcx
-			rdx ^= r10;             //xor rdx, r10
-			rdx = _byteswap_uint64(rdx);            //bswap rdx
-			rax *= driver::read<uintptr_t>(rdx + 0x15);             //imul rax, [rdx+0x15]
-			rdx = imageBase + 0x7B8D;          //lea rdx, [0xFFFFFFFFFDD9B48A]
-			rcx = r11;              //mov rcx, r11
-			rcx ^= rdx;             //xor rcx, rdx
-			rax += rcx;             //add rax, rcx
-			return rax;
-		}
-		case 7:
-		{
-			r9 = driver::read<uintptr_t>(imageBase + 0x72AF157);               //mov r9, [0x0000000005042777]
-			r10 = imageBase + 0x1BAED0C3;              //lea r10, [0x00000000198806D0]
-			r15 = imageBase;           //lea r15, [0xFFFFFFFFFDD9354B]
-			rcx = r11;              //mov rcx, r11
-			rcx -= r15;             //sub rcx, r15
-			rcx -= 0x62225603;              //sub rcx, 0x62225603
-			rax ^= rcx;             //xor rax, rcx
-			rcx = 0x3BD827E0921DA442;               //mov rcx, 0x3BD827E0921DA442
-			rax -= rcx;             //sub rax, rcx
-			rcx = 0;                //and rcx, 0xFFFFFFFFC0000000
-			rcx = _rotl64(rcx, 0x10);               //rol rcx, 0x10
-			rcx ^= r9;              //xor rcx, r9
-			rcx = _byteswap_uint64(rcx);            //bswap rcx
-			rax *= driver::read<uintptr_t>(rcx + 0x15);             //imul rax, [rcx+0x15]
-			rcx = rax;              //mov rcx, rax
-			rcx >>= 0x28;           //shr rcx, 0x28
-			rax ^= rcx;             //xor rax, rcx
-			rax -= r11;             //sub rax, r11
-			rcx = 0x1A7736DC7DF34B49;               //mov rcx, 0x1A7736DC7DF34B49
-			rax ^= rcx;             //xor rax, rcx
-			rcx = 0xC9D72E55A0C72075;               //mov rcx, 0xC9D72E55A0C72075
-			rax *= rcx;             //imul rax, rcx
-			rcx = r11;              //mov rcx, r11
-			rcx ^= r10;             //xor rcx, r10
-			rax += rcx;             //add rax, rcx
-			return rax;
-		}
-		case 8:
-		{
-			r10 = driver::read<uintptr_t>(imageBase + 0x72AF157);              //mov r10, [0x0000000005042380]
-			rcx = rax;              //mov rcx, rax
-			rcx >>= 0x10;           //shr rcx, 0x10
-			rax ^= rcx;             //xor rax, rcx
-			rcx = rax;              //mov rcx, rax
-			rcx >>= 0x20;           //shr rcx, 0x20
-			rax ^= rcx;             //xor rax, rcx
-			rcx = imageBase;           //lea rcx, [0xFFFFFFFFFDD92D6B]
-			rax ^= rcx;             //xor rax, rcx
-			rcx = r11;              //mov rcx, r11
-			rcx = ~rcx;             //not rcx
-			rax += rcx;             //add rax, rcx
-			rcx = imageBase + 0x4874;          //lea rcx, [0xFFFFFFFFFDD975CC]
-			rax += rcx;             //add rax, rcx
-			rcx = 0;                //and rcx, 0xFFFFFFFFC0000000
-			rcx = _rotl64(rcx, 0x10);               //rol rcx, 0x10
-			rcx ^= r10;             //xor rcx, r10
-			rcx = _byteswap_uint64(rcx);            //bswap rcx
-			rax *= driver::read<uintptr_t>(rcx + 0x15);             //imul rax, [rcx+0x15]
-			rcx = 0x8DB340B078A74BB9;               //mov rcx, 0x8DB340B078A74BB9
-			rax *= rcx;             //imul rax, rcx
-			rcx = 0x662C53AA617F463B;               //mov rcx, 0x662C53AA617F463B
-			rax += rcx;             //add rax, rcx
-			rax -= r11;             //sub rax, r11
-			return rax;
-		}
-		case 9:
-		{
-			r9 = driver::read<uintptr_t>(imageBase + 0x72AF157);               //mov r9, [0x0000000005041DBA]
-			rcx = 0;                //and rcx, 0xFFFFFFFFC0000000
-			rcx = _rotl64(rcx, 0x10);               //rol rcx, 0x10
-			rcx ^= r9;              //xor rcx, r9
-			rcx = _byteswap_uint64(rcx);            //bswap rcx
-			rax *= driver::read<uintptr_t>(rcx + 0x15);             //imul rax, [rcx+0x15]
-			rcx = imageBase;           //lea rcx, [0xFFFFFFFFFDD929AF]
-			rcx += 0x4D5F;          //add rcx, 0x4D5F
-			rcx += r11;             //add rcx, r11
-			rax += rcx;             //add rax, rcx
-			rcx = rax;              //mov rcx, rax
-			rcx >>= 0xF;            //shr rcx, 0x0F
-			rax ^= rcx;             //xor rax, rcx
-			rcx = rax;              //mov rcx, rax
-			rcx >>= 0x1E;           //shr rcx, 0x1E
-			rax ^= rcx;             //xor rax, rcx
-			rcx = rax;              //mov rcx, rax
-			rcx >>= 0x3C;           //shr rcx, 0x3C
-			rax ^= rcx;             //xor rax, rcx
-			rax += r11;             //add rax, r11
-			rcx = 0x20AB1EFCD0B1EB91;               //mov rcx, 0x20AB1EFCD0B1EB91
-			rax ^= rcx;             //xor rax, rcx
-			rsi = imageBase;           //lea rsi, [0xFFFFFFFFFDD929EE]
-			rcx = 0xDBA0890CC53FF4FF;               //mov rcx, 0xDBA0890CC53FF4FF
-			rax *= rcx;             //imul rax, rcx
-			rcx = 0x4288955A707A9CEF;               //mov rcx, 0x4288955A707A9CEF
-			rax += rcx;             //add rax, rcx
-			rax += rsi;             //add rax, rsi
-			return rax;
-		}
-		case 10:
-		{
-			r14 = imageBase + 0x3D70E030;              //lea r14, [0x000000003B4A0795]
-			r10 = driver::read<uintptr_t>(imageBase + 0x72AF157);              //mov r10, [0x0000000005041854]
-			rcx = r11;              //mov rcx, r11
-			uintptr_t RSP_0x60;
-			RSP_0x60 = imageBase + 0x6230;             //lea rcx, [0xFFFFFFFFFDD98970] : RSP+0x60
-			rcx *= RSP_0x60;                //imul rcx, [rsp+0x60]
-			rax += rcx;             //add rax, rcx
-			rax += r14;             //add rax, r14
-			rdx = r11;              //mov rdx, r11
-			rdx = ~rdx;             //not rdx
-			rax += rdx;             //add rax, rdx
-			rcx = rax;              //mov rcx, rax
-			rcx >>= 0x23;           //shr rcx, 0x23
-			rax ^= rcx;             //xor rax, rcx
-			rcx = 0x629FDB45D83ACF99;               //mov rcx, 0x629FDB45D83ACF99
-			rax *= rcx;             //imul rax, rcx
-			rax ^= r11;             //xor rax, r11
-			rcx = 0x95CEAC06FDAFC6CD;               //mov rcx, 0x95CEAC06FDAFC6CD
-			rax ^= rcx;             //xor rax, rcx
-			rcx = 0;                //and rcx, 0xFFFFFFFFC0000000
-			rcx = _rotl64(rcx, 0x10);               //rol rcx, 0x10
-			rcx ^= r10;             //xor rcx, r10
-			rcx = _byteswap_uint64(rcx);            //bswap rcx
-			rax *= driver::read<uintptr_t>(rcx + 0x15);             //imul rax, [rcx+0x15]
-			rcx = 0x5441205014F7F037;               //mov rcx, 0x5441205014F7F037
-			rax -= rcx;             //sub rax, rcx
-			return rax;
-		}
-		case 11:
-		{
-			r10 = driver::read<uintptr_t>(imageBase + 0x72AF157);              //mov r10, [0x0000000005041451]
-			r15 = imageBase + 0x4E012628;              //lea r15, [0x000000004BDA490F]
-			r14 = imageBase + 0x56F0;          //lea r14, [0xFFFFFFFFFDD979CC]
-			rax ^= r11;             //xor rax, r11
-			rax ^= r14;             //xor rax, r14
-			rcx = 0x23C534834E590797;               //mov rcx, 0x23C534834E590797
-			rax *= rcx;             //imul rax, rcx
-			rcx = imageBase;           //lea rcx, [0xFFFFFFFFFDD91E67]
-			rax += rcx;             //add rax, rcx
-			rdx = 0;                //and rdx, 0xFFFFFFFFC0000000
-			rdx = _rotl64(rdx, 0x10);               //rol rdx, 0x10
-			rdx ^= r10;             //xor rdx, r10
-			rcx = r11;              //mov rcx, r11
-			rcx = ~rcx;             //not rcx
-			rcx *= r15;             //imul rcx, r15
-			rdx = _byteswap_uint64(rdx);            //bswap rdx
-			rax += rcx;             //add rax, rcx
-			rax *= driver::read<uintptr_t>(rdx + 0x15);             //imul rax, [rdx+0x15]
-			rcx = rax;              //mov rcx, rax
-			rcx >>= 0x26;           //shr rcx, 0x26
-			rax ^= rcx;             //xor rax, rcx
-			rcx = rax;              //mov rcx, rax
-			rcx >>= 0x1B;           //shr rcx, 0x1B
-			rax ^= rcx;             //xor rax, rcx
-			rcx = rax;              //mov rcx, rax
-			rcx >>= 0x36;           //shr rcx, 0x36
-			rax ^= rcx;             //xor rax, rcx
-			rax -= r11;             //sub rax, r11
-			return rax;
-		}
-		case 12:
-		{
-			r10 = driver::read<uintptr_t>(imageBase + 0x72AF157);              //mov r10, [0x0000000005040F71]
-			rcx = r11;              //mov rcx, r11
-			rcx = ~rcx;             //not rcx
-			uintptr_t RSP_0xFFFFFFFFFFFFFF88;
-			RSP_0xFFFFFFFFFFFFFF88 = imageBase + 0x37C3F569;           //lea rcx, [0x00000000359D137C] : RBP+0xFFFFFFFFFFFFFF88
-			rcx *= RSP_0xFFFFFFFFFFFFFF88;          //imul rcx, [rbp-0x78]
-			rax += rcx;             //add rax, rcx
-			rcx = r11;              //mov rcx, r11
-			rcx -= imageBase;          //sub rcx, [rbp-0x80] -- didn't find trace -> use base
-			rcx += 0xFFFFFFFFFFFFEE2C;              //add rcx, 0xFFFFFFFFFFFFEE2C
-			rax += rcx;             //add rax, rcx
-			rcx = 0x4FF4C01916651419;               //mov rcx, 0x4FF4C01916651419
-			rax ^= rcx;             //xor rax, rcx
-			rcx = 0;                //and rcx, 0xFFFFFFFFC0000000
-			rcx = _rotl64(rcx, 0x10);               //rol rcx, 0x10
-			rcx ^= r10;             //xor rcx, r10
-			rcx = _byteswap_uint64(rcx);            //bswap rcx
-			rcx = driver::read<uintptr_t>(rcx + 0x15);              //mov rcx, [rcx+0x15]
-			uintptr_t RSP_0x48;
-			RSP_0x48 = 0xCB32221DE51BF37;           //mov rcx, 0xCB32221DE51BF37 : RSP+0x48
-			rcx *= RSP_0x48;                //imul rcx, [rsp+0x48]
-			rax *= rcx;             //imul rax, rcx
-			rcx = rax;              //mov rcx, rax
-			rcx >>= 0x7;            //shr rcx, 0x07
-			rax ^= rcx;             //xor rax, rcx
-			rcx = rax;              //mov rcx, rax
-			rcx >>= 0xE;            //shr rcx, 0x0E
-			rax ^= rcx;             //xor rax, rcx
-			rcx = rax;              //mov rcx, rax
-			rcx >>= 0x1C;           //shr rcx, 0x1C
-			rax ^= rcx;             //xor rax, rcx
-			rcx = rax;              //mov rcx, rax
-			rcx >>= 0x38;           //shr rcx, 0x38
-			rax ^= rcx;             //xor rax, rcx
-			rcx = 0xFFFFFFFF918D89B7;               //mov rcx, 0xFFFFFFFF918D89B7
-			rcx -= r11;             //sub rcx, r11
-			rcx -= imageBase;          //sub rcx, [rbp-0x80] -- didn't find trace -> use base
-			rax += rcx;             //add rax, rcx
-			rcx = 0xE53E777C9B49B8C;                //mov rcx, 0xE53E777C9B49B8C
-			rax += rcx;             //add rax, rcx
-			return rax;
-		}
-		case 13:
-		{
-			r9 = driver::read<uintptr_t>(imageBase + 0x72AF157);               //mov r9, [0x000000000504093B]
-			rcx = imageBase;           //lea rcx, [0xFFFFFFFFFDD91724]
-			rax ^= rcx;             //xor rax, rcx
-			rcx = 0x8611E269817EE1B3;               //mov rcx, 0x8611E269817EE1B3
-			rax *= rcx;             //imul rax, rcx
-			rcx = 0;                //and rcx, 0xFFFFFFFFC0000000
-			rcx = _rotl64(rcx, 0x10);               //rol rcx, 0x10
-			rcx ^= r9;              //xor rcx, r9
-			rcx = _byteswap_uint64(rcx);            //bswap rcx
-			rax *= driver::read<uintptr_t>(rcx + 0x15);             //imul rax, [rcx+0x15]
-			rcx = 0x746B6E1C295D372;                //mov rcx, 0x746B6E1C295D372
-			rax ^= rcx;             //xor rax, rcx
-			rcx = imageBase;           //lea rcx, [0xFFFFFFFFFDD91387]
-			rax -= rcx;             //sub rax, rcx
 			rcx = rax;              //mov rcx, rax
 			rcx >>= 0x4;            //shr rcx, 0x04
 			rax ^= rcx;             //xor rax, rcx
@@ -515,38 +74,254 @@ namespace decryption {
 			rcx = rax;              //mov rcx, rax
 			rcx >>= 0x20;           //shr rcx, 0x20
 			rax ^= rcx;             //xor rax, rcx
-			rcx = rax;              //mov rcx, rax
-			rcx >>= 0x1D;           //shr rcx, 0x1D
-			rax ^= rcx;             //xor rax, rcx
-			rcx = rax;              //mov rcx, rax
-			rcx >>= 0x3A;           //shr rcx, 0x3A
-			rax ^= rcx;             //xor rax, rcx
-			rcx = 0x35CE80F541F75ED0;               //mov rcx, 0x35CE80F541F75ED0
+			rcx = 0x755FBB47AE09AD86;               //mov rcx, 0x755FBB47AE09AD86
 			rax += rcx;             //add rax, rcx
+			rax += r11;             //add rax, r11
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x15;           //shr rcx, 0x15
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x2A;           //shr rcx, 0x2A
+			rax ^= rcx;             //xor rax, rcx
 			return rax;
 		}
-		case 14:
+		case 1:
 		{
-			r14 = imageBase + 0x39094B30;              //lea r14, [0x0000000036E25DFD]
-			r9 = driver::read<uintptr_t>(imageBase + 0x72AF157);               //mov r9, [0x00000000050403B5]
-			rcx = 0x4F984FD0F88E1E18;               //mov rcx, 0x4F984FD0F88E1E18
-			rax -= rcx;             //sub rax, rcx
-			//failed to translate: inc rax
-			rcx = r14;              //mov rcx, r14
-			rcx = ~rcx;             //not rcx
-			rcx += r11;             //add rcx, r11
-			rax += rcx;             //add rax, rcx
+			r9 = driver::read<uintptr_t>(imageBase + 0x782112E);               //mov r9, [0x00000000050450D5]
 			rcx = 0;                //and rcx, 0xFFFFFFFFC0000000
 			rcx = _rotl64(rcx, 0x10);               //rol rcx, 0x10
 			rcx ^= r9;              //xor rcx, r9
 			rcx = _byteswap_uint64(rcx);            //bswap rcx
-			rax *= driver::read<uintptr_t>(rcx + 0x15);             //imul rax, [rcx+0x15]
-			rcx = rax;              //mov rcx, rax
-			rcx >>= 0x22;           //shr rcx, 0x22
-			rax ^= rcx;             //xor rax, rcx
-			rcx = 0xE2478769402024E1;               //mov rcx, 0xE2478769402024E1
+			rax *= driver::read<uintptr_t>(rcx + 0x7);              //imul rax, [rcx+0x07]
+			rcx = 0x7E1C80D166226A23;               //mov rcx, 0x7E1C80D166226A23
 			rax *= rcx;             //imul rax, rcx
-			rcx = 0x7A07D33B1B737C94;               //mov rcx, 0x7A07D33B1B737C94
+			rcx = 0x4A28F073A6F03584;               //mov rcx, 0x4A28F073A6F03584
+			rax -= rcx;             //sub rax, rcx
+			rcx = imageBase;           //lea rcx, [0xFFFFFFFFFD823DFB]
+			rax += rcx;             //add rax, rcx
+			rcx = 0x7C93633C19F8E759;               //mov rcx, 0x7C93633C19F8E759
+			rax *= rcx;             //imul rax, rcx
+			rcx = imageBase;           //lea rcx, [0xFFFFFFFFFD823F49]
+			rax -= rcx;             //sub rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x26;           //shr rcx, 0x26
+			rax ^= rcx;             //xor rax, rcx
+			rax -= r11;             //sub rax, r11
+			return rax;
+		}
+		case 2:
+		{
+			rsi = imageBase + 0x39BD99F1;              //lea rsi, [0x00000000373FD631]
+			r9 = driver::read<uintptr_t>(imageBase + 0x782112E);               //mov r9, [0x0000000005044CF5]
+			rcx = 0;                //and rcx, 0xFFFFFFFFC0000000
+			rcx = _rotl64(rcx, 0x10);               //rol rcx, 0x10
+			rcx ^= r9;              //xor rcx, r9
+			rcx = _byteswap_uint64(rcx);            //bswap rcx
+			rax *= driver::read<uintptr_t>(rcx + 0x7);              //imul rax, [rcx+0x07]
+			rcx = r11;              //mov rcx, r11
+			rcx *= rsi;             //imul rcx, rsi
+			rax -= rcx;             //sub rax, rcx
+			rcx = 0x3AA9562CB5774ADE;               //mov rcx, 0x3AA9562CB5774ADE
+			rax += rcx;             //add rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0xA;            //shr rcx, 0x0A
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x14;           //shr rcx, 0x14
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x28;           //shr rcx, 0x28
+			rax ^= rcx;             //xor rax, rcx
+			rax += r11;             //add rax, r11
+			rcx = imageBase;           //lea rcx, [0xFFFFFFFFFD8238CA]
+			rax -= rcx;             //sub rax, rcx
+			rcx = 0x78F02B7AD6A222C1;               //mov rcx, 0x78F02B7AD6A222C1
+			rax *= rcx;             //imul rax, rcx
+			return rax;
+		}
+		case 3:
+		{
+			r10 = driver::read<uintptr_t>(imageBase + 0x782112E);              //mov r10, [0x000000000504479B]
+			rcx = 0x752B1E6822441F99;               //mov rcx, 0x752B1E6822441F99
+			rax ^= rcx;             //xor rax, rcx
+			rdx = r11;              //mov rdx, r11
+			rdx = ~rdx;             //not rdx
+			rcx = imageBase + 0x2C4B;          //lea rcx, [0xFFFFFFFFFD825F4C]
+			rax += rcx;             //add rax, rcx
+			rax += rdx;             //add rax, rdx
+			r14 = 0xEC1FD435349004E7;               //mov r14, 0xEC1FD435349004E7
+			rax += r14;             //add rax, r14
+			rcx = 0;                //and rcx, 0xFFFFFFFFC0000000
+			rcx = _rotl64(rcx, 0x10);               //rol rcx, 0x10
+			rcx ^= r10;             //xor rcx, r10
+			rcx = _byteswap_uint64(rcx);            //bswap rcx
+			rax *= driver::read<uintptr_t>(rcx + 0x7);              //imul rax, [rcx+0x07]
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x1C;           //shr rcx, 0x1C
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x38;           //shr rcx, 0x38
+			rax ^= rcx;             //xor rax, rcx
+			rcx = 0xC907060823DB336F;               //mov rcx, 0xC907060823DB336F
+			rax *= rcx;             //imul rax, rcx
+			rax += r11;             //add rax, r11
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x1E;           //shr rcx, 0x1E
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x3C;           //shr rcx, 0x3C
+			rax ^= rcx;             //xor rax, rcx
+			return rax;
+		}
+		case 4:
+		{
+			r9 = driver::read<uintptr_t>(imageBase + 0x782112E);               //mov r9, [0x00000000050442F6]
+			r14 = imageBase + 0x7967;          //lea r14, [0xFFFFFFFFFD82AB1C]
+			rcx = r11;              //mov rcx, r11
+			rcx ^= r14;             //xor rcx, r14
+			rcx += r11;             //add rcx, r11
+			rax -= rcx;             //sub rax, rcx
+			rcx = imageBase + 0x1D7;           //lea rcx, [0xFFFFFFFFFD82301C]
+			rcx -= r11;             //sub rcx, r11
+			rax ^= rcx;             //xor rax, rcx
+			rcx = 0x80FEAE873EA35F31;               //mov rcx, 0x80FEAE873EA35F31
+			rax *= rcx;             //imul rax, rcx
+			rcx = 0x5946C1C563FF5DB5;               //mov rcx, 0x5946C1C563FF5DB5
+			rax -= rcx;             //sub rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x1A;           //shr rcx, 0x1A
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x34;           //shr rcx, 0x34
+			rax ^= rcx;             //xor rax, rcx
+			rsi = 0xA758813978033BF2;               //mov rsi, 0xA758813978033BF2
+			rax += rsi;             //add rax, rsi
+			rcx = 0;                //and rcx, 0xFFFFFFFFC0000000
+			rcx = _rotl64(rcx, 0x10);               //rol rcx, 0x10
+			rcx ^= r9;              //xor rcx, r9
+			rcx = _byteswap_uint64(rcx);            //bswap rcx
+			rax *= driver::read<uintptr_t>(rcx + 0x7);              //imul rax, [rcx+0x07]
+			return rax;
+		}
+		case 5:
+		{
+			r9 = driver::read<uintptr_t>(imageBase + 0x782112E);               //mov r9, [0x0000000005043DD0]
+			rcx = 0;                //and rcx, 0xFFFFFFFFC0000000
+			rcx = _rotl64(rcx, 0x10);               //rol rcx, 0x10
+			rcx ^= r9;              //xor rcx, r9
+			rcx = _byteswap_uint64(rcx);            //bswap rcx
+			rax *= driver::read<uintptr_t>(rcx + 0x7);              //imul rax, [rcx+0x07]
+			rcx = imageBase;           //lea rcx, [0xFFFFFFFFFD8227CF]
+			rax -= rcx;             //sub rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x1F;           //shr rcx, 0x1F
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x3E;           //shr rcx, 0x3E
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0xD;            //shr rcx, 0x0D
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x1A;           //shr rcx, 0x1A
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x34;           //shr rcx, 0x34
+			rax ^= rcx;             //xor rax, rcx
+			rcx = 0x17B6DB8315AA1B89;               //mov rcx, 0x17B6DB8315AA1B89
+			rax *= rcx;             //imul rax, rcx
+			rcx = 0x3E4B475BF8EA16F3;               //mov rcx, 0x3E4B475BF8EA16F3
+			rax *= rcx;             //imul rax, rcx
+			rcx = imageBase;           //lea rcx, [0xFFFFFFFFFD822BD5]
+			rax ^= rcx;             //xor rax, rcx
+			rcx = 0x30BC3D77CD84EFEF;               //mov rcx, 0x30BC3D77CD84EFEF
+			rax -= rcx;             //sub rax, rcx
+			return rax;
+		}
+		case 6:
+		{
+			r15 = imageBase + 0x9276;          //lea r15, [0xFFFFFFFFFD82B9F7]
+			r10 = driver::read<uintptr_t>(imageBase + 0x782112E);              //mov r10, [0x0000000005043837]
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x25;           //shr rcx, 0x25
+			rax ^= rcx;             //xor rax, rcx
+			rcx = 0;                //and rcx, 0xFFFFFFFFC0000000
+			rcx = _rotl64(rcx, 0x10);               //rol rcx, 0x10
+			rcx ^= r10;             //xor rcx, r10
+			rcx = _byteswap_uint64(rcx);            //bswap rcx
+			rax *= driver::read<uintptr_t>(rcx + 0x7);              //imul rax, [rcx+0x07]
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0xF;            //shr rcx, 0x0F
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x1E;           //shr rcx, 0x1E
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x3C;           //shr rcx, 0x3C
+			rax ^= rcx;             //xor rax, rcx
+			rcx = 0x737EA267D6DD56C2;               //mov rcx, 0x737EA267D6DD56C2
+			rax += rcx;             //add rax, rcx
+			rax -= r11;             //sub rax, r11
+			rdx = r11;              //mov rdx, r11
+			rdx = ~rdx;             //not rdx
+			rax += r15;             //add rax, r15
+			rax += rdx;             //add rax, rdx
+			rcx = 0x9BA8C81C5AF1FBD5;               //mov rcx, 0x9BA8C81C5AF1FBD5
+			rax *= rcx;             //imul rax, rcx
+			rcx = 0x436D06370BF36C94;               //mov rcx, 0x436D06370BF36C94
+			rax -= rcx;             //sub rax, rcx
+			return rax;
+		}
+		case 7:
+		{
+			r14 = imageBase + 0x435A;          //lea r14, [0xFFFFFFFFFD8265ED]
+			r15 = imageBase + 0x723E23F4;              //lea r15, [0x000000006FC0467B]
+			r10 = driver::read<uintptr_t>(imageBase + 0x782112E);              //mov r10, [0x000000000504335F]
+			rcx = 0;                //and rcx, 0xFFFFFFFFC0000000
+			rcx = _rotl64(rcx, 0x10);               //rol rcx, 0x10
+			rcx ^= r10;             //xor rcx, r10
+			rcx = _byteswap_uint64(rcx);            //bswap rcx
+			rax *= driver::read<uintptr_t>(rcx + 0x7);              //imul rax, [rcx+0x07]
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x1B;           //shr rcx, 0x1B
+			rax ^= rcx;             //xor rax, rcx
+			rdx = rax;              //mov rdx, rax
+			rdx >>= 0x36;           //shr rdx, 0x36
+			rax ^= rdx;             //xor rax, rdx
+			rcx = r11;              //mov rcx, r11
+			rcx ^= r15;             //xor rcx, r15
+			rax -= rcx;             //sub rax, rcx
+			rax -= r11;             //sub rax, r11
+			rcx = 0xC778B8D2E2ADB7B9;               //mov rcx, 0xC778B8D2E2ADB7B9
+			rax ^= rcx;             //xor rax, rcx
+			rcx = 0x50C73C28CF860E6D;               //mov rcx, 0x50C73C28CF860E6D
+			rax *= rcx;             //imul rax, rcx
+			rcx = 0x1E24A17857596D18;               //mov rcx, 0x1E24A17857596D18
+			rax -= rcx;             //sub rax, rcx
+			rcx = r11;              //mov rcx, r11
+			rcx *= r14;             //imul rcx, r14
+			rax += rcx;             //add rax, rcx
+			return rax;
+		}
+		case 8:
+		{
+			r10 = driver::read<uintptr_t>(imageBase + 0x782112E);              //mov r10, [0x0000000005042F4F]
+			r15 = imageBase + 0x12865D13;              //lea r15, [0x0000000010087B21]
+			rcx = r15;              //mov rcx, r15
+			rcx = ~rcx;             //not rcx
+			rcx ^= r11;             //xor rcx, r11
+			rax += rcx;             //add rax, rcx
+			rcx = 0;                //and rcx, 0xFFFFFFFFC0000000
+			rcx = _rotl64(rcx, 0x10);               //rol rcx, 0x10
+			rcx ^= r10;             //xor rcx, r10
+			rcx = _byteswap_uint64(rcx);            //bswap rcx
+			rax *= driver::read<uintptr_t>(rcx + 0x7);              //imul rax, [rcx+0x07]
+			rcx = r11;              //mov rcx, r11
+			rcx -= imageBase;          //sub rcx, [rbp-0x70] -- didn't find trace -> use base
+			rcx -= 0x8C41;          //sub rcx, 0x8C41
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0xB;            //shr rcx, 0x0B
 			rax ^= rcx;             //xor rax, rcx
 			rcx = rax;              //mov rcx, rax
 			rcx >>= 0x16;           //shr rcx, 0x16
@@ -554,29 +329,69 @@ namespace decryption {
 			rcx = rax;              //mov rcx, rax
 			rcx >>= 0x2C;           //shr rcx, 0x2C
 			rax ^= rcx;             //xor rax, rcx
-			rcx = rax;              //mov rcx, rax
-			rcx >>= 0x25;           //shr rcx, 0x25
-			rax ^= rcx;             //xor rax, rcx
+			rcx = 0x1E65D2E7F53D0599;               //mov rcx, 0x1E65D2E7F53D0599
+			rax *= rcx;             //imul rax, rcx
+			rcx = imageBase + 0x1BE4CBEF;              //lea rcx, [0x000000001966E661]
+			rdx = 0x1;              //mov edx, 0x01
+			rdx -= rcx;             //sub rdx, rcx
+			rcx = imageBase + 0x676F5BD7;              //lea rcx, [0x0000000064F17632]
+			rcx = ~rcx;             //not rcx
+			rcx += rax;             //add rcx, rax
+			rax = 0x7D1A798F4028AA98;               //mov rax, 0x7D1A798F4028AA98
+			rax += rcx;             //add rax, rcx
+			rdx *= r11;             //imul rdx, r11
+			rax += rdx;             //add rax, rdx
 			return rax;
 		}
-		case 15:
+		case 9:
 		{
-			r10 = driver::read<uintptr_t>(imageBase + 0x72AF157);              //mov r10, [0x000000000503FF18]
-			rcx = imageBase;           //lea rcx, [0xFFFFFFFFFDD90946]
-			rax -= rcx;             //sub rax, rcx
-			rcx = imageBase + 0x558D7463;              //lea rcx, [0x0000000053668017]
-			rax += rcx;             //add rax, rcx
-			rdx = r11;              //mov rdx, r11
-			rdx = ~rdx;             //not rdx
-			rax += rdx;             //add rax, rdx
-			rcx = imageBase;           //lea rcx, [0xFFFFFFFFFDD909C6]
-			rax ^= rcx;             //xor rax, rcx
-			rcx = 0xC48FC9D4011610BD;               //mov rcx, 0xC48FC9D4011610BD
-			rax *= rcx;             //imul rax, rcx
+			r9 = driver::read<uintptr_t>(imageBase + 0x782112E);               //mov r9, [0x0000000005042A15]
 			rax -= r11;             //sub rax, r11
+			rax += 0xC6D1;          //add rax, 0xC6D1
+			rcx = 0;                //and rcx, 0xFFFFFFFFC0000000
+			rcx = _rotl64(rcx, 0x10);               //rol rcx, 0x10
+			rcx ^= r9;              //xor rcx, r9
+			rcx = _byteswap_uint64(rcx);            //bswap rcx
+			rax *= driver::read<uintptr_t>(rcx + 0x7);              //imul rax, [rcx+0x07]
 			rcx = rax;              //mov rcx, rax
-			rcx >>= 0x7;            //shr rcx, 0x07
+			rcx >>= 0x20;           //shr rcx, 0x20
 			rax ^= rcx;             //xor rax, rcx
+			rcx = imageBase;           //lea rcx, [0xFFFFFFFFFD8216F0]
+			rax -= rcx;             //sub rax, rcx
+			rcx = 0xBA48EB7B0323A268;               //mov rcx, 0xBA48EB7B0323A268
+			rax ^= rcx;             //xor rax, rcx
+			rcx = 0x144E79F8DA45C107;               //mov rcx, 0x144E79F8DA45C107
+			rax *= rcx;             //imul rax, rcx
+			return rax;
+		}
+		case 10:
+		{
+			r9 = driver::read<uintptr_t>(imageBase + 0x782112E);               //mov r9, [0x00000000050425C6]
+			rcx = 0x6A3E839949A7CB7F;               //mov rcx, 0x6A3E839949A7CB7F
+			rax *= rcx;             //imul rax, rcx
+			rcx = 0x286F0DFA3863B725;               //mov rcx, 0x286F0DFA3863B725
+			rax ^= rcx;             //xor rax, rcx
+			rcx = 0;                //and rcx, 0xFFFFFFFFC0000000
+			rcx = _rotl64(rcx, 0x10);               //rol rcx, 0x10
+			rcx ^= r9;              //xor rcx, r9
+			rcx = _byteswap_uint64(rcx);            //bswap rcx
+			rax *= driver::read<uintptr_t>(rcx + 0x7);              //imul rax, [rcx+0x07]
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x6;            //shr rcx, 0x06
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0xC;            //shr rcx, 0x0C
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x18;           //shr rcx, 0x18
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x30;           //shr rcx, 0x30
+			rax ^= rcx;             //xor rax, rcx
+			rcx = imageBase;           //lea rcx, [0xFFFFFFFFFD82115B]
+			rax ^= rcx;             //xor rax, rcx
+			rcx = 0x45E8866AB8385AB3;               //mov rcx, 0x45E8866AB8385AB3
+			rax *= rcx;             //imul rax, rcx
 			rcx = rax;              //mov rcx, rax
 			rcx >>= 0xE;            //shr rcx, 0x0E
 			rax ^= rcx;             //xor rax, rcx
@@ -586,13 +401,186 @@ namespace decryption {
 			rcx = rax;              //mov rcx, rax
 			rcx >>= 0x38;           //shr rcx, 0x38
 			rax ^= rcx;             //xor rax, rcx
-			r14 = 0xA95627D4EAF11D8D;               //mov r14, 0xA95627D4EAF11D8D
-			rax += r14;             //add rax, r14
+			rax -= r11;             //sub rax, r11
+			return rax;
+		}
+		case 11:
+		{
+			r15 = imageBase + 0x6FB85EAB;              //lea r15, [0x000000006D3A6EE9]
+			rdx = imageBase + 0x8104;          //lea rdx, [0xFFFFFFFFFD829136]
+			r10 = driver::read<uintptr_t>(imageBase + 0x782112E);              //mov r10, [0x0000000005042106]
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x1E;           //shr rcx, 0x1E
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x3C;           //shr rcx, 0x3C
+			rax ^= rcx;             //xor rax, rcx
 			rcx = 0;                //and rcx, 0xFFFFFFFFC0000000
 			rcx = _rotl64(rcx, 0x10);               //rol rcx, 0x10
 			rcx ^= r10;             //xor rcx, r10
 			rcx = _byteswap_uint64(rcx);            //bswap rcx
-			rax *= driver::read<uintptr_t>(rcx + 0x15);             //imul rax, [rcx+0x15]
+			rax *= driver::read<uintptr_t>(rcx + 0x7);              //imul rax, [rcx+0x07]
+			rcx = r11;              //mov rcx, r11
+			rcx *= rdx;             //imul rcx, rdx
+			rax -= rcx;             //sub rax, rcx
+			rcx = 0x9F8D511DDCFF7CF9;               //mov rcx, 0x9F8D511DDCFF7CF9
+			rax *= rcx;             //imul rax, rcx
+			rcx = r15;              //mov rcx, r15
+			rcx = ~rcx;             //not rcx
+			rcx += r11;             //add rcx, r11
+			rax += rcx;             //add rax, rcx
+			rcx = r11;              //mov rcx, r11
+			uintptr_t RSP_0xFFFFFFFFFFFFFF90;
+			RSP_0xFFFFFFFFFFFFFF90 = imageBase + 0xD4E1;               //lea rcx, [0xFFFFFFFFFD82E534] : RBP+0xFFFFFFFFFFFFFF90
+			rcx *= RSP_0xFFFFFFFFFFFFFF90;          //imul rcx, [rbp-0x70]
+			rax ^= rcx;             //xor rax, rcx
+			rdx = r11;              //mov rdx, r11
+			rcx = imageBase + 0xD525;          //lea rcx, [0xFFFFFFFFFD82E26B]
+			rdx *= rcx;             //imul rdx, rcx
+			rcx = 0xA6843FD12094A545;               //mov rcx, 0xA6843FD12094A545
+			rax += rcx;             //add rax, rcx
+			rax += rdx;             //add rax, rdx
+			return rax;
+		}
+		case 12:
+		{
+			r10 = driver::read<uintptr_t>(imageBase + 0x782112E);              //mov r10, [0x0000000005041C16]
+			rcx = imageBase;           //lea rcx, [0xFFFFFFFFFD820A22]
+			rax -= rcx;             //sub rax, rcx
+			rax -= r11;             //sub rax, r11
+			rcx = 0;                //and rcx, 0xFFFFFFFFC0000000
+			rcx = _rotl64(rcx, 0x10);               //rol rcx, 0x10
+			rcx ^= r10;             //xor rcx, r10
+			rcx = _byteswap_uint64(rcx);            //bswap rcx
+			rax *= driver::read<uintptr_t>(rcx + 0x7);              //imul rax, [rcx+0x07]
+			rax ^= r11;             //xor rax, r11
+			rcx = 0xD313F71358156A05;               //mov rcx, 0xD313F71358156A05
+			rax += rcx;             //add rax, rcx
+			rcx = 0xE12B8F402CAE2E43;               //mov rcx, 0xE12B8F402CAE2E43
+			rax ^= rcx;             //xor rax, rcx
+			rcx = 0x53DD4F0F31203213;               //mov rcx, 0x53DD4F0F31203213
+			rax *= rcx;             //imul rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x12;           //shr rcx, 0x12
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x24;           //shr rcx, 0x24
+			rax ^= rcx;             //xor rax, rcx
+			return rax;
+		}
+		case 13:
+		{
+			r14 = imageBase + 0x42489571;              //lea r14, [0x000000003FCA9D13]
+			r10 = driver::read<uintptr_t>(imageBase + 0x782112E);              //mov r10, [0x000000000504186B]
+			rdx = r11;              //mov rdx, r11
+			rdx = ~rdx;             //not rdx
+			rcx = r14;              //mov rcx, r14
+			rcx = ~rcx;             //not rcx
+			rax += rcx;             //add rax, rcx
+			rax += rdx;             //add rax, rdx
+			rcx = imageBase;           //lea rcx, [0xFFFFFFFFFD8206A9]
+			rax -= rcx;             //sub rax, rcx
+			rcx = imageBase;           //lea rcx, [0xFFFFFFFFFD8202D0]
+			rax -= rcx;             //sub rax, rcx
+			rcx = 0x9058D51FC87FE52F;               //mov rcx, 0x9058D51FC87FE52F
+			rax *= rcx;             //imul rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x21;           //shr rcx, 0x21
+			rax ^= rcx;             //xor rax, rcx
+			rcx = r11;              //mov rcx, r11
+			rcx -= imageBase;          //sub rcx, [rbp-0x70] -- didn't find trace -> use base
+			rcx += 0xFFFFFFFF891A3C8C;              //add rcx, 0xFFFFFFFF891A3C8C
+			rax += rcx;             //add rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x6;            //shr rcx, 0x06
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0xC;            //shr rcx, 0x0C
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x18;           //shr rcx, 0x18
+			rax ^= rcx;             //xor rax, rcx
+			rdx = 0;                //and rdx, 0xFFFFFFFFC0000000
+			rdx = _rotl64(rdx, 0x10);               //rol rdx, 0x10
+			rdx ^= r10;             //xor rdx, r10
+			rcx = rax;              //mov rcx, rax
+			rdx = _byteswap_uint64(rdx);            //bswap rdx
+			rcx >>= 0x30;           //shr rcx, 0x30
+			rax ^= rcx;             //xor rax, rcx
+			rax *= driver::read<uintptr_t>(rdx + 0x7);              //imul rax, [rdx+0x07]
+			return rax;
+		}
+		case 14:
+		{
+			r10 = driver::read<uintptr_t>(imageBase + 0x782112E);              //mov r10, [0x000000000504137B]
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x26;           //shr rcx, 0x26
+			rax ^= rcx;             //xor rax, rcx
+			rax -= r11;             //sub rax, r11
+			rcx = 0x1E0565F71BE1E433;               //mov rcx, 0x1E0565F71BE1E433
+			rax *= rcx;             //imul rax, rcx
+			rcx = 0;                //and rcx, 0xFFFFFFFFC0000000
+			rcx = _rotl64(rcx, 0x10);               //rol rcx, 0x10
+			rcx ^= r10;             //xor rcx, r10
+			rcx = _byteswap_uint64(rcx);            //bswap rcx
+			rax *= driver::read<uintptr_t>(rcx + 0x7);              //imul rax, [rcx+0x07]
+			rcx = 0x74FF870987896E;                 //mov rcx, 0x74FF870987896E
+			rax -= rcx;             //sub rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0xA;            //shr rcx, 0x0A
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x14;           //shr rcx, 0x14
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x28;           //shr rcx, 0x28
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x17;           //shr rcx, 0x17
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x2E;           //shr rcx, 0x2E
+			rax ^= rcx;             //xor rax, rcx
+			rcx = 0x61CE29C21FA16684;               //mov rcx, 0x61CE29C21FA16684
+			rax += rcx;             //add rax, rcx
+			return rax;
+		}
+		case 15:
+		{
+			r15 = imageBase + 0x4B1B9B48;              //lea r15, [0x00000000489D9844]
+			r10 = driver::read<uintptr_t>(imageBase + 0x782112E);              //mov r10, [0x0000000005040DA1]
+			rcx = r15;              //mov rcx, r15
+			rcx = ~rcx;             //not rcx
+			rcx ^= r11;             //xor rcx, r11
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x25;           //shr rcx, 0x25
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x3;            //shr rcx, 0x03
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x6;            //shr rcx, 0x06
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0xC;            //shr rcx, 0x0C
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x18;           //shr rcx, 0x18
+			rax ^= rcx;             //xor rax, rcx
+			rcx = rax;              //mov rcx, rax
+			rcx >>= 0x30;           //shr rcx, 0x30
+			rax ^= rcx;             //xor rax, rcx
+			rax ^= driver::read<uintptr_t>(imageBase + 0x27E0587);             //xor rax, [rbp-0x70] -- didn't find trace -> use base
+			rcx = 0;                //and rcx, 0xFFFFFFFFC0000000
+			rcx = _rotl64(rcx, 0x10);               //rol rcx, 0x10
+			rcx ^= r10;             //xor rcx, r10
+			rcx = _byteswap_uint64(rcx);            //bswap rcx
+			rax *= driver::read<uintptr_t>(rcx + 0x7);              //imul rax, [rcx+0x07]
+			rcx = 0x76A71F3008631679;               //mov rcx, 0x76A71F3008631679
+			rax *= rcx;             //imul rax, rcx
+			rcx = 0x2542281AF0A8CEC9;               //mov rcx, 0x2542281AF0A8CEC9
+			rax += rcx;             //add rax, rcx
 			return rax;
 		}
 		}
@@ -601,614 +589,584 @@ namespace decryption {
 	extern "C" auto decrypt_bone_base(uint64_t imageBase, uint64_t peb) -> uint64_t
 	{
 		uint64_t rax = imageBase, rbx = imageBase, rcx = imageBase, rdx = imageBase, rdi = imageBase, rsi = imageBase, r8 = imageBase, r9 = imageBase, r10 = imageBase, r11 = imageBase, r12 = imageBase, r13 = imageBase, r14 = imageBase, r15 = imageBase;
-		r8 = driver::read<uintptr_t>(imageBase + 0x1BCF6B48);
-		if (!r8)
-			return r8;
-		rbx = ~peb;              //mov rbx, gs:[rax]
-		rax = rbx;              //mov rax, rbx
-		rax = _rotl64(rax, 0x21);               //rol rax, 0x21
+		rdx = driver::read<uintptr_t>(imageBase + 0x1C262B48);
+		if (!rdx)
+			return rdx;
+		r11 = peb;              //mov r11, gs:[rax]
+		rax = r11;              //mov rax, r11
+		rax = _rotr64(rax, 0x19);               //ror rax, 0x19
 		rax &= 0xF;
 		switch (rax) {
 		case 0:
 		{
-			r9 = driver::read<uintptr_t>(imageBase + 0x72AF269);               //mov r9, [0x0000000004EDF09B]
+			r9 = driver::read<uintptr_t>(imageBase + 0x7821223);               //mov r9, [0x0000000004CA9601]
+			rax = imageBase;           //lea rax, [0xFFFFFFFFFD488269]
+			rdx += rax;             //add rdx, rax
+			rax = 0x9D49503AEEC3085C;               //mov rax, 0x9D49503AEEC3085C
+			rdx ^= rax;             //xor rdx, rax
+			r15 = imageBase;           //lea r15, [0xFFFFFFFFFD48807B]
+			rdx += r15;             //add rdx, r15
 			rax = 0;                //and rax, 0xFFFFFFFFC0000000
 			rax = _rotl64(rax, 0x10);               //rol rax, 0x10
 			rax ^= r9;              //xor rax, r9
-			rax = ~rax;             //not rax
-			r8 *= driver::read<uintptr_t>(rax + 0xd);               //imul r8, [rax+0x0D]
-			rax = 0xFFFFFFFF8D4F0082;               //mov rax, 0xFFFFFFFF8D4F0082
-			r11 = imageBase;           //lea r11, [0xFFFFFFFFFDC2FC89]
-			rax -= rbx;             //sub rax, rbx
-			rax -= r11;             //sub rax, r11
-			r8 += rax;              //add r8, rax
-			r11 = imageBase + 0x9DA3;          //lea r11, [0xFFFFFFFFFDC39B8A]
-			rax = rbx;              //mov rax, rbx
-			rax = ~rax;             //not rax
-			rax *= r11;             //imul rax, r11
-			r8 ^= rax;              //xor r8, rax
-			rax = r8;               //mov rax, r8
+			rax = _byteswap_uint64(rax);            //bswap rax
+			rdx *= driver::read<uintptr_t>(rax + 0x9);              //imul rdx, [rax+0x09]
+			rax = 0x5F5A112DC99B7A4B;               //mov rax, 0x5F5A112DC99B7A4B
+			rdx *= rax;             //imul rdx, rax
+			rax = imageBase;           //lea rax, [0xFFFFFFFFFD48838E]
+			rdx += rax;             //add rdx, rax
+			rax = 0x913CFC69B7F3F340;               //mov rax, 0x913CFC69B7F3F340
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0xC;            //shr rax, 0x0C
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
 			rax >>= 0x18;           //shr rax, 0x18
-			r8 ^= rax;              //xor r8, rax
-			rax = r8;               //mov rax, r8
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
 			rax >>= 0x30;           //shr rax, 0x30
-			r8 ^= rax;              //xor r8, rax
-			rax = imageBase;           //lea rax, [0xFFFFFFFFFDC2FA4F]
-			r8 -= rax;              //sub r8, rax
-			rax = 0xF8223C958390731B;               //mov rax, 0xF8223C958390731B
-			r8 *= rax;              //imul r8, rax
-			rax = 0xAD1C5D88470601FD;               //mov rax, 0xAD1C5D88470601FD
-			r8 += rax;              //add r8, rax
-			rax = 0xD5A842AB557F3D9A;               //mov rax, 0xD5A842AB557F3D9A
-			r8 ^= rax;              //xor r8, rax
-			return r8;
+			rdx ^= rax;             //xor rdx, rax
+			return rdx;
 		}
 		case 1:
 		{
-			r10 = driver::read<uintptr_t>(imageBase + 0x72AF269);              //mov r10, [0x0000000004EDEBCA]
-			rcx = imageBase + 0xB372;          //lea rcx, [0xFFFFFFFFFDC3AC83]
-			rax = rbx;              //mov rax, rbx
-			rax ^= rcx;             //xor rax, rcx
-			r8 -= rax;              //sub r8, rax
-			r11 = imageBase;           //lea r11, [0xFFFFFFFFFDC2F59F]
-			rax = imageBase + 0x6AD453A2;              //lea rax, [0x0000000068974916]
-			rax = ~rax;             //not rax
-			rax ^= rbx;             //xor rax, rbx
-			rax -= r11;             //sub rax, r11
-			r8 += rax;              //add r8, rax
-			rax = 0x9B018290D9E4AA59;               //mov rax, 0x9B018290D9E4AA59
-			r8 *= rax;              //imul r8, rax
-			rax = r8;               //mov rax, r8
+			r10 = driver::read<uintptr_t>(imageBase + 0x7821223);              //mov r10, [0x0000000004CA918F]
+			rdx ^= r11;             //xor rdx, r11
+			rax = 0x56F3C62967B05B8A;               //mov rax, 0x56F3C62967B05B8A
+			rcx = 0;                //and rcx, 0xFFFFFFFFC0000000
+			rdx ^= rax;             //xor rdx, rax
+			rcx = _rotl64(rcx, 0x10);               //rol rcx, 0x10
+			rcx ^= r10;             //xor rcx, r10
+			rcx = _byteswap_uint64(rcx);            //bswap rcx
+			rdx *= driver::read<uintptr_t>(rcx + 0x9);              //imul rdx, [rcx+0x09]
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0xB;            //shr rax, 0x0B
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x16;           //shr rax, 0x16
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x2C;           //shr rax, 0x2C
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
 			rax >>= 0x26;           //shr rax, 0x26
-			r8 ^= rax;              //xor r8, rax
-			rax = 0x57B808FF05967115;               //mov rax, 0x57B808FF05967115
-			r8 += rax;              //add r8, rax
-			rax = 0xAD51013A881770EF;               //mov rax, 0xAD51013A881770EF
-			r8 *= rax;              //imul r8, rax
-			rax = 0;                //and rax, 0xFFFFFFFFC0000000
-			rax = _rotl64(rax, 0x10);               //rol rax, 0x10
-			rax ^= r10;             //xor rax, r10
-			rax = ~rax;             //not rax
-			r8 *= driver::read<uintptr_t>(rax + 0xd);               //imul r8, [rax+0x0D]
-			return r8;
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x7;            //shr rax, 0x07
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0xE;            //shr rax, 0x0E
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x1C;           //shr rax, 0x1C
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x38;           //shr rax, 0x38
+			rdx ^= rax;             //xor rdx, rax
+			rax = 0xA7692940131CCC49;               //mov rax, 0xA7692940131CCC49
+			rdx *= rax;             //imul rdx, rax
+			rax = 0xB698B1C9E93059C1;               //mov rax, 0xB698B1C9E93059C1
+			rdx *= rax;             //imul rdx, rax
+			return rdx;
 		}
 		case 2:
 		{
-			//failed to translate: pop rbx
-			r10 = driver::read<uintptr_t>(imageBase + 0x72AF269);              //mov r10, [0x0000000004EDE76D]
-			rax = 0;                //and rax, 0xFFFFFFFFC0000000
-			rax = _rotl64(rax, 0x10);               //rol rax, 0x10
-			rax ^= r10;             //xor rax, r10
-			rax = ~rax;             //not rax
-			r8 *= driver::read<uintptr_t>(rax + 0xd);               //imul r8, [rax+0x0D]
-			rax = r8;               //mov rax, r8
-			rax >>= 0x16;           //shr rax, 0x16
-			r8 ^= rax;              //xor r8, rax
-			rax = r8;               //mov rax, r8
-			rax >>= 0x2C;           //shr rax, 0x2C
-			r8 ^= rax;              //xor r8, rax
-			rcx = rbx;              //mov rcx, rbx
-			rcx = ~rcx;             //not rcx
-			rax = imageBase + 0xFD61;          //lea rax, [0xFFFFFFFFFDC3ED47]
-			rcx *= rax;             //imul rcx, rax
-			rax = r8;               //mov rax, r8
-			r8 = 0x6D8627334D164F1;                 //mov r8, 0x6D8627334D164F1
-			r8 *= rax;              //imul r8, rax
-			r8 += rcx;              //add r8, rcx
-			rax = r8;               //mov rax, r8
-			rax >>= 0x1;            //shr rax, 0x01
-			r8 ^= rax;              //xor r8, rax
-			rax = r8;               //mov rax, r8
-			rax >>= 0x2;            //shr rax, 0x02
-			r8 ^= rax;              //xor r8, rax
-			rax = r8;               //mov rax, r8
-			rax >>= 0x4;            //shr rax, 0x04
-			r8 ^= rax;              //xor r8, rax
-			rax = r8;               //mov rax, r8
-			rax >>= 0x8;            //shr rax, 0x08
-			r8 ^= rax;              //xor r8, rax
-			rax = r8;               //mov rax, r8
-			rax >>= 0x10;           //shr rax, 0x10
-			r8 ^= rax;              //xor r8, rax
-			rax = r8;               //mov rax, r8
-			rax >>= 0x20;           //shr rax, 0x20
-			r8 ^= rax;              //xor r8, rax
-			rax = r8;               //mov rax, r8
-			rax >>= 0x15;           //shr rax, 0x15
-			r8 ^= rax;              //xor r8, rax
-			rax = r8;               //mov rax, r8
-			rax >>= 0x2A;           //shr rax, 0x2A
-			r8 ^= rax;              //xor r8, rax
-			return r8;
+			r10 = driver::read<uintptr_t>(imageBase + 0x7821223);              //mov r10, [0x0000000004CA8BD6]
+			rax = r11;              //mov rax, r11
+			rax = imageBase;           //sub rax, [rsp+0x78] -- didn't find trace -> use base
+			rax -= 0x2C38EA16;              //sub rax, 0x2C38EA16
+			rdx ^= rax;             //xor rdx, rax
+			rax = 0xB4B93D59D2681089;               //mov rax, 0xB4B93D59D2681089
+			rdx *= rax;             //imul rdx, rax
+			rdx += r11;             //add rdx, r11
+			rax = imageBase;           //lea rax, [0xFFFFFFFFFD48777D]
+			rdx ^= rax;             //xor rdx, rax
+			rax = imageBase;           //lea rax, [0xFFFFFFFFFD487955]
+			rdx += rax;             //add rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x1C;           //shr rax, 0x1C
+			rdx ^= rax;             //xor rdx, rax
+			rcx = 0;                //and rcx, 0xFFFFFFFFC0000000
+			rax = rdx;              //mov rax, rdx
+			rcx = _rotl64(rcx, 0x10);               //rol rcx, 0x10
+			rax >>= 0x38;           //shr rax, 0x38
+			rcx ^= r10;             //xor rcx, r10
+			rdx ^= rax;             //xor rdx, rax
+			rax = 0x1CE3CAA84AA7682A;               //mov rax, 0x1CE3CAA84AA7682A
+			rcx = _byteswap_uint64(rcx);            //bswap rcx
+			rdx *= driver::read<uintptr_t>(rcx + 0x9);              //imul rdx, [rcx+0x09]
+			rdx -= rax;             //sub rdx, rax
+			return rdx;
 		}
 		case 3:
 		{
-			r10 = driver::read<uintptr_t>(imageBase + 0x72AF269);              //mov r10, [0x0000000004EDE11D]
-			rax = r8;               //mov rax, r8
-			rax >>= 0x17;           //shr rax, 0x17
-			r8 ^= rax;              //xor r8, rax
-			rax = r8;               //mov rax, r8
-			rax >>= 0x2E;           //shr rax, 0x2E
-			r8 ^= rax;              //xor r8, rax
-			rax = 0xFE574E233B2A1CFC;               //mov rax, 0xFE574E233B2A1CFC
-			r8 ^= rax;              //xor r8, rax
-			rax = imageBase;           //lea rax, [0xFFFFFFFFFDC2EB19]
-			r8 += rax;              //add r8, rax
-			rax = r8;               //mov rax, r8
-			rax >>= 0x13;           //shr rax, 0x13
-			r8 ^= rax;              //xor r8, rax
-			rax = r8;               //mov rax, r8
-			rax >>= 0x26;           //shr rax, 0x26
+			r10 = driver::read<uintptr_t>(imageBase + 0x7821223);              //mov r10, [0x0000000004CA86D6]
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x27;           //shr rax, 0x27
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0xB;            //shr rax, 0x0B
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x16;           //shr rax, 0x16
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x2C;           //shr rax, 0x2C
+			rdx ^= rax;             //xor rdx, rax
 			rcx = 0;                //and rcx, 0xFFFFFFFFC0000000
-			r8 ^= rax;              //xor r8, rax
 			rcx = _rotl64(rcx, 0x10);               //rol rcx, 0x10
-			rax = imageBase;           //lea rax, [0xFFFFFFFFFDC2ECE2]
+			rax = 0x131F56B1238D73B5;               //mov rax, 0x131F56B1238D73B5
+			rdx *= rax;             //imul rdx, rax
 			rcx ^= r10;             //xor rcx, r10
-			r8 ^= rax;              //xor r8, rax
-			rcx = ~rcx;             //not rcx
-			rax = 0xB1B628BF2CC88CF5;               //mov rax, 0xB1B628BF2CC88CF5
-			r8 *= driver::read<uintptr_t>(rcx + 0xd);               //imul r8, [rcx+0x0D]
-			r8 *= rax;              //imul r8, rax
-			return r8;
+			rax = 0x1035435E575B6C59;               //mov rax, 0x1035435E575B6C59
+			rdx -= rax;             //sub rdx, rax
+			rcx = _byteswap_uint64(rcx);            //bswap rcx
+			rdx *= driver::read<uintptr_t>(rcx + 0x9);              //imul rdx, [rcx+0x09]
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x22;           //shr rax, 0x22
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x12;           //shr rax, 0x12
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x24;           //shr rax, 0x24
+			rdx ^= rax;             //xor rdx, rax
+			return rdx;
 		}
 		case 4:
 		{
-			//failed to translate: pop rbx
-			r11 = driver::read<uintptr_t>(imageBase + 0x72AF269);              //mov r11, [0x0000000004EDDBD2]
-			rax = 0x6A477414A347C06F;               //mov rax, 0x6A477414A347C06F
-			r8 *= rax;              //imul r8, rax
-			rax = 0xCCC1F0196522B225;               //mov rax, 0xCCC1F0196522B225
-			r8 ^= rax;              //xor r8, rax
-			rax = r8;               //mov rax, r8
-			rax >>= 0xC;            //shr rax, 0x0C
-			r8 ^= rax;              //xor r8, rax
-			rax = r8;               //mov rax, r8
-			rax >>= 0x18;           //shr rax, 0x18
-			r8 ^= rax;              //xor r8, rax
-			rax = r8;               //mov rax, r8
-			rax >>= 0x30;           //shr rax, 0x30
-			r8 ^= rax;              //xor r8, rax
-			rax = imageBase;           //lea rax, [0xFFFFFFFFFDC2E750]
-			rax += 0xA110;          //add rax, 0xA110
-			rax += rbx;             //add rax, rbx
-			r8 += rax;              //add r8, rax
-			rcx = rbx;              //mov rcx, rbx
-			rcx = ~rcx;             //not rcx
-			rax = 0;                //and rax, 0xFFFFFFFFC0000000
-			rax = _rotl64(rax, 0x10);               //rol rax, 0x10
-			rax ^= r11;             //xor rax, r11
-			rax = ~rax;             //not rax
-			rdx = driver::read<uintptr_t>(rax + 0xd);               //mov rdx, [rax+0x0D]
-			rax = imageBase + 0x5B1B3622;              //lea rax, [0x0000000058DE1C3F]
-			rax = ~rax;             //not rax
-			rcx += rax;             //add rcx, rax
-			rax = imageBase;           //lea rax, [0xFFFFFFFFFDC2E608]
-			rcx -= rax;             //sub rcx, rax
-			rax = 0xF56CDF71E1A5D93D;               //mov rax, 0xF56CDF71E1A5D93D
-			rcx += rbx;             //add rcx, rbx
-			r8 += rcx;              //add r8, rcx
-			r8 *= rax;              //imul r8, rax
-			rax = 0x61F801A7637D1AF9;               //mov rax, 0x61F801A7637D1AF9
-			r8 += rax;              //add r8, rax
-			r8 *= rdx;              //imul r8, rdx
-			return r8;
-		}
-		case 5:
-		{
-			r9 = driver::read<uintptr_t>(imageBase + 0x72AF269);               //mov r9, [0x0000000004EDD684]
-			rax = r8;               //mov rax, r8
-			rax >>= 0x17;           //shr rax, 0x17
-			r8 ^= rax;              //xor r8, rax
-			rax = r8;               //mov rax, r8
-			rax >>= 0x2E;           //shr rax, 0x2E
-			r8 ^= rax;              //xor r8, rax
-			rax = imageBase;           //lea rax, [0xFFFFFFFFFDC2DFDB]
-			rax += 0x5333;          //add rax, 0x5333
-			rax += rbx;             //add rax, rbx
-			r8 += rax;              //add r8, rax
-			rax = r8;               //mov rax, r8
-			rax >>= 0x27;           //shr rax, 0x27
-			r8 ^= rax;              //xor r8, rax
-			r8 -= rbx;              //sub r8, rbx
-			rax = 0;                //and rax, 0xFFFFFFFFC0000000
-			rax = _rotl64(rax, 0x10);               //rol rax, 0x10
-			rax ^= r9;              //xor rax, r9
-			rax = ~rax;             //not rax
-			r8 *= driver::read<uintptr_t>(rax + 0xd);               //imul r8, [rax+0x0D]
-			rax = 0xA59E5728885EEE93;               //mov rax, 0xA59E5728885EEE93
-			r8 *= rax;              //imul r8, rax
-			rax = 0x6EAFDEAD53F36EE8;               //mov rax, 0x6EAFDEAD53F36EE8
-			r8 ^= rax;              //xor r8, rax
-			return r8;
-		}
-		case 6:
-		{
-			r10 = driver::read<uintptr_t>(imageBase + 0x72AF269);              //mov r10, [0x0000000004EDD14E]
+			//failed to translate: pop rdx
+			r10 = driver::read<uintptr_t>(imageBase + 0x7821223);              //mov r10, [0x0000000004CA822D]
 			rax = 0;                //and rax, 0xFFFFFFFFC0000000
 			rax = _rotl64(rax, 0x10);               //rol rax, 0x10
 			rax ^= r10;             //xor rax, r10
+			rax = _byteswap_uint64(rax);            //bswap rax
+			rdx *= driver::read<uintptr_t>(rax + 0x9);              //imul rdx, [rax+0x09]
+			rax = 0x4122953E9B59DAE5;               //mov rax, 0x4122953E9B59DAE5
+			rdx += rax;             //add rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x11;           //shr rax, 0x11
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x22;           //shr rax, 0x22
+			rdx ^= rax;             //xor rdx, rax
+			rax = imageBase;           //lea rax, [0xFFFFFFFFFD486DF4]
+			rdx -= rax;             //sub rdx, rax
+			rdx ^= r11;             //xor rdx, r11
+			rax = r11;              //mov rax, r11
+			rax = imageBase;           //sub rax, [rsp+0x78] -- didn't find trace -> use base
+			rax -= 0x58348A4C;              //sub rax, 0x58348A4C
+			rdx ^= rax;             //xor rdx, rax
+			rax = 0x2D70BFA88C1DE299;               //mov rax, 0x2D70BFA88C1DE299
+			rdx *= rax;             //imul rdx, rax
+			return rdx;
+		}
+		case 5:
+		{
+			r12 = imageBase + 0x6716;          //lea r12, [0xFFFFFFFFFD48D23F]
+			r10 = driver::read<uintptr_t>(imageBase + 0x7821223);              //mov r10, [0x0000000004CA7CF6]
+			rdx ^= r11;             //xor rdx, r11
+			rax = 0x37669064BDFE9EA;                //mov rax, 0x37669064BDFE9EA
+			rdx += rax;             //add rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x8;            //shr rax, 0x08
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x10;           //shr rax, 0x10
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x20;           //shr rax, 0x20
+			rdx ^= rax;             //xor rdx, rax
+			rdx += r11;             //add rdx, r11
+			uintptr_t RSP_0x48;
+			RSP_0x48 = imageBase + 0x21D5F0D4;                 //lea rax, [0x000000001F1E5C1B] : RSP+0x48
+			rdx += RSP_0x48;                //add rdx, [rsp+0x48]
+			rax = 0;                //and rax, 0xFFFFFFFFC0000000
+			rax = _rotl64(rax, 0x10);               //rol rax, 0x10
+			rax ^= r10;             //xor rax, r10
+			rax = _byteswap_uint64(rax);            //bswap rax
+			rdx *= driver::read<uintptr_t>(rax + 0x9);              //imul rdx, [rax+0x09]
+			rax = 0x8C4AA275AFE07453;               //mov rax, 0x8C4AA275AFE07453
+			rdx *= rax;             //imul rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0xF;            //shr rax, 0x0F
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x1E;           //shr rax, 0x1E
+			rdx ^= rax;             //xor rdx, rax
+			rcx = rdx;              //mov rcx, rdx
+			rcx >>= 0x3C;           //shr rcx, 0x3C
+			rdx ^= rcx;             //xor rdx, rcx
+			rax = r11;              //mov rax, r11
+			rax ^= r12;             //xor rax, r12
+			rdx -= rax;             //sub rdx, rax
+			return rdx;
+		}
+		case 6:
+		{
+			//failed to translate: pop rdx
+			r10 = driver::read<uintptr_t>(imageBase + 0x7821223);              //mov r10, [0x0000000004CA788E]
+			r15 = imageBase + 0x3FF1F77A;              //lea r15, [0x000000003D3A5DD2]
+			rcx = r11;              //mov rcx, r11
+			rcx = ~rcx;             //not rcx
+			rax = r15;              //mov rax, r15
 			rax = ~rax;             //not rax
-			r8 *= driver::read<uintptr_t>(rax + 0xd);               //imul r8, [rax+0x0D]
-			rax = r8;               //mov rax, r8
-			rax >>= 0x23;           //shr rax, 0x23
-			r8 ^= rax;              //xor r8, rax
-			rax = r8;               //mov rax, r8
-			rax >>= 0x5;            //shr rax, 0x05
-			r8 ^= rax;              //xor r8, rax
-			rax = r8;               //mov rax, r8
-			rax >>= 0xA;            //shr rax, 0x0A
-			r8 ^= rax;              //xor r8, rax
-			rax = r8;               //mov rax, r8
-			rax >>= 0x14;           //shr rax, 0x14
-			r8 ^= rax;              //xor r8, rax
-			rax = r8;               //mov rax, r8
-			rax >>= 0x28;           //shr rax, 0x28
-			r8 ^= rax;              //xor r8, rax
-			rax = 0xFB3A20DFA1FEC597;               //mov rax, 0xFB3A20DFA1FEC597
-			r8 *= rax;              //imul r8, rax
-			rax = 0x9D34BCD4BA58BB91;               //mov rax, 0x9D34BCD4BA58BB91
-			r8 *= rax;              //imul r8, rax
-			rax = imageBase;           //lea rax, [0xFFFFFFFFFDC2DC5E]
-			r8 ^= rax;              //xor r8, rax
-			rax = 0x6A21B4883F6DEEB6;               //mov rax, 0x6A21B4883F6DEEB6
-			r8 ^= rax;              //xor r8, rax
-			rax = r8;               //mov rax, r8
-			rax >>= 0x14;           //shr rax, 0x14
-			r8 ^= rax;              //xor r8, rax
-			rax = r8;               //mov rax, r8
-			rax >>= 0x28;           //shr rax, 0x28
-			r8 ^= rax;              //xor r8, rax
-			return r8;
+			rdx += rax;             //add rdx, rax
+			rdx += rcx;             //add rdx, rcx
+			rax = 0;                //and rax, 0xFFFFFFFFC0000000
+			rax = _rotl64(rax, 0x10);               //rol rax, 0x10
+			rax ^= r10;             //xor rax, r10
+			rax = _byteswap_uint64(rax);            //bswap rax
+			rdx *= driver::read<uintptr_t>(rax + 0x9);              //imul rdx, [rax+0x09]
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x6;            //shr rax, 0x06
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0xC;            //shr rax, 0x0C
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rcx = r11;              //mov rcx, r11
+			rax >>= 0x18;           //shr rax, 0x18
+			rdx ^= rax;             //xor rdx, rax
+			rax = imageBase;           //lea rax, [0xFFFFFFFFFD4862B7]
+			rcx -= rax;             //sub rcx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x30;           //shr rax, 0x30
+			rcx -= 0x14449F64;              //sub rcx, 0x14449F64
+			rcx ^= rax;             //xor rcx, rax
+			rdx ^= rcx;             //xor rdx, rcx
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x8;            //shr rax, 0x08
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x10;           //shr rax, 0x10
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x20;           //shr rax, 0x20
+			rdx ^= rax;             //xor rdx, rax
+			rax = 0x1BC2C247FD97588F;               //mov rax, 0x1BC2C247FD97588F
+			rdx ^= rax;             //xor rdx, rax
+			rax = 0xE2D3224BC82DCA86;               //mov rax, 0xE2D3224BC82DCA86
+			rdx ^= rax;             //xor rdx, rax
+			rax = 0x952977A961DEF5B5;               //mov rax, 0x952977A961DEF5B5
+			rdx *= rax;             //imul rdx, rax
+			return rdx;
 		}
 		case 7:
 		{
-			r10 = driver::read<uintptr_t>(imageBase + 0x72AF269);              //mov r10, [0x0000000004EDCBBA]
-			rax = r8;               //mov rax, r8
-			rax >>= 0x1A;           //shr rax, 0x1A
-			r8 ^= rax;              //xor r8, rax
-			rax = r8;               //mov rax, r8
-			rcx = 0;                //and rcx, 0xFFFFFFFFC0000000
-			rax >>= 0x34;           //shr rax, 0x34
-			rcx = _rotl64(rcx, 0x10);               //rol rcx, 0x10
-			r8 ^= rax;              //xor r8, rax
-			rcx ^= r10;             //xor rcx, r10
-			rax = 0xEFC9E5B644D8365B;               //mov rax, 0xEFC9E5B644D8365B
-			rcx = ~rcx;             //not rcx
-			r8 *= driver::read<uintptr_t>(rcx + 0xd);               //imul r8, [rcx+0x0D]
-			r8 *= rax;              //imul r8, rax
-			rcx = imageBase + 0x4B76;          //lea rcx, [0xFFFFFFFFFDC32477]
-			rax = 0xD97AE04D7B82C647;               //mov rax, 0xD97AE04D7B82C647
-			r8 *= rax;              //imul r8, rax
-			r8 -= rbx;              //sub r8, rbx
-			rax = r8;               //mov rax, r8
-			rax >>= 0xE;            //shr rax, 0x0E
-			r8 ^= rax;              //xor r8, rax
-			rax = r8;               //mov rax, r8
-			rax >>= 0x1C;           //shr rax, 0x1C
-			r8 ^= rax;              //xor r8, rax
-			rax = r8;               //mov rax, r8
-			rax >>= 0x38;           //shr rax, 0x38
-			r8 ^= rax;              //xor r8, rax
-			r8 -= rbx;              //sub r8, rbx
-			r8 += rcx;              //add r8, rcx
-			return r8;
+			r12 = imageBase + 0x6DA1;          //lea r12, [0xFFFFFFFFFD48CED2]
+			r9 = driver::read<uintptr_t>(imageBase + 0x7821223);               //mov r9, [0x0000000004CA72DA]
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0xC;            //shr rax, 0x0C
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x18;           //shr rax, 0x18
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x30;           //shr rax, 0x30
+			rdx ^= rax;             //xor rdx, rax
+			rax = imageBase;           //lea rax, [0xFFFFFFFFFD485F4A]
+			rdx += rax;             //add rdx, rax
+			rdx ^= r11;             //xor rdx, r11
+			rdx ^= r12;             //xor rdx, r12
+			rax = 0;                //and rax, 0xFFFFFFFFC0000000
+			rax = _rotl64(rax, 0x10);               //rol rax, 0x10
+			rax ^= r9;              //xor rax, r9
+			rax = _byteswap_uint64(rax);            //bswap rax
+			rax = driver::read<uintptr_t>(rax + 0x9);               //mov rax, [rax+0x09]
+			uintptr_t RSP_0x28;
+			RSP_0x28 = 0x11156F7E6912ED7D;          //mov rax, 0x11156F7E6912ED7D : RSP+0x28
+			rax *= RSP_0x28;                //imul rax, [rsp+0x28]
+			rdx *= rax;             //imul rdx, rax
+			rax = 0x8442A66056336123;               //mov rax, 0x8442A66056336123
+			rdx ^= rax;             //xor rdx, rax
+			rax = r11;              //mov rax, r11
+			rax = imageBase;           //sub rax, [rsp+0x78] -- didn't find trace -> use base
+			rax += 0xFFFFFFFFFFFF59E1;              //add rax, 0xFFFFFFFFFFFF59E1
+			rdx += rax;             //add rdx, rax
+			rax = imageBase + 0x3B3BDD34;              //lea rax, [0x0000000038843A3F]
+			rax -= r11;             //sub rax, r11
+			rdx += rax;             //add rdx, rax
+			return rdx;
 		}
 		case 8:
 		{
-			//failed to translate: pop rbx
-			r10 = driver::read<uintptr_t>(imageBase + 0x72AF269);              //mov r10, [0x0000000004EDC6E3]
-			rax = 0xA0409E79A43A271B;               //mov rax, 0xA0409E79A43A271B
-			r8 *= rax;              //imul r8, rax
-			rax = r8;               //mov rax, r8
-			rax >>= 0x1;            //shr rax, 0x01
-			r8 ^= rax;              //xor r8, rax
-			rax = r8;               //mov rax, r8
-			rax >>= 0x2;            //shr rax, 0x02
-			r8 ^= rax;              //xor r8, rax
-			rax = r8;               //mov rax, r8
-			rax >>= 0x4;            //shr rax, 0x04
-			r8 ^= rax;              //xor r8, rax
-			rax = r8;               //mov rax, r8
-			rax >>= 0x8;            //shr rax, 0x08
-			r8 ^= rax;              //xor r8, rax
-			rax = r8;               //mov rax, r8
-			rax >>= 0x10;           //shr rax, 0x10
-			r8 ^= rax;              //xor r8, rax
-			rax = r8;               //mov rax, r8
-			rcx = 0;                //and rcx, 0xFFFFFFFFC0000000
-			rax >>= 0x20;           //shr rax, 0x20
-			r8 ^= rax;              //xor r8, rax
-			rcx = _rotl64(rcx, 0x10);               //rol rcx, 0x10
-			rcx ^= r10;             //xor rcx, r10
-			rax = 0x2DA1E695C439F6FC;               //mov rax, 0x2DA1E695C439F6FC
-			rcx = ~rcx;             //not rcx
-			r8 *= driver::read<uintptr_t>(rcx + 0xd);               //imul r8, [rcx+0x0D]
-			r8 ^= rax;              //xor r8, rax
-			rax = r8;               //mov rax, r8
-			rax >>= 0x17;           //shr rax, 0x17
-			r8 ^= rax;              //xor r8, rax
-			rax = r8;               //mov rax, r8
-			rax >>= 0x2E;           //shr rax, 0x2E
-			r8 ^= rax;              //xor r8, rax
-			r11 = imageBase;           //lea r11, [0xFFFFFFFFFDC2D028]
-			rax = rbx;              //mov rax, rbx
-			rax = ~rax;             //not rax
-			rax -= r11;             //sub rax, r11
-			rax += 0xFFFFFFFF9BE0509E;              //add rax, 0xFFFFFFFF9BE0509E
-			r8 += rax;              //add r8, rax
-			rax = imageBase + 0x482BDCE4;              //lea rax, [0x0000000045EEB0A2]
-			r8 ^= rax;              //xor r8, rax
-			rax = 0x51549FB6ECBFB9A2;               //mov rax, 0x51549FB6ECBFB9A2
-			r8 ^= rbx;              //xor r8, rbx
-			r8 ^= rax;              //xor r8, rax
-			return r8;
+			r9 = driver::read<uintptr_t>(imageBase + 0x7821223);               //mov r9, [0x0000000004CA6D14]
+			rax = imageBase;           //lea rax, [0xFFFFFFFFFD4859C3]
+			rdx += rax;             //add rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x7;            //shr rax, 0x07
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0xE;            //shr rax, 0x0E
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x1C;           //shr rax, 0x1C
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x38;           //shr rax, 0x38
+			rdx ^= rax;             //xor rdx, rax
+			rax = 0xFE54433AB99670D9;               //mov rax, 0xFE54433AB99670D9
+			rdx *= rax;             //imul rdx, rax
+			rax = 0;                //and rax, 0xFFFFFFFFC0000000
+			rax = _rotl64(rax, 0x10);               //rol rax, 0x10
+			rax ^= r9;              //xor rax, r9
+			rax = _byteswap_uint64(rax);            //bswap rax
+			rax = driver::read<uintptr_t>(rax + 0x9);               //mov rax, [rax+0x09]
+			uintptr_t RSP_0x28;
+			RSP_0x28 = 0x707C989E1DF75A21;          //mov rax, 0x707C989E1DF75A21 : RSP+0x28
+			rax *= RSP_0x28;                //imul rax, [rsp+0x28]
+			rdx *= rax;             //imul rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x12;           //shr rax, 0x12
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x24;           //shr rax, 0x24
+			rdx ^= rax;             //xor rdx, rax
+			rax = imageBase;           //lea rax, [0xFFFFFFFFFD4859D2]
+			rdx ^= rax;             //xor rdx, rax
+			rax = 0x3E789F5419565466;               //mov rax, 0x3E789F5419565466
+			rdx ^= rax;             //xor rdx, rax
+			return rdx;
 		}
 		case 9:
 		{
-			r10 = driver::read<uintptr_t>(imageBase + 0x72AF269);              //mov r10, [0x0000000004EDC153]
-			r8 += rbx;              //add r8, rbx
-			rax = r8;               //mov rax, r8
-			rax >>= 0x19;           //shr rax, 0x19
-			r8 ^= rax;              //xor r8, rax
-			rcx = 0;                //and rcx, 0xFFFFFFFFC0000000
-			rcx = _rotl64(rcx, 0x10);               //rol rcx, 0x10
-			rcx ^= r10;             //xor rcx, r10
-			rax = r8;               //mov rax, r8
-			rcx = ~rcx;             //not rcx
-			rax >>= 0x32;           //shr rax, 0x32
-			r8 ^= rax;              //xor r8, rax
-			r8 *= driver::read<uintptr_t>(rcx + 0xd);               //imul r8, [rcx+0x0D]
-			rax = 0xC3C1E7238826F0E3;               //mov rax, 0xC3C1E7238826F0E3
-			r8 *= rax;              //imul r8, rax
-			r8 ^= rbx;              //xor r8, rbx
-			rax = imageBase + 0x85E1;          //lea rax, [0xFFFFFFFFFDC352AA]
-			r8 ^= rax;              //xor r8, rax
-			rax = 0x36919C1DAB4319F;                //mov rax, 0x36919C1DAB4319F
-			r8 ^= rax;              //xor r8, rax
-			rax = imageBase;           //lea rax, [0xFFFFFFFFFDC2CCF7]
-			r8 ^= rax;              //xor r8, rax
-			rax = 0x3E644A0A1C4ABA44;               //mov rax, 0x3E644A0A1C4ABA44
-			r8 ^= rax;              //xor r8, rax
-			return r8;
+			r12 = imageBase + 0x5F624819;              //lea r12, [0x000000005CAA9E26]
+			r9 = driver::read<uintptr_t>(imageBase + 0x7821223);               //mov r9, [0x0000000004CA67DB]
+			rax = r12;              //mov rax, r12
+			rax = ~rax;             //not rax
+			rax *= r11;             //imul rax, r11
+			rax ^= r11;             //xor rax, r11
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x10;           //shr rax, 0x10
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x20;           //shr rax, 0x20
+			rdx ^= rax;             //xor rdx, rax
+			rax = 0x2D56E8150613B67A;               //mov rax, 0x2D56E8150613B67A
+			rdx -= rax;             //sub rdx, rax
+			rax = 0;                //and rax, 0xFFFFFFFFC0000000
+			rax = _rotl64(rax, 0x10);               //rol rax, 0x10
+			rax ^= r9;              //xor rax, r9
+			rax = _byteswap_uint64(rax);            //bswap rax
+			rdx *= driver::read<uintptr_t>(rax + 0x9);              //imul rdx, [rax+0x09]
+			rax = imageBase;           //lea rax, [0xFFFFFFFFFD485523]
+			rdx ^= rax;             //xor rdx, rax
+			rax = 0xCB760501238D6C11;               //mov rax, 0xCB760501238D6C11
+			rdx *= rax;             //imul rdx, rax
+			rax = 0x4FBDE321E4E187DD;               //mov rax, 0x4FBDE321E4E187DD
+			rdx *= rax;             //imul rdx, rax
+			return rdx;
 		}
 		case 10:
 		{
-			r10 = driver::read<uintptr_t>(imageBase + 0x72AF269);              //mov r10, [0x0000000004EDBC49]
-			r11 = imageBase + 0x272;           //lea r11, [0xFFFFFFFFFDC2CC3F]
-			rax = imageBase;           //lea rax, [0xFFFFFFFFFDC2C6D7]
-			r8 ^= rax;              //xor r8, rax
-			rcx = rbx;              //mov rcx, rbx
-			rcx = ~rcx;             //not rcx
-			rax = imageBase;           //lea rax, [0xFFFFFFFFFDC2C678]
-			r8 += rax;              //add r8, rax
-			rax = 0x35F80BEE9E577B5D;               //mov rax, 0x35F80BEE9E577B5D
-			r8 *= rax;              //imul r8, rax
-			rax = 0xE81A7FABDAFAA67;                //mov rax, 0xE81A7FABDAFAA67
-			r8 -= rax;              //sub r8, rax
+			r10 = driver::read<uintptr_t>(imageBase + 0x7821223);              //mov r10, [0x0000000004CA62CD]
+			r12 = imageBase + 0x50F0C2A6;              //lea r12, [0x000000004E39133D]
 			rax = r11;              //mov rax, r11
 			rax = ~rax;             //not rax
-			rcx += rax;             //add rcx, rax
-			rax = r8;               //mov rax, r8
-			rax >>= 0x20;           //shr rax, 0x20
-			rcx ^= rax;             //xor rcx, rax
-			r8 ^= rcx;              //xor r8, rcx
-			rax = r8;               //mov rax, r8
-			rax >>= 0x19;           //shr rax, 0x19
-			r8 ^= rax;              //xor r8, rax
-			rax = r8;               //mov rax, r8
-			rax >>= 0x32;           //shr rax, 0x32
+			rax *= r12;             //imul rax, r12
+			rdx += rax;             //add rdx, rax
+			rax = 0x5D20D5819D812B0E;               //mov rax, 0x5D20D5819D812B0E
+			rdx ^= rax;             //xor rdx, rax
+			rax = 0xB0C6DE8FE5EC7286;               //mov rax, 0xB0C6DE8FE5EC7286
+			rdx ^= rax;             //xor rdx, rax
+			rdx -= r11;             //sub rdx, r11
+			rax = 0x8F3C63ED5E5ACF53;               //mov rax, 0x8F3C63ED5E5ACF53
+			rdx *= rax;             //imul rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x26;           //shr rax, 0x26
+			rdx ^= rax;             //xor rdx, rax
+			rax = imageBase + 0x628C;          //lea rax, [0xFFFFFFFFFD48B19B]
+			rax -= r11;             //sub rax, r11
 			rcx = 0;                //and rcx, 0xFFFFFFFFC0000000
-			r8 ^= rax;              //xor r8, rax
+			rdx += rax;             //add rdx, rax
 			rcx = _rotl64(rcx, 0x10);               //rol rcx, 0x10
 			rcx ^= r10;             //xor rcx, r10
-			rcx = ~rcx;             //not rcx
-			r8 *= driver::read<uintptr_t>(rcx + 0xd);               //imul r8, [rcx+0x0D]
-			return r8;
+			rcx = _byteswap_uint64(rcx);            //bswap rcx
+			rdx *= driver::read<uintptr_t>(rcx + 0x9);              //imul rdx, [rcx+0x09]
+			return rdx;
 		}
 		case 11:
 		{
-			//failed to translate: pop rbx
-			r10 = driver::read<uintptr_t>(imageBase + 0x72AF269);              //mov r10, [0x0000000004EDB80D]
-			rcx = imageBase + 0xAF0A;          //lea rcx, [0xFFFFFFFFFDC37443]
-			rax = 0x900D58648B08FD67;               //mov rax, 0x900D58648B08FD67
-			r8 *= rax;              //imul r8, rax
-			rax = 0x26F4BB807BE0EAAF;               //mov rax, 0x26F4BB807BE0EAAF
-			r8 -= rax;              //sub r8, rax
-			rax = rbx;              //mov rax, rbx
-			rax *= rcx;             //imul rax, rcx
-			r8 ^= rax;              //xor r8, rax
-			rax = r8;               //mov rax, r8
-			rax >>= 0xE;            //shr rax, 0x0E
-			r8 ^= rax;              //xor r8, rax
-			rax = r8;               //mov rax, r8
-			rax >>= 0x1C;           //shr rax, 0x1C
-			r8 ^= rax;              //xor r8, rax
-			rax = r8;               //mov rax, r8
-			rax >>= 0x38;           //shr rax, 0x38
-			r8 ^= rax;              //xor r8, rax
-			rcx = imageBase;           //lea rcx, [0xFFFFFFFFFDC2C0A5]
-			rax = rbx;              //mov rax, rbx
-			rax -= rcx;             //sub rax, rcx
-			rax += 0xFFFFFFFFFFFF756A;              //add rax, 0xFFFFFFFFFFFF756A
-			r8 += rax;              //add r8, rax
-			rax = 0x23F739B05DBF5EB0;               //mov rax, 0x23F739B05DBF5EB0
-			r8 ^= rax;              //xor r8, rax
-			rax = r8;               //mov rax, r8
-			rax >>= 0xB;            //shr rax, 0x0B
-			r8 ^= rax;              //xor r8, rax
-			rax = r8;               //mov rax, r8
-			rax >>= 0x16;           //shr rax, 0x16
-			r8 ^= rax;              //xor r8, rax
-			rax = r8;               //mov rax, r8
-			rax >>= 0x2C;           //shr rax, 0x2C
-			r8 ^= rax;              //xor r8, rax
-			rcx = 0;                //and rcx, 0xFFFFFFFFC0000000
-			rcx = _rotl64(rcx, 0x10);               //rol rcx, 0x10
-			rcx ^= r10;             //xor rcx, r10
-			rcx = ~rcx;             //not rcx
-			r8 *= driver::read<uintptr_t>(rcx + 0xd);               //imul r8, [rcx+0x0D]
-			return r8;
+			r10 = driver::read<uintptr_t>(imageBase + 0x7821223);              //mov r10, [0x0000000004CA5E26]
+			r15 = imageBase + 0x620DA68E;              //lea r15, [0x000000005F55F27E]
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x17;           //shr rax, 0x17
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x2E;           //shr rax, 0x2E
+			rdx ^= rax;             //xor rdx, rax
+			rax = r15;              //mov rax, r15
+			rax ^= r11;             //xor rax, r11
+			rdx += rax;             //add rdx, rax
+			rax = 0xAE5536B2D6AC7D85;               //mov rax, 0xAE5536B2D6AC7D85
+			rdx *= rax;             //imul rdx, rax
+			rax = imageBase;           //lea rax, [0xFFFFFFFFFD4849A2]
+			rdx += rax;             //add rdx, rax
+			rax = r11;              //mov rax, r11
+			rax = ~rax;             //not rax
+			uintptr_t RSP_0x48;
+			RSP_0x48 = imageBase + 0xA254;             //lea rax, [0xFFFFFFFFFD48EE12] : RSP+0x48
+			rax *= RSP_0x48;                //imul rax, [rsp+0x48]
+			rdx += rax;             //add rdx, rax
+			rax = 0x70A5567341388F09;               //mov rax, 0x70A5567341388F09
+			rdx ^= rax;             //xor rdx, rax
+			rax = 0;                //and rax, 0xFFFFFFFFC0000000
+			rax = _rotl64(rax, 0x10);               //rol rax, 0x10
+			rax ^= r10;             //xor rax, r10
+			rax = _byteswap_uint64(rax);            //bswap rax
+			rdx *= driver::read<uintptr_t>(rax + 0x9);              //imul rdx, [rax+0x09]
+			rax = imageBase;           //lea rax, [0xFFFFFFFFFD484A15]
+			rdx += rax;             //add rdx, rax
+			return rdx;
 		}
 		case 12:
 		{
-			//failed to translate: pop rbx
-			r9 = driver::read<uintptr_t>(imageBase + 0x72AF269);               //mov r9, [0x0000000004EDB1EC]
+			r12 = imageBase + 0x2F3844CA;              //lea r12, [0x000000002C808BB5]
+			r9 = driver::read<uintptr_t>(imageBase + 0x7821223);               //mov r9, [0x0000000004CA58C3]
+			rax = imageBase + 0xB4F0;          //lea rax, [0xFFFFFFFFFD48FA7C]
+			rax = ~rax;             //not rax
+			rax *= r11;             //imul rax, r11
+			rdx += rax;             //add rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0xC;            //shr rax, 0x0C
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x18;           //shr rax, 0x18
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x30;           //shr rax, 0x30
+			rdx ^= rax;             //xor rdx, rax
+			rax = r12;              //mov rax, r12
+			rax = ~rax;             //not rax
+			rax -= r11;             //sub rax, r11
+			rdx += rax;             //add rdx, rax
+			rax = 0xEC9CBB3752ACA0AD;               //mov rax, 0xEC9CBB3752ACA0AD
+			rdx *= rax;             //imul rdx, rax
+			rdx += r11;             //add rdx, r11
+			rax = 0x444363F4A500959E;               //mov rax, 0x444363F4A500959E
+			rdx += rax;             //add rdx, rax
 			rax = 0;                //and rax, 0xFFFFFFFFC0000000
 			rax = _rotl64(rax, 0x10);               //rol rax, 0x10
 			rax ^= r9;              //xor rax, r9
-			rax = ~rax;             //not rax
-			r8 *= driver::read<uintptr_t>(rax + 0xd);               //imul r8, [rax+0x0D]
-			rax = 0x6A19C1C7E437843D;               //mov rax, 0x6A19C1C7E437843D
-			r8 += rax;              //add r8, rax
-			rax = r8;               //mov rax, r8
-			rax >>= 0x4;            //shr rax, 0x04
-			r8 ^= rax;              //xor r8, rax
-			rax = r8;               //mov rax, r8
-			rax >>= 0x8;            //shr rax, 0x08
-			r8 ^= rax;              //xor r8, rax
-			rax = r8;               //mov rax, r8
-			rax >>= 0x10;           //shr rax, 0x10
-			r8 ^= rax;              //xor r8, rax
-			rax = r8;               //mov rax, r8
-			rax >>= 0x20;           //shr rax, 0x20
-			r8 ^= rax;              //xor r8, rax
-			rax = 0x593521E25A6758F7;               //mov rax, 0x593521E25A6758F7
-			r8 *= rax;              //imul r8, rax
-			rax = r8;               //mov rax, r8
-			rax >>= 0x18;           //shr rax, 0x18
-			r8 ^= rax;              //xor r8, rax
-			rax = r8;               //mov rax, r8
-			rax >>= 0x30;           //shr rax, 0x30
-			rax ^= rbx;             //xor rax, rbx
-			r8 ^= rax;              //xor r8, rax
-			rax = imageBase + 0xBABB;          //lea rax, [0xFFFFFFFFFDC375AF]
-			r8 ^= rax;              //xor r8, rax
-			rax = imageBase;           //lea rax, [0xFFFFFFFFFDC2BB4A]
-			r8 += rax;              //add r8, rax
-			r8 += rbx;              //add r8, rbx
-			return r8;
+			rax = _byteswap_uint64(rax);            //bswap rax
+			rdx *= driver::read<uintptr_t>(rax + 0x9);              //imul rdx, [rax+0x09]
+			rax = 0xA0C47D17C58A0559;               //mov rax, 0xA0C47D17C58A0559
+			rdx ^= rax;             //xor rdx, rax
+			return rdx;
 		}
 		case 13:
 		{
-			r10 = driver::read<uintptr_t>(imageBase + 0x72AF269);              //mov r10, [0x0000000004EDAC97]
-			rax = r8;               //mov rax, r8
-			rax >>= 0x1B;           //shr rax, 0x1B
-			r8 ^= rax;              //xor r8, rax
+			//failed to translate: pop rdx
+			r10 = driver::read<uintptr_t>(imageBase + 0x7821223);              //mov r10, [0x0000000004CA5440]
+			r13 = imageBase + 0x25C2E896;              //lea r13, [0x00000000230B2AA0]
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x19;           //shr rax, 0x19
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x32;           //shr rax, 0x32
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x27;           //shr rax, 0x27
+			rdx ^= rax;             //xor rdx, rax
+			rax = imageBase + 0x62966F05;              //lea rax, [0x000000005FDEAE12]
+			rax += r11;             //add rax, r11
+			rdx ^= rax;             //xor rdx, rax
+			rax = 0xFF099BB3AB88BA97;               //mov rax, 0xFF099BB3AB88BA97
+			rdx *= rax;             //imul rdx, rax
+			rdx -= r11;             //sub rdx, r11
 			rcx = 0;                //and rcx, 0xFFFFFFFFC0000000
 			rcx = _rotl64(rcx, 0x10);               //rol rcx, 0x10
-			rax = r8;               //mov rax, r8
+			rax = rdx;              //mov rax, rdx
 			rcx ^= r10;             //xor rcx, r10
-			rax >>= 0x36;           //shr rax, 0x36
-			rcx = ~rcx;             //not rcx
-			r8 ^= rax;              //xor r8, rax
-			r8 *= driver::read<uintptr_t>(rcx + 0xd);               //imul r8, [rcx+0x0D]
-			rax = imageBase;           //lea rax, [0xFFFFFFFFFDC2B574]
-			r8 += rax;              //add r8, rax
-			rax = r8;               //mov rax, r8
-			rax >>= 0x3;            //shr rax, 0x03
-			r8 ^= rax;              //xor r8, rax
-			rax = r8;               //mov rax, r8
-			rax >>= 0x6;            //shr rax, 0x06
-			r8 ^= rax;              //xor r8, rax
-			rax = r8;               //mov rax, r8
-			rax >>= 0xC;            //shr rax, 0x0C
-			r8 ^= rax;              //xor r8, rax
-			rax = r8;               //mov rax, r8
-			rax >>= 0x18;           //shr rax, 0x18
-			r8 ^= rax;              //xor r8, rax
-			rax = r8;               //mov rax, r8
-			rax >>= 0x30;           //shr rax, 0x30
-			r8 ^= rax;              //xor r8, rax
-			rax = 0xDC882EE398774B3A;               //mov rax, 0xDC882EE398774B3A
-			r8 ^= rax;              //xor r8, rax
-			rax = 0x71BC85CECC2CF7C7;               //mov rax, 0x71BC85CECC2CF7C7
-			r8 -= rax;              //sub r8, rax
-			rax = r8;               //mov rax, r8
-			rax >>= 0xF;            //shr rax, 0x0F
-			r8 ^= rax;              //xor r8, rax
-			rax = r8;               //mov rax, r8
-			rax >>= 0x1E;           //shr rax, 0x1E
-			r8 ^= rax;              //xor r8, rax
-			rax = r8;               //mov rax, r8
-			rax >>= 0x3C;           //shr rax, 0x3C
-			r8 ^= rax;              //xor r8, rax
-			rax = 0xB22294677CAE4057;               //mov rax, 0xB22294677CAE4057
-			r8 *= rax;              //imul r8, rax
-			return r8;
+			rcx = _byteswap_uint64(rcx);            //bswap rcx
+			rdx = r13;              //mov rdx, r13
+			rdx = ~rdx;             //not rdx
+			rax *= driver::read<uintptr_t>(rcx + 0x9);              //imul rax, [rcx+0x09]
+			rax += r11;             //add rax, r11
+			rdx += rax;             //add rdx, rax
+			return rdx;
 		}
 		case 14:
 		{
-			r9 = driver::read<uintptr_t>(imageBase + 0x72AF269);               //mov r9, [0x0000000004EDA6C5]
-			rax = rbx;              //mov rax, rbx
-			uintptr_t RSP_0xFFFFFFFFFFFFFFC0;
-			RSP_0xFFFFFFFFFFFFFFC0 = imageBase + 0x5D2C829C;           //lea rax, [0x000000005AEF36F1] : RBP+0xFFFFFFFFFFFFFFC0
-			rax ^= RSP_0xFFFFFFFFFFFFFFC0;          //xor rax, [rbp-0x40]
-			r8 += rax;              //add r8, rax
-			rax = imageBase;           //lea rax, [0xFFFFFFFFFDC2B1A9]
-			r8 -= rax;              //sub r8, rax
-			rax = 0x2DFD83BA726131F3;               //mov rax, 0x2DFD83BA726131F3
-			r8 *= rax;              //imul r8, rax
-			rax = r8;               //mov rax, r8
-			rax >>= 0x1C;           //shr rax, 0x1C
-			r8 ^= rax;              //xor r8, rax
-			rax = r8;               //mov rax, r8
-			rax >>= 0x38;           //shr rax, 0x38
-			r8 ^= rax;              //xor r8, rax
-			rax = 0xF4ECD7D0B27744D1;               //mov rax, 0xF4ECD7D0B27744D1
-			r8 *= rax;              //imul r8, rax
-			r11 = imageBase;           //lea r11, [0xFFFFFFFFFDC2B2E4]
-			r8 += r11;              //add r8, r11
+			r10 = driver::read<uintptr_t>(imageBase + 0x7821223);              //mov r10, [0x0000000004CA4F4B]
 			rax = 0;                //and rax, 0xFFFFFFFFC0000000
 			rax = _rotl64(rax, 0x10);               //rol rax, 0x10
-			rax ^= r9;              //xor rax, r9
+			rax ^= r10;             //xor rax, r10
+			rax = _byteswap_uint64(rax);            //bswap rax
+			rdx *= driver::read<uintptr_t>(rax + 0x9);              //imul rdx, [rax+0x09]
+			rax = 0x8E93F56EEFBABF67;               //mov rax, 0x8E93F56EEFBABF67
+			rdx *= rax;             //imul rdx, rax
+			rax = 0x531487C50C675851;               //mov rax, 0x531487C50C675851
+			rdx *= rax;             //imul rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x19;           //shr rax, 0x19
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x32;           //shr rax, 0x32
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0xE;            //shr rax, 0x0E
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x1C;           //shr rax, 0x1C
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x38;           //shr rax, 0x38
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x19;           //shr rax, 0x19
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x32;           //shr rax, 0x32
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rcx = imageBase + 0x61F1;          //lea rcx, [0xFFFFFFFFFD489C35]
+			rax >>= 0x13;           //shr rax, 0x13
+			rcx = ~rcx;             //not rcx
+			rdx ^= rax;             //xor rdx, rax
+			rax = r11;              //mov rax, r11
 			rax = ~rax;             //not rax
-			r8 *= driver::read<uintptr_t>(rax + 0xd);               //imul r8, [rax+0x0D]
-			rax = 0xD42A25F92D1BC49F;               //mov rax, 0xD42A25F92D1BC49F
-			r8 ^= rax;              //xor r8, rax
-			return r8;
+			rcx *= rax;             //imul rcx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x26;           //shr rax, 0x26
+			rdx ^= rax;             //xor rdx, rax
+			rdx += rcx;             //add rdx, rcx
+			return rdx;
 		}
 		case 15:
 		{
-			r10 = driver::read<uintptr_t>(imageBase + 0x72AF269);              //mov r10, [0x0000000004EDA125]
-			rax = r8;               //mov rax, r8
-			rax >>= 0x1D;           //shr rax, 0x1D
-			r8 ^= rax;              //xor r8, rax
-			rax = r8;               //mov rax, r8
-			rax >>= 0x3A;           //shr rax, 0x3A
-			r8 ^= rax;              //xor r8, rax
-			rax = imageBase + 0x18571ADD;              //lea rax, [0x000000001619C648]
-			rax = ~rax;             //not rax
-			rax *= rbx;             //imul rax, rbx
-			r8 += rax;              //add r8, rax
-			rax = r8;               //mov rax, r8
-			rax >>= 0x4;            //shr rax, 0x04
-			r8 ^= rax;              //xor r8, rax
-			rax = r8;               //mov rax, r8
-			rax >>= 0x8;            //shr rax, 0x08
-			r8 ^= rax;              //xor r8, rax
-			rax = r8;               //mov rax, r8
-			rax >>= 0x10;           //shr rax, 0x10
-			r8 ^= rax;              //xor r8, rax
-			rax = r8;               //mov rax, r8
-			rax >>= 0x20;           //shr rax, 0x20
-			r8 ^= rax;              //xor r8, rax
-			rax = rbx;              //mov rax, rbx
+			//failed to translate: pop rdx
+			r10 = driver::read<uintptr_t>(imageBase + 0x7821223);              //mov r10, [0x0000000004CA4AB6]
+			r12 = imageBase + 0x7B4A67C4;              //lea r12, [0x000000007892A044]
+			rax = 0x2193B3A646C10871;               //mov rax, 0x2193B3A646C10871
+			rdx *= rax;             //imul rdx, rax
+			rdx ^= r11;             //xor rdx, r11
+			rax = 0x569717F7DAB262A0;               //mov rax, 0x569717F7DAB262A0
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0xE;            //shr rax, 0x0E
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x1C;           //shr rax, 0x1C
+			rdx ^= rax;             //xor rdx, rax
+			rax = rdx;              //mov rax, rdx
+			rax >>= 0x38;           //shr rax, 0x38
+			rax ^= rdx;             //xor rax, rdx
+			rdx = imageBase + 0x9AC5;          //lea rdx, [0xFFFFFFFFFD48D02C]
+			rax += r11;             //add rax, r11
+			rdx += rax;             //add rdx, rax
 			rcx = 0;                //and rcx, 0xFFFFFFFFC0000000
 			rcx = _rotl64(rcx, 0x10);               //rol rcx, 0x10
 			rcx ^= r10;             //xor rcx, r10
-			rcx = ~rcx;             //not rcx
-			r8 *= driver::read<uintptr_t>(rcx + 0xd);               //imul r8, [rcx+0x0D]
-			rcx = imageBase;           //lea rcx, [0xFFFFFFFFFDC2ACA5]
-			rax -= rcx;             //sub rax, rcx
-			rax -= 0x60AAD3EF;              //sub rax, 0x60AAD3EF
-			r8 ^= rax;              //xor r8, rax
-			rax = 0x4787A3D03756D75D;               //mov rax, 0x4787A3D03756D75D
-			r8 ^= rax;              //xor r8, rax
-			rax = 0x6A58CF259205070B;               //mov rax, 0x6A58CF259205070B
-			r8 *= rax;              //imul r8, rax
-			rax = 0x23040926EA571BB0;               //mov rax, 0x23040926EA571BB0
-			r8 += rax;              //add r8, rax
-			return r8;
+			rax = r12;              //mov rax, r12
+			rax ^= r11;             //xor rax, r11
+			rax -= r11;             //sub rax, r11
+			rcx = _byteswap_uint64(rcx);            //bswap rcx
+			rdx += rax;             //add rdx, rax
+			rdx *= driver::read<uintptr_t>(rcx + 0x9);              //imul rdx, [rcx+0x09]
+			return rdx;
 		}
 		}
 	}
@@ -1218,69 +1176,65 @@ namespace decryption {
 		uint64_t rax = imageBase, rbx = imageBase, rcx = imageBase, rdx = imageBase, rdi = imageBase, rsi = imageBase, r8 = imageBase, r9 = imageBase, r10 = imageBase, r11 = imageBase, r12 = imageBase, r13 = imageBase, r14 = imageBase, r15 = imageBase;
 		rbx = index;
 		rcx = rbx * 0x13C8;
-		rax = 0xC9C400975300717F;               //mov rax, 0xC9C400975300717F
-		r11 = imageBase;           //lea r11, [0xFFFFFFFFFDDA953D]
+		rax = 0x4AD2CE6C11F9A497;               //mov rax, 0x4AD2CE6C11F9A497
+		r11 = imageBase;           //lea r11, [0xFFFFFFFFFD8377D3]
 		rax = _umul128(rax, rcx, (uintptr_t*)&rdx);             //mul rcx
-		r10 = 0x26EAA6D39C7E93F7;               //mov r10, 0x26EAA6D39C7E93F7
-		rdx >>= 0xC;            //shr rdx, 0x0C
-		rax = rdx * 0x144D;             //imul rax, rdx, 0x144D
+		r10 = 0xF9DE825D26E3B99B;               //mov r10, 0xF9DE825D26E3B99B
+		rdx >>= 0xB;            //shr rdx, 0x0B
+		rax = rdx * 0x1B5F;             //imul rax, rdx, 0x1B5F
 		rcx -= rax;             //sub rcx, rax
-		rax = 0x4AC525D2BAA21969;               //mov rax, 0x4AC525D2BAA21969
-		r8 = rcx * 0x144D;              //imul r8, rcx, 0x144D
+		rax = 0x3B0E039359376BE7;               //mov rax, 0x3B0E039359376BE7
+		r8 = rcx * 0x1B5F;              //imul r8, rcx, 0x1B5F
 		rax = _umul128(rax, r8, (uintptr_t*)&rdx);              //mul r8
 		rdx >>= 0xB;            //shr rdx, 0x0B
-		rax = rdx * 0x1B64;             //imul rax, rdx, 0x1B64
+		rax = rdx * 0x22AE;             //imul rax, rdx, 0x22AE
 		r8 -= rax;              //sub r8, rax
-		rax = 0xE60D414382A3C6F;                //mov rax, 0xE60D414382A3C6F
+		rax = 0x97B425ED097B425F;               //mov rax, 0x97B425ED097B425F
 		rax = _umul128(rax, r8, (uintptr_t*)&rdx);              //mul r8
-		rax = 0xAAAAAAAAAAAAAAAB;               //mov rax, 0xAAAAAAAAAAAAAAAB
+		rax = 0x8F1779D9FDC3A219;               //mov rax, 0x8F1779D9FDC3A219
+		rdx >>= 0x5;            //shr rdx, 0x05
+		rcx = rdx * 0x36;               //imul rcx, rdx, 0x36
+		rax = _umul128(rax, r8, (uintptr_t*)&rdx);              //mul r8
 		rdx >>= 0x7;            //shr rdx, 0x07
-		rcx = rdx * 0x8E7;              //imul rcx, rdx, 0x8E7
-		rax = _umul128(rax, r8, (uintptr_t*)&rdx);              //mul r8
-		rdx >>= 0x2;            //shr rdx, 0x02
 		rcx += rdx;             //add rcx, rdx
-		rax = rcx + rcx * 2;            //lea rax, [rcx+rcx*2]
-		rax <<= 0x2;            //shl rax, 0x02
-		rcx = r8 * 0xE;                 //imul rcx, r8, 0x0E
+		rax = rcx * 0x1CA;              //imul rax, rcx, 0x1CA
+		rcx = r8 * 0x1CC;               //imul rcx, r8, 0x1CC
 		rcx -= rax;             //sub rcx, rax
-		rax = driver::read<uint16_t>(rcx + r11 * 1 + 0x72C6420);                //movzx eax, word ptr [rcx+r11*1+0x72C6420]
+		rax = driver::read<uint16_t>(rcx + r11 * 1 + 0x7834840);                //movzx eax, word ptr [rcx+r11*1+0x7834840]
 		r8 = rax * 0x13C8;              //imul r8, rax, 0x13C8
 		rax = r10;              //mov rax, r10
 		rax = _umul128(rax, r8, (uintptr_t*)&rdx);              //mul r8
-		rcx = r8;               //mov rcx, r8
 		rax = r10;              //mov rax, r10
-		rcx -= rdx;             //sub rcx, rdx
-		rcx >>= 0x1;            //shr rcx, 0x01
-		rcx += rdx;             //add rcx, rdx
-		rcx >>= 0xC;            //shr rcx, 0x0C
-		rcx = rcx * 0x1BC7;             //imul rcx, rcx, 0x1BC7
+		rdx >>= 0xD;            //shr rdx, 0x0D
+		rcx = rdx * 0x20C9;             //imul rcx, rdx, 0x20C9
 		r8 -= rcx;              //sub r8, rcx
-		r9 = r8 * 0x1F84;               //imul r9, r8, 0x1F84
+		r9 = r8 * 0x3ED7;               //imul r9, r8, 0x3ED7
 		rax = _umul128(rax, r9, (uintptr_t*)&rdx);              //mul r9
-		rax = r9;               //mov rax, r9
-		rax -= rdx;             //sub rax, rdx
-		rax >>= 0x1;            //shr rax, 0x01
-		rax += rdx;             //add rax, rdx
-		rax >>= 0xC;            //shr rax, 0x0C
-		rax = rax * 0x1BC7;             //imul rax, rax, 0x1BC7
+		rdx >>= 0xD;            //shr rdx, 0x0D
+		rax = rdx * 0x20C9;             //imul rax, rdx, 0x20C9
 		r9 -= rax;              //sub r9, rax
-		rax = 0x4E5E0A72F0539783;               //mov rax, 0x4E5E0A72F0539783
+		rax = 0x3521CFB2B78C1353;               //mov rax, 0x3521CFB2B78C1353
 		rax = _umul128(rax, r9, (uintptr_t*)&rdx);              //mul r9
 		rax = r9;               //mov rax, r9
 		rax -= rdx;             //sub rax, rdx
 		rax >>= 0x1;            //shr rax, 0x01
 		rax += rdx;             //add rax, rdx
-		rax >>= 0x6;            //shr rax, 0x06
-		rcx = rax * 0x62;               //imul rcx, rax, 0x62
-		rax = 0x3AEF6CA970586723;               //mov rax, 0x3AEF6CA970586723
+		rax >>= 0x7;            //shr rax, 0x07
+		rcx = rax * 0xD4;               //imul rcx, rax, 0xD4
+		rax = 0x5C9882B931057263;               //mov rax, 0x5C9882B931057263
 		rax = _umul128(rax, r9, (uintptr_t*)&rdx);              //mul r9
-		rdx >>= 0x5;            //shr rdx, 0x05
-		rcx += rdx;             //add rcx, rdx
-		rax = rcx * 0x116;              //imul rax, rcx, 0x116
-		rcx = r9 * 0x118;               //imul rcx, r9, 0x118
+		rax = r9;               //mov rax, r9
+		rax -= rdx;             //sub rax, rdx
+		rax >>= 0x1;            //shr rax, 0x01
+		rax += rdx;             //add rax, rdx
+		rax >>= 0x5;            //shr rax, 0x05
+		rcx += rax;             //add rcx, rax
+		rax = rcx * 0x5E;               //imul rax, rcx, 0x5E
+		rcx = r9 + r9 * 2;              //lea rcx, [r9+r9*2]
+		rcx <<= 0x5;            //shl rcx, 0x05
 		rcx -= rax;             //sub rcx, rax
-		r15 = driver::read<uint16_t>(rcx + r11 * 1 + 0x72CCF00);                //movsx r15d, word ptr [rcx+r11*1+0x72CCF00]
-		return r15;
+		rsi = driver::read<uint16_t>(rcx + r11 * 1 + 0x783A8E0);                //movsx esi, word ptr [rcx+r11*1+0x783A8E0]
+		return rsi;
 	}
 }
 
