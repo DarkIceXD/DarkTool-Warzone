@@ -10,7 +10,7 @@
 
 static uintptr_t camera_base = 0;
 
-void overlay::draw(const data::game& data, ImDrawList* d)
+void overlay::draw(data::game& data, ImDrawList* d)
 {
 	if (!data.valid)
 		return;
@@ -27,6 +27,33 @@ void overlay::draw(const data::game& data, ImDrawList* d)
 
 	const auto refdef = driver::read<ref_def>(ref_def_ptr);
 	const auto camera = math::get_camera_struct(camera_base);
+	for (auto& player : data.players)
+	{
+		if (!player.valid)
+			break;
+
+		if (cfg->esp.max_distance && player.distance > cfg->esp.max_distance &&
+			cfg->aimbot.max_distance && player.distance > cfg->aimbot.max_distance)
+			break;
+
+		if (player.team == data.local_player.team)
+			continue;
+
+		for (size_t i = 0; i < player.bones.size(); i++)
+		{
+			const auto& bone = player.bones[i];
+			auto& screen = player.bones_screen[i];
+			screen.valid = false;
+
+			if ((bone - player.origin).length() > 150)
+				continue;
+
+			if (!math::world_to_screen(bone, camera.position, refdef, screen.screen))
+				continue;
+
+			screen.valid = true;
+		}
+	}
 	features::esp(data, d, refdef, camera);
 	features::aimbot(data, d, refdef, camera);
 }
@@ -42,6 +69,7 @@ void data::update(data::game& data)
 	static uint64_t client_base = 0;
 	static uint64_t bone_base = 0;
 	static uint64_t visible_base = 0;
+	static uint64_t visible_list_old = 0;
 	static uintptr_t name_base = 0;
 
 	const auto client_info_new = decryption::decrypt_client_info(globals::base, globals::peb);
@@ -77,19 +105,24 @@ void data::update(data::game& data)
 		full_refresh = false;
 	}
 
-	const auto local_index = player::get_local_index(client_info);
-	if (!local_index)
+	int local_index;
+	if (!player::get_local_index(client_info, local_index))
 		return;
 
-	const player local_player(client_base, *local_index);
-	const auto local_origin_opt = local_player.get_origin();
-	if (!local_origin_opt)
+	const player local_player(client_base, local_index);
+	vector3 local_origin;
+	if (!local_player.get_origin(local_origin))
 		return;
 
-	const auto local_origin = *local_origin_opt;
 	data.local_player.team = local_player.get_team();
 	const auto bone_base_pos = player::get_bone_base_pos(client_info);
-	const auto visible_list = driver::read<uint64_t>(visible_base);
+	auto visible_list = driver::read<uint64_t>(visible_base);
+	if (!utils::is_valid_ptr(visible_list) || visible_list != visible_list_old)
+	{
+		visible_base = decryption::get_visible_base(globals::base, offsets::visible, offsets::distribute);
+		visible_list = driver::read<uint64_t>(visible_base);
+	}
+	visible_list_old = visible_list;
 	for (int i = 0; i < data.players.size(); i++)
 	{
 		auto& player_data = data.players[i];
@@ -101,11 +134,8 @@ void data::update(data::game& data)
 		if (!p.is_valid())
 			continue;
 
-		const auto origin = p.get_origin();
-		if (!origin)
+		if (!p.get_origin(player_data.origin))
 			continue;
-
-		player_data.origin = *origin;
 
 		const auto bone_ptr = player::get_bone_ptr(bone_base, decryption::get_bone_index(i, globals::base));
 		if (!bone_ptr)

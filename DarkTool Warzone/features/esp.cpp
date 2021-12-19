@@ -48,20 +48,19 @@ void features::esp(const data::game& data, ImDrawList* d, const ref_def& refdef,
 		d->AddRect(hp_min, hp_max, IM_COL32_BLACK);
 
 		const auto skeleton_color = player.stance == player::stance::downed ? skeleton_downed_color : (player.visible ? skeleton_visible_color : skeleton_base_color);
-		if ((skeleton_color & 0xFF000000))
-		{
-			std::array<vector2, 21> screen;
-			auto valid = true;
-			for (size_t i = 0; i < player.bones.size(); i++)
-				if ((player.bones[i] - player.origin).length() > 150 || !math::world_to_screen(player.bones[i], camera.position, refdef, screen[i]))
-				{
-					valid = false;
-					break;
-				}
-			if (valid)
-				for (const auto& bone_connection : player::bone_connections)
-					d->AddLine(screen[data::player_data::bone_to_index(bone_connection.first)], screen[data::player_data::bone_to_index(bone_connection.second)], skeleton_color);
-		}
+		if (skeleton_color & 0xFF000000)
+			for (const auto& bone_connection : player::bone_connections)
+			{
+				const auto& a = player.bones_screen[data::player_data::bone_to_index(bone_connection.first)];
+				if (!a.valid)
+					continue;
+
+				const auto& b = player.bones_screen[data::player_data::bone_to_index(bone_connection.second)];
+				if (!b.valid)
+					continue;
+
+				d->AddLine(a.screen, b.screen, skeleton_color);
+			}
 	}
 	if (cfg->esp.show_nearest_players)
 	{
@@ -123,7 +122,7 @@ void features::esp(const data::game& data, ImDrawList* d, const ref_def& refdef,
 					const auto angle = math::deg2rad * camera.angles.y;
 					const auto s = sin(angle);
 					const auto c = cos(angle);
-					std::array<float, 150> xs;
+					std::array<float, data::player_count> xs;
 					std::array<float, xs.size()> ys;
 					int size = 0;
 					for (const auto& player : data.players)
@@ -131,14 +130,14 @@ void features::esp(const data::game& data, ImDrawList* d, const ref_def& refdef,
 						if (!player.valid)
 							break;
 
-						if (player.distance > cfg->esp.show_nearest_players)
-							break;
-
 						if (player.team != data.local_player.team)
 							continue;
 
-						const auto x = player.delta.y;
-						const auto y = player.delta.x;
+						const auto& x = player.delta.y;
+						const auto& y = player.delta.x;
+						if (std::abs(x) > cfg->esp.show_nearest_players || std::abs(y) > cfg->esp.show_nearest_players)
+							continue;
+
 						xs[size] = -math::units_to_m(x * c - y * s);
 						ys[size] = math::units_to_m(x * s + y * c);
 						size++;
@@ -150,14 +149,14 @@ void features::esp(const data::game& data, ImDrawList* d, const ref_def& refdef,
 						if (!player.valid)
 							break;
 
-						if (player.distance > cfg->esp.show_nearest_players)
-							break;
-
 						if (player.team == data.local_player.team)
 							continue;
 
-						const auto x = player.delta.y;
-						const auto y = player.delta.x;
+						const auto& x = player.delta.y;
+						const auto& y = player.delta.x;
+						if (math::units_to_m(std::abs(x)) > cfg->esp.show_nearest_players || math::units_to_m(std::abs(y)) > cfg->esp.show_nearest_players)
+							continue;
+
 						xs[size] = -math::units_to_m(x * c - y * s);
 						ys[size] = math::units_to_m(x * s + y * c);
 						size++;

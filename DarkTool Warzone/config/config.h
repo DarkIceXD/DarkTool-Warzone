@@ -1,6 +1,7 @@
 #pragma once
 #include "common.h"
 #include <Windows.h>
+#include "../game/player.h"
 
 struct rgb {
 	float r{ 1 }, g{ 1 }, b{ 1 }, a{ 1 };
@@ -84,11 +85,27 @@ struct config {
 		int max_distance{ 0 };
 		float fov{ 5.f };
 		float smoothness{ 1.f };
-		int hitbox{ 0 };
+		bool head{ false };
+		bool chest{ true };
 		bool visibility_check{ true };
 		bool aim_at_downed_players{ false };
 		bool show_aim_spot{ true };
-		JSON_SERIALIZE(aimbot, bind, game_sensitivity, max_distance, fov, smoothness, hitbox, visibility_check, aim_at_downed_players, show_aim_spot)
+		constexpr bool is_bone_enabled(const player::bone bone) const
+		{
+			switch (bone)
+			{
+			case player::bone::head:
+			case player::bone::neck:
+				return head;
+			case player::bone::chest:
+			case player::bone::mid:
+			case player::bone::tummy:
+				return chest;
+			default:
+				return false;
+			}
+		}
+		JSON_SERIALIZE(aimbot, bind, game_sensitivity, max_distance, fov, smoothness, head, chest, visibility_check, aim_at_downed_players, show_aim_spot)
 	} aimbot;
 	JSON_SERIALIZE(config, esp, aimbot)
 };

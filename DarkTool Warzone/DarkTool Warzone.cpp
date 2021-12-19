@@ -44,8 +44,11 @@ void collect_data()
 {
 	globals::base = driver::get_base();
 	globals::peb = driver::get_peb();
-	std::cout << "base: " << std::hex << globals::base << '\n';
-	std::cout << "peb: " << std::hex << globals::peb << '\n';
+	std::cout
+		<< std::hex
+		<< "base: " << globals::base << '\n'
+		<< "peb: " << globals::peb << '\n'
+		<< std::dec;
 	while (true)
 	{
 		{

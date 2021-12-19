@@ -51,15 +51,21 @@ void features::aimbot(const data::game& data, ImDrawList* d, const ref_def& refd
 		if (!cfg->aimbot.aim_at_downed_players && player.stance == player::stance::downed)
 			continue;
 
-		vector2 hitbox;
-		if (!math::world_to_screen(player.get_bone((cfg->aimbot.hitbox == 0) ? player::bone::chest : player::bone::head), camera.position, refdef, hitbox))
-			continue;
-		
-		const auto fov = math::pixels_to_fov((hitbox - middle).length(), tan_half_fov, middle.x);
-		if (fov < smallest_fov)
+		for (int i = 0; i < player.bones_screen.size(); i++)
 		{
-			smallest_fov = fov;
-			best_hitbox = hitbox;
+			const auto& bone = player.bones_screen[i];
+			if (!bone.valid)
+				continue;
+
+			if (!cfg->aimbot.is_bone_enabled(data::player_data::index_to_bone(i)))
+				continue;
+
+			const auto fov = math::pixels_to_fov((bone.screen - middle).length(), tan_half_fov, middle.x);
+			if (fov < smallest_fov)
+			{
+				smallest_fov = fov;
+				best_hitbox = bone.screen;
+			}
 		}
 	}
 
@@ -73,7 +79,7 @@ void features::aimbot(const data::game& data, ImDrawList* d, const ref_def& refd
 	}
 
 	const auto diff = best_hitbox - middle;
-	auto dx = diff * (7.f / cfg->aimbot.game_sensitivity);
+	auto dx = diff * (3.f / cfg->aimbot.game_sensitivity);
 	const auto fov = math::pixels_to_fov(diff.length(), tan_half_fov, middle.x);
 	if (fov > 2)
 		dx /= cfg->aimbot.smoothness;

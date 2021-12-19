@@ -1,6 +1,5 @@
 #pragma once
 #include <cstdint>
-#include <optional>
 #include "structs.h"
 
 struct player {
@@ -71,7 +70,7 @@ struct player {
 
 	player(const uintptr_t base, const int index);
 	[[nodiscard]] bool is_valid() const;
-	[[nodiscard]] std::optional<vector3> get_origin() const;
+	[[nodiscard]] bool get_origin(vector3& out) const;
 	[[nodiscard]] stance get_stance() const;
 	[[nodiscard]] int get_team() const;
 	[[nodiscard]] name get_name_struct(const uintptr_t name_array_base) const;
@@ -81,7 +80,7 @@ struct player {
 	[[nodiscard]] static float estimate_head_position(const stance stance);
 	[[nodiscard]] static float estimate_width(const stance stance);
 	[[nodiscard]] static uintptr_t get_name_array_base(const uintptr_t base);
-	[[nodiscard]] static std::optional<int> get_local_index(const uintptr_t client_info);
+	[[nodiscard]] static bool get_local_index(const uintptr_t client_info, int& out);
 	[[nodiscard]] static uintptr_t get_bone_ptr(const uint64_t bone_base, const uint64_t bone_index);
 	[[nodiscard]] static vector3 get_bone_base_pos(const uintptr_t client_info);
 	[[nodiscard]] static vector3 get_bone_position(const uintptr_t bone_ptr, const vector3& base_pos, const player::bone bone);

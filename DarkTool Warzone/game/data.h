@@ -3,8 +3,14 @@
 #include <array>
 
 namespace data {
+	constexpr auto player_count = 155;
 	struct player_data {
 		std::array<vector3, 21> bones;
+		struct bone_screen {
+			vector2 screen;
+			bool valid;
+		};
+		std::array<bone_screen, 21> bones_screen;
 		vector3 origin, delta;
 		player::stance stance;
 		int distance;
@@ -122,7 +128,7 @@ namespace data {
 		int team;
 	};
 	struct game {
-		std::array<player_data, 150> players;
+		std::array<player_data, player_count> players;
 		local_player local_player;
 		bool valid;
 	};

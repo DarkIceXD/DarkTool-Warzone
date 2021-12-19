@@ -25,13 +25,14 @@ player::player(const uintptr_t client_base, const int index) : base(client_base 
 	return true;
 }
 
-[[nodiscard]] std::optional<vector3> player::get_origin() const
+[[nodiscard]] bool player::get_origin(vector3& out) const
 {
 	const auto position_address = driver::read<uintptr_t>(base + offsets::player::pos);
 	if (!utils::is_valid_ptr(position_address))
-		return std::nullopt;
+		return false;
 
-	return driver::read<vector3>(position_address + 0x40);
+	out = driver::read<vector3>(position_address + 0x40);
+	return true;
 }
 
 [[nodiscard]] player::stance player::get_stance() const
@@ -121,13 +122,14 @@ player::player(const uintptr_t client_base, const int index) : base(client_base 
 	return driver::read<uintptr_t>(base + offsets::name_array);
 }
 
-[[nodiscard]] std::optional<int> player::get_local_index(const uintptr_t client_info)
+[[nodiscard]] bool player::get_local_index(const uintptr_t client_info, int& out)
 {
 	const auto local_index = driver::read<uintptr_t>(client_info + offsets::local_index);
 	if (!utils::is_valid_ptr(local_index))
-		return std::nullopt;
+		return false;
 
-	return driver::read<int>(local_index + offsets::local_index_pos);
+	out = driver::read<int>(local_index + offsets::local_index_pos);
+	return true;
 }
 
 [[nodiscard]] uintptr_t player::get_bone_ptr(const uint64_t bone_base, const uint64_t bone_index)

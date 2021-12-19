@@ -71,11 +71,30 @@ void overlay::menu()
 				ImGui::Checkbox("Enabled", &cfg->aimbot.bind.enabled);
 				static auto aimbot_found = true;
 				ImGui::KeyBind("Aimbot", &cfg->aimbot.bind.type, &cfg->aimbot.bind.key_bind, &aimbot_found);
-				ImGui::SliderFloat("Game Sensitivity", &cfg->aimbot.game_sensitivity, 0, 10);
+				ImGui::SliderFloat("Game Sensitivity", &cfg->aimbot.game_sensitivity, 0, 20);
 				ImGui::SliderInt("Max Distance", &cfg->aimbot.max_distance, 0, 1000);
 				ImGui::SliderFloat("Fov", &cfg->aimbot.fov, 1, 90);
 				ImGui::SliderFloat("Smoothness", &cfg->aimbot.smoothness, 1, 10);
-				ImGui::Combo("Hitbox", &cfg->aimbot.hitbox, "Chest\0Head\0");
+				if (ImGui::BeginTable("hitbox", 2, ImGuiTableFlags_SizingStretchSame))
+				{
+					ImGui::TableSetupColumn("Hitbox");
+					ImGui::TableSetupColumn("Enabled");
+					ImGui::TableHeadersRow();
+					ImGui::TableNextRow();
+					ImGui::PushID(0);
+					ImGui::TableNextColumn();
+					ImGui::TextUnformatted("Head");
+					ImGui::TableNextColumn();
+					ImGui::Checkbox("##normal", &cfg->aimbot.head);
+					ImGui::PopID();
+					ImGui::PushID(1);
+					ImGui::TableNextColumn();
+					ImGui::TextUnformatted("Chest");
+					ImGui::TableNextColumn();
+					ImGui::Checkbox("##normal", &cfg->aimbot.chest);
+					ImGui::PopID();
+					ImGui::EndTable();
+				}
 				ImGui::Checkbox("Visibility Check", &cfg->aimbot.visibility_check);
 				ImGui::Checkbox("Aim at downed players", &cfg->aimbot.aim_at_downed_players);
 				ImGui::Checkbox("Show aim spot", &cfg->aimbot.show_aim_spot);
