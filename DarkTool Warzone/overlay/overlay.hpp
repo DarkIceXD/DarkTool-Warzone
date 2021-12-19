@@ -15,8 +15,8 @@ namespace overlay_window {
 
 namespace overlay {
 	bool create_overlay(const uint32_t pid);
-	void render(const data::game& data);
-	void draw(const data::game& data, ImDrawList* d);
+	void render(data::game& data);
+	void draw(data::game& data, ImDrawList* d);
 	void menu();
 	void destroy();
 }
