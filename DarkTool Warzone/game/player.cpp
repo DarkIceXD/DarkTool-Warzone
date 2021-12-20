@@ -65,10 +65,7 @@ player::player(const uintptr_t client_base, const int index) : base(client_base 
 		return false;
 
 	const BYTE visible_flags_1 = driver::read<DWORD>(rdx + 0x10) ^ v511 ^ BYTE1(v511);
-	if (visible_flags_1 == 3)
-		return true;
-
-	return false;
+	return visible_flags_1 == 3;
 }
 
 [[nodiscard]] bool player::get_bounding_box_fallback(vector2& min, vector2& max, const vector3& origin_pos, const player::stance stance, const vector3& camera_pos, const ref_def& ref_def)

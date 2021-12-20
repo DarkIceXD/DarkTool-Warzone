@@ -137,9 +137,6 @@
     <ClInclude Include="game\structs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="game\globals.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="game\player.h">
       <Filter>Header Files</Filter>
     </ClInclude>

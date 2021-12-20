@@ -46,6 +46,8 @@ namespace ImGui {
 
 void overlay::menu()
 {
+	if (GetAsyncKeyState(VK_F12) & 1)
+		cfg->debug.enabled = !cfg->debug.enabled;
 	if (ImGui::Begin("DarkTool Warzone")) {
 		ImGui::PushItemWidth(-200);
 		if (ImGui::BeginTabBar("tabs"))
@@ -62,8 +64,8 @@ void overlay::menu()
 				ImGui::ColorEdit4("Skeleton Color", &cfg->esp.skeleton.base.r, ImGuiColorEditFlags_Float | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_AlphaPreview);
 				ImGui::ColorEdit4("Skeleton Color Visible", &cfg->esp.skeleton.visible.r, ImGuiColorEditFlags_Float | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_AlphaPreview);
 				ImGui::ColorEdit4("Skeleton Color Downed", &cfg->esp.skeleton.downed.r, ImGuiColorEditFlags_Float | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_AlphaPreview);
-				ImGui::SliderInt("Show Nearest Players", &cfg->esp.show_nearest_players, 0, 1000);
-				ImGui::Combo("Show Nearest Players Type", &cfg->esp.show_nearest_players_type, "Table\0Radar\0");
+				ImGui::Combo("Show Nearest Players", &cfg->esp.show_nearest_players, "Disabled\0Table\0Radar\0");
+				ImGui::SliderInt("Show Nearest Players Distance", &cfg->esp.show_nearest_players_distance, 0, 1000);
 				ImGui::EndTabItem();
 			}
 			if (ImGui::BeginTabItem("Aimbot"))
@@ -104,6 +106,11 @@ void overlay::menu()
 			{
 				if (ImGui::Button("Save config"))
 					cfg->save();
+				ImGui::EndTabItem();
+			}
+			if (ImGui::BeginTabItem("Debug", &cfg->debug.enabled))
+			{
+				ImGui::Checkbox("Show Debug Log", &cfg->debug.show_debug_log);
 				ImGui::EndTabItem();
 			}
 			ImGui::EndTabBar();

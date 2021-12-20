@@ -1,6 +1,5 @@
 #include "math.hpp"
 #include "../driver/driver.h"
-#include "../game/globals.h"
 #include "../game/offsets.h"
 
 [[nodiscard]] uintptr_t math::get_camera_base(const uintptr_t base) noexcept

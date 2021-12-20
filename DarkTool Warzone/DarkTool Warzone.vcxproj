@@ -177,7 +177,6 @@
     <ClInclude Include="driver\driver.h" />
     <ClInclude Include="game\decryption.h" />
     <ClInclude Include="features\features.h" />
-    <ClInclude Include="game\globals.h" />
     <ClInclude Include="game\player.h" />
     <ClInclude Include="game\structs.h" />
     <ClInclude Include="imgui\imconfig.h" />

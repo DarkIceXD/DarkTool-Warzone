@@ -3,7 +3,6 @@
 #include "../config/config.h"
 #include "../math/math.hpp"
 #include "../game/decryption.h"
-#include "../game/globals.h"
 
 void aim_at(const vector2& screen, const bool absolute)
 {

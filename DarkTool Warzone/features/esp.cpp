@@ -62,7 +62,7 @@ void features::esp(const data::game& data, ImDrawList* d, const ref_def& refdef,
 				d->AddLine(a.screen, b.screen, skeleton_color);
 			}
 	}
-	if (cfg->esp.show_nearest_players)
+	if (cfg->esp.show_nearest_players && cfg->esp.show_nearest_players_distance)
 	{
 		ImGuiIO& io = ImGui::GetIO();
 		ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav;
@@ -83,7 +83,7 @@ void features::esp(const data::game& data, ImDrawList* d, const ref_def& refdef,
 		ImGui::SetNextWindowBgAlpha(0.35f);
 		if (ImGui::Begin("Nearest Enemies", nullptr, window_flags))
 		{
-			if (cfg->esp.show_nearest_players_type == 0)
+			if (cfg->esp.show_nearest_players == 1)
 			{
 				if (ImGui::BeginTable("enemies", 3, ImGuiTableFlags_SizingStretchSame))
 				{
@@ -96,7 +96,7 @@ void features::esp(const data::game& data, ImDrawList* d, const ref_def& refdef,
 						if (!player.valid)
 							break;
 
-						if (player.distance > cfg->esp.show_nearest_players)
+						if (player.distance > cfg->esp.show_nearest_players_distance)
 							break;
 
 						if (player.team == data.local_player.team)
@@ -116,8 +116,8 @@ void features::esp(const data::game& data, ImDrawList* d, const ref_def& refdef,
 			}
 			else
 			{
-				ImPlot::SetNextPlotLimitsY(-cfg->esp.show_nearest_players, cfg->esp.show_nearest_players, ImGuiCond_Always);
-				ImPlot::SetNextPlotLimitsX(-cfg->esp.show_nearest_players, cfg->esp.show_nearest_players, ImGuiCond_Always);
+				ImPlot::SetNextPlotLimitsY(-cfg->esp.show_nearest_players_distance, cfg->esp.show_nearest_players_distance, ImGuiCond_Always);
+				ImPlot::SetNextPlotLimitsX(-cfg->esp.show_nearest_players_distance, cfg->esp.show_nearest_players_distance, ImGuiCond_Always);
 				if (ImPlot::BeginPlot("##Radar", nullptr, nullptr, { 0, 0 }, ImPlotFlags_NoTitle | ImPlotFlags_NoMenus | ImPlotFlags_NoBoxSelect | ImPlotFlags_NoMousePos, ImPlotAxisFlags_NoTickMarks, ImPlotAxisFlags_NoTickMarks)) {
 					const auto angle = math::deg2rad * camera.angles.y;
 					const auto s = sin(angle);
@@ -135,7 +135,7 @@ void features::esp(const data::game& data, ImDrawList* d, const ref_def& refdef,
 
 						const auto& x = player.delta.y;
 						const auto& y = player.delta.x;
-						if (std::abs(x) > cfg->esp.show_nearest_players || std::abs(y) > cfg->esp.show_nearest_players)
+						if (math::units_to_m(std::abs(x)) > cfg->esp.show_nearest_players_distance || math::units_to_m(std::abs(y)) > cfg->esp.show_nearest_players_distance)
 							continue;
 
 						xs[size] = -math::units_to_m(x * c - y * s);
@@ -154,7 +154,7 @@ void features::esp(const data::game& data, ImDrawList* d, const ref_def& refdef,
 
 						const auto& x = player.delta.y;
 						const auto& y = player.delta.x;
-						if (math::units_to_m(std::abs(x)) > cfg->esp.show_nearest_players || math::units_to_m(std::abs(y)) > cfg->esp.show_nearest_players)
+						if (math::units_to_m(std::abs(x)) > cfg->esp.show_nearest_players_distance || math::units_to_m(std::abs(y)) > cfg->esp.show_nearest_players_distance)
 							continue;
 
 						xs[size] = -math::units_to_m(x * c - y * s);

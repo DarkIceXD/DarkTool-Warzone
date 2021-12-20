@@ -74,10 +74,10 @@ struct config {
 			JSON_SERIALIZE(color, base, visible, downed)
 		}
 		box{ { 1, 0, 0, 1 }, { 0, 1, 0, 1 }, { 0, 1, 1, 1 } }, skeleton{ { 1, 0, 0, 0.5f }, { 0, 1, 0, 0.5f }, { 0, 1, 1, 0.5f } };
-		int show_nearest_players{ 200 };
-		int show_nearest_players_type{ 0 };
+		int show_nearest_players{ 0 };
+		int show_nearest_players_distance{ 200 };
 		int overlay_corner{ 0 };
-		JSON_SERIALIZE(esp, bind, max_distance, box, skeleton, show_nearest_players, show_nearest_players_type, overlay_corner)
+		JSON_SERIALIZE(esp, bind, max_distance, box, skeleton, show_nearest_players, show_nearest_players_distance, overlay_corner)
 	} esp;
 	struct aimbot {
 		keybind bind{};
@@ -107,6 +107,10 @@ struct config {
 		}
 		JSON_SERIALIZE(aimbot, bind, game_sensitivity, max_distance, fov, smoothness, head, chest, visibility_check, aim_at_downed_players, show_aim_spot)
 	} aimbot;
+	struct debug {
+		bool enabled{ false };
+		bool show_debug_log{ false };
+	}debug;
 	JSON_SERIALIZE(config, esp, aimbot)
 };
 

@@ -1,5 +1,4 @@
 ﻿#include "driver/driver.h"
-#include "game/globals.h"
 #include "overlay/overlay.hpp"
 #include "config/config.h"
 #include "utilities/xorstr.h"
@@ -42,12 +41,12 @@ void overlay_execute()
 
 void collect_data()
 {
-	globals::base = driver::get_base();
-	globals::peb = driver::get_peb();
+	game_data.base = driver::get_base();
+	game_data.peb = driver::get_peb();
 	std::cout
 		<< std::hex
-		<< "base: " << globals::base << '\n'
-		<< "peb: " << globals::peb << '\n'
+		<< "base: " << game_data.base << '\n'
+		<< "peb: " << game_data.peb << '\n'
 		<< std::dec;
 	while (true)
 	{

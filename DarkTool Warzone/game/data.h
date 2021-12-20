@@ -130,6 +130,8 @@ namespace data {
 	struct game {
 		std::array<player_data, player_count> players;
 		local_player local_player;
+		uint64_t base;
+		uint64_t peb;
 		bool valid;
 	};
 	void update(game& data);

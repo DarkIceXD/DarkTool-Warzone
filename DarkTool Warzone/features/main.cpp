@@ -2,7 +2,6 @@
 #include "features.h"
 #include "../math/math.hpp"
 #include "../game/decryption.h"
-#include "../game/globals.h"
 #include "../game/offsets.h"
 #include "../driver/driver.h"
 #include "../config/config.h"
@@ -18,10 +17,10 @@ void overlay::draw(data::game& data, ImDrawList* d)
 	if (!utils::is_valid_ptr(camera_base))
 		return;
 
-	static auto ref_def_ptr = decryption::get_ref_def(globals::base, offsets::refdef);
+	static auto ref_def_ptr = decryption::get_ref_def(data.base, offsets::refdef);
 	if (!utils::is_valid_ptr(ref_def_ptr))
 	{
-		ref_def_ptr = decryption::get_ref_def(globals::base, offsets::refdef);
+		ref_def_ptr = decryption::get_ref_def(data.base, offsets::refdef);
 		return;
 	}
 
@@ -72,7 +71,7 @@ void data::update(data::game& data)
 	static uint64_t visible_list_old = 0;
 	static uintptr_t name_base = 0;
 
-	const auto client_info_new = decryption::decrypt_client_info(globals::base, globals::peb);
+	const auto client_info_new = decryption::decrypt_client_info(data.base, data.peb);
 	if (client_info != client_info_new)
 		full_refresh = true;
 
@@ -82,23 +81,19 @@ void data::update(data::game& data)
 		if (!utils::is_valid_ptr(client_info))
 			return;
 
-		client_base = decryption::decrypt_client_base(client_info, globals::base, globals::peb);
+		client_base = decryption::decrypt_client_base(client_info, data.base, data.peb);
 		if (!utils::is_valid_ptr(client_base))
 			return;
 
-		bone_base = decryption::decrypt_bone_base(globals::base, globals::peb);
+		bone_base = decryption::decrypt_bone_base(data.base, data.peb);
 		if (!utils::is_valid_ptr(bone_base))
 			return;
 
-		visible_base = decryption::get_visible_base(globals::base, offsets::visible, offsets::distribute);
-		if (!utils::is_valid_ptr(visible_base))
-			return;
-
-		name_base = player::get_name_array_base(globals::base);
+		name_base = player::get_name_array_base(data.base);
 		if (!utils::is_valid_ptr(name_base))
 			return;
 
-		camera_base = math::get_camera_base(globals::base);
+		camera_base = math::get_camera_base(data.base);
 		if (!utils::is_valid_ptr(camera_base))
 			return;
 
@@ -116,10 +111,15 @@ void data::update(data::game& data)
 
 	data.local_player.team = local_player.get_team();
 	const auto bone_base_pos = player::get_bone_base_pos(client_info);
+	if (!utils::is_valid_ptr(visible_base))
+	{
+		visible_base = decryption::get_visible_base(data.base, offsets::visible, offsets::distribute);
+		return;
+	}
 	auto visible_list = driver::read<uint64_t>(visible_base);
 	if (!utils::is_valid_ptr(visible_list) || visible_list != visible_list_old)
 	{
-		visible_base = decryption::get_visible_base(globals::base, offsets::visible, offsets::distribute);
+		visible_base = decryption::get_visible_base(data.base, offsets::visible, offsets::distribute);
 		visible_list = driver::read<uint64_t>(visible_base);
 	}
 	visible_list_old = visible_list;
@@ -137,7 +137,7 @@ void data::update(data::game& data)
 		if (!p.get_origin(player_data.origin))
 			continue;
 
-		const auto bone_ptr = player::get_bone_ptr(bone_base, decryption::get_bone_index(i, globals::base));
+		const auto bone_ptr = player::get_bone_ptr(bone_base, decryption::get_bone_index(i, data.base));
 		if (!bone_ptr)
 			continue;
 
