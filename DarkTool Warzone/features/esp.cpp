@@ -116,9 +116,9 @@ void features::esp(const data::game& data, ImDrawList* d, const ref_def& refdef,
 			}
 			else
 			{
-				ImPlot::SetNextPlotLimitsY(-cfg->esp.show_nearest_players_distance, cfg->esp.show_nearest_players_distance, ImGuiCond_Always);
-				ImPlot::SetNextPlotLimitsX(-cfg->esp.show_nearest_players_distance, cfg->esp.show_nearest_players_distance, ImGuiCond_Always);
-				if (ImPlot::BeginPlot("##Radar", nullptr, nullptr, { 0, 0 }, ImPlotFlags_NoTitle | ImPlotFlags_NoMenus | ImPlotFlags_NoBoxSelect | ImPlotFlags_NoMousePos, ImPlotAxisFlags_NoTickMarks, ImPlotAxisFlags_NoTickMarks)) {
+				if (ImPlot::BeginPlot("##Radar", { 0, 0 }, ImPlotFlags_NoTitle | ImPlotFlags_NoMenus | ImPlotFlags_NoBoxSelect | ImPlotFlags_NoMouseText)) {
+					ImPlot::SetupAxes(nullptr, nullptr, ImPlotAxisFlags_NoTickMarks, ImPlotAxisFlags_NoTickMarks);
+					ImPlot::SetupAxesLimits(-cfg->esp.show_nearest_players_distance, cfg->esp.show_nearest_players_distance, -cfg->esp.show_nearest_players_distance, cfg->esp.show_nearest_players_distance, ImGuiCond_Always);
 					const auto angle = math::deg2rad * camera.angles.y;
 					const auto s = sin(angle);
 					const auto c = cos(angle);
