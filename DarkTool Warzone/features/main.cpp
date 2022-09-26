@@ -31,8 +31,8 @@ void overlay::draw(data::game& data, ImDrawList* d)
 		if (!player.valid)
 			break;
 
-		if (cfg->esp.max_distance && player.distance > cfg->esp.max_distance &&
-			cfg->aimbot.max_distance && player.distance > cfg->aimbot.max_distance)
+		if (cfg.esp.max_distance && player.distance > cfg.esp.max_distance &&
+			cfg.aimbot.max_distance && player.distance > cfg.aimbot.max_distance)
 			break;
 
 		if (player.team == data.local_player.team)
@@ -60,7 +60,7 @@ void overlay::draw(data::game& data, ImDrawList* d)
 void data::update(data::game& data)
 {
 	data.valid = false;
-	if (!cfg->esp.bind.enabled && !cfg->aimbot.bind.enabled)
+	if (!cfg.esp.bind.enabled && !cfg.aimbot.bind.enabled)
 		return;
 
 	static auto full_refresh = true;

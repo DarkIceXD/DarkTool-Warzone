@@ -6,22 +6,22 @@
 
 void features::esp(const data::game& data, ImDrawList* d, const ref_def& refdef, const camera& camera)
 {
-	cfg->esp.bind.run();
-	if (!cfg->esp.bind.enabled)
+	cfg.esp.bind.run();
+	if (!cfg.esp.bind.enabled)
 		return;
 
-	const auto box_base_color = cfg->esp.box.base.to_u32();
-	const auto box_visible_color = cfg->esp.box.visible.to_u32();
-	const auto box_downed_color = cfg->esp.box.downed.to_u32();
-	const auto skeleton_base_color = cfg->esp.skeleton.base.to_u32();
-	const auto skeleton_visible_color = cfg->esp.skeleton.visible.to_u32();
-	const auto skeleton_downed_color = cfg->esp.skeleton.downed.to_u32();
+	const auto box_base_color = cfg.esp.box.base.to_u32();
+	const auto box_visible_color = cfg.esp.box.visible.to_u32();
+	const auto box_downed_color = cfg.esp.box.downed.to_u32();
+	const auto skeleton_base_color = cfg.esp.skeleton.base.to_u32();
+	const auto skeleton_visible_color = cfg.esp.skeleton.visible.to_u32();
+	const auto skeleton_downed_color = cfg.esp.skeleton.downed.to_u32();
 	for (const auto& player : data.players)
 	{
 		if (!player.valid)
 			break;
 
-		if (cfg->esp.max_distance && player.distance > cfg->esp.max_distance)
+		if (cfg.esp.max_distance && player.distance > cfg.esp.max_distance)
 			break;
 
 		if (player.team == data.local_player.team)
@@ -62,28 +62,28 @@ void features::esp(const data::game& data, ImDrawList* d, const ref_def& refdef,
 				d->AddLine(a.screen, b.screen, skeleton_color);
 			}
 	}
-	if (cfg->esp.show_nearest_players && cfg->esp.show_nearest_players_distance)
+	if (cfg.esp.show_nearest_players && cfg.esp.show_nearest_players_distance)
 	{
 		ImGuiIO& io = ImGui::GetIO();
 		ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav;
-		if (cfg->esp.overlay_corner != -1)
+		if (cfg.esp.overlay_corner != -1)
 		{
 			const auto viewport = ImGui::GetMainViewport();
 			const auto& work_pos = viewport->WorkPos;
 			const auto& work_size = viewport->WorkSize;
 			ImVec2 window_pos, window_pos_pivot;
 			constexpr auto padding = 10;
-			window_pos.x = (cfg->esp.overlay_corner & 1) ? (work_pos.x + work_size.x - padding) : (work_pos.x + padding);
-			window_pos.y = (cfg->esp.overlay_corner & 2) ? (work_pos.y + work_size.y - padding) : (work_pos.y + padding);
-			window_pos_pivot.x = (cfg->esp.overlay_corner & 1) ? 1.0f : 0.0f;
-			window_pos_pivot.y = (cfg->esp.overlay_corner & 2) ? 1.0f : 0.0f;
+			window_pos.x = (cfg.esp.overlay_corner & 1) ? (work_pos.x + work_size.x - padding) : (work_pos.x + padding);
+			window_pos.y = (cfg.esp.overlay_corner & 2) ? (work_pos.y + work_size.y - padding) : (work_pos.y + padding);
+			window_pos_pivot.x = (cfg.esp.overlay_corner & 1) ? 1.0f : 0.0f;
+			window_pos_pivot.y = (cfg.esp.overlay_corner & 2) ? 1.0f : 0.0f;
 			ImGui::SetNextWindowPos(window_pos, ImGuiCond_Always, window_pos_pivot);
 			window_flags |= ImGuiWindowFlags_NoMove;
 		}
 		ImGui::SetNextWindowBgAlpha(0.35f);
 		if (ImGui::Begin("Nearest Enemies", nullptr, window_flags))
 		{
-			if (cfg->esp.show_nearest_players == 1)
+			if (cfg.esp.show_nearest_players == 1)
 			{
 				if (ImGui::BeginTable("enemies", 3, ImGuiTableFlags_SizingStretchSame))
 				{
@@ -96,7 +96,7 @@ void features::esp(const data::game& data, ImDrawList* d, const ref_def& refdef,
 						if (!player.valid)
 							break;
 
-						if (player.distance > cfg->esp.show_nearest_players_distance)
+						if (player.distance > cfg.esp.show_nearest_players_distance)
 							break;
 
 						if (player.team == data.local_player.team)
@@ -118,7 +118,7 @@ void features::esp(const data::game& data, ImDrawList* d, const ref_def& refdef,
 			{
 				if (ImPlot::BeginPlot("##Radar", { 0, 0 }, ImPlotFlags_NoTitle | ImPlotFlags_NoMenus | ImPlotFlags_NoBoxSelect | ImPlotFlags_NoMouseText)) {
 					ImPlot::SetupAxes(nullptr, nullptr, ImPlotAxisFlags_NoTickMarks, ImPlotAxisFlags_NoTickMarks);
-					ImPlot::SetupAxesLimits(-cfg->esp.show_nearest_players_distance, cfg->esp.show_nearest_players_distance, -cfg->esp.show_nearest_players_distance, cfg->esp.show_nearest_players_distance, ImGuiCond_Always);
+					ImPlot::SetupAxesLimits(-cfg.esp.show_nearest_players_distance, cfg.esp.show_nearest_players_distance, -cfg.esp.show_nearest_players_distance, cfg.esp.show_nearest_players_distance, ImGuiCond_Always);
 					const auto angle = math::deg2rad * camera.angles.y;
 					const auto s = sin(angle);
 					const auto c = cos(angle);
@@ -135,7 +135,7 @@ void features::esp(const data::game& data, ImDrawList* d, const ref_def& refdef,
 
 						const auto& x = player.delta.y;
 						const auto& y = player.delta.x;
-						if (math::units_to_m(std::abs(x)) > cfg->esp.show_nearest_players_distance || math::units_to_m(std::abs(y)) > cfg->esp.show_nearest_players_distance)
+						if (math::units_to_m(std::abs(x)) > cfg.esp.show_nearest_players_distance || math::units_to_m(std::abs(y)) > cfg.esp.show_nearest_players_distance)
 							continue;
 
 						xs[size] = -math::units_to_m(x * c - y * s);
@@ -154,7 +154,7 @@ void features::esp(const data::game& data, ImDrawList* d, const ref_def& refdef,
 
 						const auto& x = player.delta.y;
 						const auto& y = player.delta.x;
-						if (math::units_to_m(std::abs(x)) > cfg->esp.show_nearest_players_distance || math::units_to_m(std::abs(y)) > cfg->esp.show_nearest_players_distance)
+						if (math::units_to_m(std::abs(x)) > cfg.esp.show_nearest_players_distance || math::units_to_m(std::abs(y)) > cfg.esp.show_nearest_players_distance)
 							continue;
 
 						xs[size] = -math::units_to_m(x * c - y * s);
@@ -167,11 +167,11 @@ void features::esp(const data::game& data, ImDrawList* d, const ref_def& refdef,
 			}
 			if (ImGui::BeginPopupContextWindow())
 			{
-				if (ImGui::MenuItem("Custom", NULL, cfg->esp.overlay_corner == -1)) cfg->esp.overlay_corner = -1;
-				if (ImGui::MenuItem("Top-left", NULL, cfg->esp.overlay_corner == 0)) cfg->esp.overlay_corner = 0;
-				if (ImGui::MenuItem("Top-right", NULL, cfg->esp.overlay_corner == 1)) cfg->esp.overlay_corner = 1;
-				if (ImGui::MenuItem("Bottom-left", NULL, cfg->esp.overlay_corner == 2)) cfg->esp.overlay_corner = 2;
-				if (ImGui::MenuItem("Bottom-right", NULL, cfg->esp.overlay_corner == 3)) cfg->esp.overlay_corner = 3;
+				if (ImGui::MenuItem("Custom", NULL, cfg.esp.overlay_corner == -1)) cfg.esp.overlay_corner = -1;
+				if (ImGui::MenuItem("Top-left", NULL, cfg.esp.overlay_corner == 0)) cfg.esp.overlay_corner = 0;
+				if (ImGui::MenuItem("Top-right", NULL, cfg.esp.overlay_corner == 1)) cfg.esp.overlay_corner = 1;
+				if (ImGui::MenuItem("Bottom-left", NULL, cfg.esp.overlay_corner == 2)) cfg.esp.overlay_corner = 2;
+				if (ImGui::MenuItem("Bottom-right", NULL, cfg.esp.overlay_corner == 3)) cfg.esp.overlay_corner = 3;
 				ImGui::EndPopup();
 			}
 		}

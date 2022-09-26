@@ -1,5 +1,5 @@
 #pragma once
-#include "common.h"
+#include "../utilities/json.hpp"
 #include <Windows.h>
 #include "../game/player.h"
 
@@ -45,7 +45,7 @@ struct rgb {
 			b = 0;
 		}
 	}
-	JSON_SERIALIZE(rgb, r, g, b, a, enabled)
+	NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(rgb, r, g, b, a, enabled)
 };
 
 struct keybind {
@@ -59,25 +59,23 @@ struct keybind {
 		else if (type == 2)
 			enabled = GetAsyncKeyState(key_bind);
 	}
-	JSON_SERIALIZE(keybind, enabled, type, key_bind)
+	NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(keybind, enabled, type, key_bind)
 };
 
 struct config {
-	static constexpr const char* conf_name = "DarkTool Warzone.json";
-	config();
-	void save() const;
+	static constexpr auto file_name = "DarkTool Warzone.json";
 	struct esp {
 		keybind bind{};
 		int max_distance{ 0 };
 		struct color {
 			rgb base, visible, downed;
-			JSON_SERIALIZE(color, base, visible, downed)
+			NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(color, base, visible, downed)
 		}
 		box{ { 1, 0, 0, 1 }, { 0, 1, 0, 1 }, { 0, 1, 1, 1 } }, skeleton{ { 1, 0, 0, 0.5f }, { 0, 1, 0, 0.5f }, { 0, 1, 1, 0.5f } };
 		int show_nearest_players{ 0 };
 		int show_nearest_players_distance{ 200 };
 		int overlay_corner{ 0 };
-		JSON_SERIALIZE(esp, bind, max_distance, box, skeleton, show_nearest_players, show_nearest_players_distance, overlay_corner)
+		NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(esp, bind, max_distance, box, skeleton, show_nearest_players, show_nearest_players_distance, overlay_corner)
 	} esp;
 	struct aimbot {
 		keybind bind{};
@@ -105,13 +103,13 @@ struct config {
 				return false;
 			}
 		}
-		JSON_SERIALIZE(aimbot, bind, game_sensitivity, max_distance, fov, smoothness, head, chest, visibility_check, aim_at_downed_players, show_aim_spot)
+		NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(aimbot, bind, game_sensitivity, max_distance, fov, smoothness, head, chest, visibility_check, aim_at_downed_players, show_aim_spot)
 	} aimbot;
 	struct debug {
 		bool enabled{ false };
 		bool show_debug_log{ false };
 	}debug;
-	JSON_SERIALIZE(config, esp, aimbot)
+	NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(config, esp, aimbot)
 };
 
-inline config* cfg;
+inline config cfg;

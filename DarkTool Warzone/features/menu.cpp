@@ -1,5 +1,6 @@
 #include "../overlay/overlay.hpp"
 #include "../config/config.h"
+#include "../utilities/json_utils.h"
 
 namespace ImGui {
 	void KeyBind(const char* label, int* selection, int* key_bind, bool* did_find) {
@@ -47,36 +48,36 @@ namespace ImGui {
 void overlay::menu()
 {
 	if (GetAsyncKeyState(VK_F12) & 1)
-		cfg->debug.enabled = !cfg->debug.enabled;
+		cfg.debug.enabled = !cfg.debug.enabled;
 	if (ImGui::Begin("DarkTool Warzone")) {
 		ImGui::PushItemWidth(-200);
 		if (ImGui::BeginTabBar("tabs"))
 		{
 			if (ImGui::BeginTabItem("ESP"))
 			{
-				ImGui::Checkbox("Enabled", &cfg->esp.bind.enabled);
+				ImGui::Checkbox("Enabled", &cfg.esp.bind.enabled);
 				static auto esp_found = true;
-				ImGui::KeyBind("ESP", &cfg->esp.bind.type, &cfg->esp.bind.key_bind, &esp_found);
-				ImGui::SliderInt("Max Distance", &cfg->esp.max_distance, 0, 1000);
-				ImGui::ColorEdit4("Box Color", &cfg->esp.box.base.r, ImGuiColorEditFlags_Float | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_AlphaPreview);
-				ImGui::ColorEdit4("Box Color Visible", &cfg->esp.box.visible.r, ImGuiColorEditFlags_Float | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_AlphaPreview);
-				ImGui::ColorEdit4("Box Color Downed", &cfg->esp.box.downed.r, ImGuiColorEditFlags_Float | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_AlphaPreview);
-				ImGui::ColorEdit4("Skeleton Color", &cfg->esp.skeleton.base.r, ImGuiColorEditFlags_Float | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_AlphaPreview);
-				ImGui::ColorEdit4("Skeleton Color Visible", &cfg->esp.skeleton.visible.r, ImGuiColorEditFlags_Float | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_AlphaPreview);
-				ImGui::ColorEdit4("Skeleton Color Downed", &cfg->esp.skeleton.downed.r, ImGuiColorEditFlags_Float | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_AlphaPreview);
-				ImGui::Combo("Show Nearest Players", &cfg->esp.show_nearest_players, "Disabled\0Table\0Radar\0");
-				ImGui::SliderInt("Show Nearest Players Distance", &cfg->esp.show_nearest_players_distance, 0, 1000);
+				ImGui::KeyBind("ESP", &cfg.esp.bind.type, &cfg.esp.bind.key_bind, &esp_found);
+				ImGui::SliderInt("Max Distance", &cfg.esp.max_distance, 0, 1000);
+				ImGui::ColorEdit4("Box Color", &cfg.esp.box.base.r, ImGuiColorEditFlags_Float | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_AlphaPreview);
+				ImGui::ColorEdit4("Box Color Visible", &cfg.esp.box.visible.r, ImGuiColorEditFlags_Float | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_AlphaPreview);
+				ImGui::ColorEdit4("Box Color Downed", &cfg.esp.box.downed.r, ImGuiColorEditFlags_Float | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_AlphaPreview);
+				ImGui::ColorEdit4("Skeleton Color", &cfg.esp.skeleton.base.r, ImGuiColorEditFlags_Float | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_AlphaPreview);
+				ImGui::ColorEdit4("Skeleton Color Visible", &cfg.esp.skeleton.visible.r, ImGuiColorEditFlags_Float | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_AlphaPreview);
+				ImGui::ColorEdit4("Skeleton Color Downed", &cfg.esp.skeleton.downed.r, ImGuiColorEditFlags_Float | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_AlphaPreview);
+				ImGui::Combo("Show Nearest Players", &cfg.esp.show_nearest_players, "Disabled\0Table\0Radar\0");
+				ImGui::SliderInt("Show Nearest Players Distance", &cfg.esp.show_nearest_players_distance, 0, 1000);
 				ImGui::EndTabItem();
 			}
 			if (ImGui::BeginTabItem("Aimbot"))
 			{
-				ImGui::Checkbox("Enabled", &cfg->aimbot.bind.enabled);
+				ImGui::Checkbox("Enabled", &cfg.aimbot.bind.enabled);
 				static auto aimbot_found = true;
-				ImGui::KeyBind("Aimbot", &cfg->aimbot.bind.type, &cfg->aimbot.bind.key_bind, &aimbot_found);
-				ImGui::SliderFloat("Game Sensitivity", &cfg->aimbot.game_sensitivity, 0, 20);
-				ImGui::SliderInt("Max Distance", &cfg->aimbot.max_distance, 0, 1000);
-				ImGui::SliderFloat("Fov", &cfg->aimbot.fov, 1, 90);
-				ImGui::SliderFloat("Smoothness", &cfg->aimbot.smoothness, 1, 10);
+				ImGui::KeyBind("Aimbot", &cfg.aimbot.bind.type, &cfg.aimbot.bind.key_bind, &aimbot_found);
+				ImGui::SliderFloat("Game Sensitivity", &cfg.aimbot.game_sensitivity, 0, 20);
+				ImGui::SliderInt("Max Distance", &cfg.aimbot.max_distance, 0, 1000);
+				ImGui::SliderFloat("Fov", &cfg.aimbot.fov, 1, 90);
+				ImGui::SliderFloat("Smoothness", &cfg.aimbot.smoothness, 1, 10);
 				if (ImGui::BeginTable("hitbox", 2, ImGuiTableFlags_SizingStretchSame))
 				{
 					ImGui::TableSetupColumn("Hitbox");
@@ -87,30 +88,30 @@ void overlay::menu()
 					ImGui::TableNextColumn();
 					ImGui::TextUnformatted("Head");
 					ImGui::TableNextColumn();
-					ImGui::Checkbox("##normal", &cfg->aimbot.head);
+					ImGui::Checkbox("##normal", &cfg.aimbot.head);
 					ImGui::PopID();
 					ImGui::PushID(1);
 					ImGui::TableNextColumn();
 					ImGui::TextUnformatted("Chest");
 					ImGui::TableNextColumn();
-					ImGui::Checkbox("##normal", &cfg->aimbot.chest);
+					ImGui::Checkbox("##normal", &cfg.aimbot.chest);
 					ImGui::PopID();
 					ImGui::EndTable();
 				}
-				ImGui::Checkbox("Visibility Check", &cfg->aimbot.visibility_check);
-				ImGui::Checkbox("Aim at downed players", &cfg->aimbot.aim_at_downed_players);
-				ImGui::Checkbox("Show aim spot", &cfg->aimbot.show_aim_spot);
+				ImGui::Checkbox("Visibility Check", &cfg.aimbot.visibility_check);
+				ImGui::Checkbox("Aim at downed players", &cfg.aimbot.aim_at_downed_players);
+				ImGui::Checkbox("Show aim spot", &cfg.aimbot.show_aim_spot);
 				ImGui::EndTabItem();
 			}
 			if (ImGui::BeginTabItem("Config"))
 			{
 				if (ImGui::Button("Save config"))
-					cfg->save();
+					json_utils::save(config::file_name, json_utils::type::JSON, cfg);
 				ImGui::EndTabItem();
 			}
-			if (ImGui::BeginTabItem("Debug", &cfg->debug.enabled))
+			if (ImGui::BeginTabItem("Debug", &cfg.debug.enabled))
 			{
-				ImGui::Checkbox("Show Debug Log", &cfg->debug.show_debug_log);
+				ImGui::Checkbox("Show Debug Log", &cfg.debug.show_debug_log);
 				ImGui::EndTabItem();
 			}
 			ImGui::EndTabBar();

@@ -146,7 +146,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="config\config.cpp" />
     <ClCompile Include="features\aimbot.cpp" />
     <ClCompile Include="driver\driver.cpp" />
     <ClCompile Include="DarkTool Warzone.cpp" />
@@ -171,8 +170,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config\config.h" />
-    <ClInclude Include="config\common.h" />
-    <ClInclude Include="config\json.hpp" />
     <ClInclude Include="game\data.h" />
     <ClInclude Include="driver\driver.h" />
     <ClInclude Include="game\decryption.h" />
@@ -196,6 +193,8 @@
     <ClInclude Include="game\offsets.h" />
     <ClInclude Include="overlay\overlay.hpp" />
     <ClInclude Include="driver\server_shared.h" />
+    <ClInclude Include="utilities\json.hpp" />
+    <ClInclude Include="utilities\json_utils.h" />
     <ClInclude Include="utilities\pad.h" />
     <ClInclude Include="utilities\utils.h" />
     <ClInclude Include="utilities\xorstr.h" />

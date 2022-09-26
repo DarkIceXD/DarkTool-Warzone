@@ -63,9 +63,6 @@
     <ClCompile Include="game\decryption.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="config\config.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="features\aimbot.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -146,12 +143,6 @@
     <ClInclude Include="game\data.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="config\json.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="config\common.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="config\config.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -168,6 +159,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="utilities\pad.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="utilities\json.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="utilities\json_utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

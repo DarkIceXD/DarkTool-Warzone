@@ -25,8 +25,8 @@ void aim_at(const vector2& screen, const bool absolute)
 
 void features::aimbot(const data::game& data, ImDrawList* d, const ref_def& refdef, const camera& camera)
 {
-	cfg->aimbot.bind.run();
-	if (!cfg->aimbot.bind.enabled)
+	cfg.aimbot.bind.run();
+	if (!cfg.aimbot.bind.enabled)
 		return;
 
 	const auto tan_half_fov = refdef.view.tan_half_fov.length();
@@ -38,16 +38,16 @@ void features::aimbot(const data::game& data, ImDrawList* d, const ref_def& refd
 		if (!player.valid)
 			break;
 
-		if (cfg->aimbot.max_distance && player.distance > cfg->aimbot.max_distance)
+		if (cfg.aimbot.max_distance && player.distance > cfg.aimbot.max_distance)
 			break;
 
 		if (player.team == data.local_player.team)
 			continue;
 
-		if (cfg->aimbot.visibility_check && !player.visible)
+		if (cfg.aimbot.visibility_check && !player.visible)
 			continue;
 
-		if (!cfg->aimbot.aim_at_downed_players && player.stance == player::stance::downed)
+		if (!cfg.aimbot.aim_at_downed_players && player.stance == player::stance::downed)
 			continue;
 
 		for (int i = 0; i < player.bones_screen.size(); i++)
@@ -56,7 +56,7 @@ void features::aimbot(const data::game& data, ImDrawList* d, const ref_def& refd
 			if (!bone.valid)
 				continue;
 
-			if (!cfg->aimbot.is_bone_enabled(data::player_data::index_to_bone(i)))
+			if (!cfg.aimbot.is_bone_enabled(data::player_data::index_to_bone(i)))
 				continue;
 
 			const auto fov = math::pixels_to_fov((bone.screen - middle).length(), tan_half_fov, middle.x);
@@ -68,19 +68,19 @@ void features::aimbot(const data::game& data, ImDrawList* d, const ref_def& refd
 		}
 	}
 
-	if (smallest_fov >= FLT_MAX || smallest_fov > cfg->aimbot.fov)
+	if (smallest_fov >= FLT_MAX || smallest_fov > cfg.aimbot.fov)
 		return;
 
-	if (cfg->aimbot.show_aim_spot)
+	if (cfg.aimbot.show_aim_spot)
 	{
 		d->AddLine(best_hitbox - vector2(5, 5), best_hitbox + vector2(5, 5), IM_COL32_WHITE);
 		d->AddLine(best_hitbox - vector2(5, -5), best_hitbox + vector2(5, -5), IM_COL32_WHITE);
 	}
 
 	const auto diff = best_hitbox - middle;
-	auto dx = diff * (3.f / cfg->aimbot.game_sensitivity);
+	auto dx = diff * (3.f / cfg.aimbot.game_sensitivity);
 	const auto fov = math::pixels_to_fov(diff.length(), tan_half_fov, middle.x);
 	if (fov > 2)
-		dx /= cfg->aimbot.smoothness;
+		dx /= cfg.aimbot.smoothness;
 	aim_at(dx, false);
 }

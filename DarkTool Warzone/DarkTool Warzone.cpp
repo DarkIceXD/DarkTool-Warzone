@@ -5,6 +5,7 @@
 #include <iostream>
 #include <thread>
 #include <mutex>
+#include "utilities/json_utils.h"
 
 static std::mutex mtx;
 static data::game game_data;
@@ -82,10 +83,9 @@ int main()
 		<< "Close this to disable DarkTool Overlay\n"
 		<< "Press INS to open Menu\n"
 		<< "Press END to close (panic button)\n";
-	cfg = new config();
+	cfg = json_utils::load<config>(config::file_name, json_utils::type::JSON);
 	std::thread worker(collect_data);
 	worker.detach();
 	overlay_execute();
-	cfg->save();
-	delete cfg;
+	json_utils::save(config::file_name, json_utils::type::JSON, cfg);
 }
